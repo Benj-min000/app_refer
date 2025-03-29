@@ -1,0 +1,15 @@
+{
+  "helloWorld": "Hello World!",
+  "changeLanguage": "Change Language",
+  "welcomeMessage": "Welcome to our app!",
+  "payment": "Payment",
+  "checkout": "Proceed to Checkout",
+  "totalAmount": "Total Amount",
+  "orderSummary": "Order Summary",
+  "settings": "Settings",
+  "offers": "Offers",
+  "whatsOnYourMind": "What's on your mind?",
+  "bookDining": "Book Dining",
+  "softDrinks": "Soft Drinks",
+  "deliveryTime": "45-50 mins"
+}

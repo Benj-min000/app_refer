@@ -1,0 +1,15 @@
+{
+  "helloWorld": "안녕하세요!",
+  "changeLanguage": "언어 변경",
+  "welcomeMessage": "우리 앱에 오신 것을 환영합니다!",
+  "payment": "결제",
+  "checkout": "결제 진행",
+  "totalAmount": "총 금액",
+  "orderSummary": "주문 요약",
+  "settings": "설정",
+  "offers": "할인 행사",
+  "whatsOnYourMind": "무엇을 드시고 싶나요?",
+  "bookDining": "식사 예약",
+  "softDrinks": "탄산음료",
+  "deliveryTime": "45-50분"
+}

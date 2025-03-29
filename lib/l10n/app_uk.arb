@@ -1,0 +1,15 @@
+{
+  "helloWorld": "Привіт Світ!",
+  "changeLanguage": "Змінити мову",
+  "welcomeMessage": "Ласкаво просимо до нашого додатку!",
+  "payment": "Оплата",
+  "checkout": "Перейти до оформлення",
+  "totalAmount": "Загальна сума",
+  "orderSummary": "Підсумок замовлення",
+  "settings": "Налаштування",
+  "offers": "Пропозиції",
+  "whatsOnYourMind": "Що вас цікавить?",
+  "bookDining": "Бронювання столика",
+  "softDrinks": "Безалкогольні напої",
+  "deliveryTime": "45-50 хв"
+}

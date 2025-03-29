@@ -1,0 +1,15 @@
+{
+  "helloWorld": "Witaj Świecie!",
+  "changeLanguage": "Zmień język",
+  "welcomeMessage": "Witamy w naszej aplikacji!",
+  "payment": "Płatność",
+  "checkout": "Przejdź do kasy",
+  "totalAmount": "Całkowita kwota",
+  "orderSummary": "Podsumowanie zamówienia",
+  "settings": "Ustawienia",
+  "offers": "Oferty",
+  "whatsOnYourMind": "Co masz na myśli?",
+  "bookDining": "Rezerwacja stolika",
+  "softDrinks": "Napoje gazowane",
+  "deliveryTime": "45-50 min"
+}

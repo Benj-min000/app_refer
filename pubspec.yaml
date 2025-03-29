@@ -1,0 +1,62 @@
+name: user_app
+description: A new Flutter project.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+  intl: 0.18.1  # Ensure compatibility with flutter_localizations
+
+  cupertino_icons: ^1.0.2
+  firebase_core: ^2.9.0
+  firebase_auth: ^4.4.0
+  cloud_firestore: ^4.5.0
+  firebase_storage: ^11.1.0
+  carousel_slider: ^4.2.1
+  image_picker: ^0.8.7+1
+  geolocator: ^9.0.2
+  geocoding: ^2.1.0
+  shared_preferences: ^2.2.3
+  flutter_staggered_grid_view: ^0.4.1
+  number_inc_dec: ^0.8.0
+  fluttertoast: ^8.2.1
+  provider: ^6.1.2
+  url_launcher: ^6.1.10
+  timezone: ^0.9.1
+  flutter_stripe: ^11.4.0
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true  # ✅ Moved inside the correct section
+  generate: true  # ✅ Enables localization auto-generation
+
+  assets:
+    - assets/images/
+    - assets/images/slider/
+
+  fonts:
+    - family: Acme
+      fonts:
+        - asset: assets/fonts/Acme-Regular.ttf
+    - family: Kiwi
+      fonts:
+        - asset: assets/fonts/KiwiMaru-Medium.ttf
+    - family: Signatra
+      fonts:
+        - asset: assets/fonts/Signatra.ttf
+    - family: Train
+      fonts:
+        - asset: assets/fonts/TrainOne-Regular.ttf
