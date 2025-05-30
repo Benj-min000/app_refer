@@ -5,11 +5,11 @@ import 'package:http/http.dart' as http;
 class PaymentService {
   static Future<void> makePayment() async {
     try {
-      // 1️⃣ Get a Payment Intent from the backend
+      // 1️⃣ Get Payment Intent from your server
       final response = await http.post(
-        Uri.parse('https://your-backend-url.com/create-payment-intent'),
+        Uri.parse('http://10.0.2.2:4242/create-payment-intent'), // ✅ LOCAL Android Emulator IP
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'amount': 1000, 'currency': 'USD'}),
+        body: jsonEncode({'amount': 1000}), // No currency if your backend already sets USD
       );
 
       final paymentIntentData = jsonDecode(response.body);
@@ -18,16 +18,16 @@ class PaymentService {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentData['clientSecret'],
-          merchantDisplayName: 'Your Business Name',
+          merchantDisplayName: 'I-Eat',
         ),
       );
 
       // 3️⃣ Show the payment sheet
       await Stripe.instance.presentPaymentSheet();
 
-      print('Payment successful!');
+      print('✅ Payment successful!');
     } catch (e) {
-      print('Error: $e');
+      print('❌ Payment error: $e');
     }
   }
 }

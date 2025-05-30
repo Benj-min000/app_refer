@@ -2,16 +2,16 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:provider/provider.dart'; // 🌍 Added for state management
+import 'package:provider/provider.dart';
 import 'package:user_app/Home/home.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/sellers.dart';
 import 'package:user_app/widgets/sellers_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/localization/locale_provider.dart'; // 🌍 Import for language state management
-import 'package:user_app/mainScreens/language_selection_screen.dart'; // 🌍 Import Language Selection Screen
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // 🌍 Import localization files
+import 'package:user_app/localization/locale_provider.dart';
+import 'package:user_app/mainScreens/language_selection_screen.dart';
+//import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,36 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final items = [
-    "assets/images/slider/0.jpg",
-    "assets/images/slider/1.jpg",
-    "assets/images/slider/2.jpg",
-    "assets/images/slider/3.jpg",
-    "assets/images/slider/4.jpg",
-    "assets/images/slider/5.jpg",
-    "assets/images/slider/6.jpg",
-    "assets/images/slider/7.jpg",
-    "assets/images/slider/8.jpg",
-    "assets/images/slider/9.jpg",
-    "assets/images/slider/10.jpg",
-    "assets/images/slider/11.jpg",
-    "assets/images/slider/12.jpg",
-    "assets/images/slider/13.jpg",
-    "assets/images/slider/14.jpg",
-    "assets/images/slider/15.jpg",
-    "assets/images/slider/16.jpg",
-    "assets/images/slider/17.jpg",
-    "assets/images/slider/18.jpg",
-    "assets/images/slider/19.jpg",
-    "assets/images/slider/20.jpg",
-    "assets/images/slider/21.jpg",
-    "assets/images/slider/22.jpg",
-    "assets/images/slider/23.jpg",
-    "assets/images/slider/24.jpg",
-    "assets/images/slider/25.jpg",
-    "assets/images/slider/26.jpg",
-    "assets/images/slider/27.jpg",
-  ];
+  final items = List.generate(
+      28, (index) => "assets/images/slider/$index.jpg");
 
   @override
   void initState() {
@@ -60,34 +32,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context); // 🌍 Get current language state
+    final localeProvider = Provider.of<LocaleProvider>(context);
+    final localizations = AppLocalizations.of(context);
+
+    // Null check fix
+    if (localizations == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.redAccent],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 0.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
+              colors: [Colors.lightBlueAccent, Colors.lightBlueAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.topRight,
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           "I-Eat",
-          style: const TextStyle(fontFamily: "Signatra", fontSize: 40),
+          style: TextStyle(fontFamily: "Signatra", fontSize: 40),
         ),
         centerTitle: true,
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.language), // 🌍 Language Change Button
+            icon: const Icon(Icons.language),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LanguageSelectionScreen()),
+                MaterialPageRoute(
+                    builder: (context) => LanguageSelectionScreen()),
               );
             },
           ),
@@ -99,87 +78,88 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                Home(),
+                const Home(),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * .3,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.3,
                     width: MediaQuery.of(context).size.width,
                     child: CarouselSlider(
-                      items: items.map((index) {
-                        return Builder(builder: (BuildContext context) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                            decoration: BoxDecoration(
+                      items: items.map((imagePath) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin:
+                              const EdgeInsets.symmetric(horizontal: 1.0),
+                              decoration: BoxDecoration(
                                 color: Colors.black,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Padding(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
                                 padding: const EdgeInsets.all(4.0),
                                 child: Image.asset(
-                                  index,
+                                  imagePath,
                                   fit: BoxFit.fill,
-                                )),
-                          );
-                        });
+                                ),
+                              ),
+                            );
+                          },
+                        );
                       }).toList(),
                       options: CarouselOptions(
                         height: 500,
-                        aspectRatio: 16 / 9,
-                        viewportFraction: 0.8,
-                        initialPage: 0,
-                        enableInfiniteScroll: true,
-                        reverse: false,
                         autoPlay: true,
+                        enlargeCenterPage: true,
+                        enlargeFactor: 0.3,
                         autoPlayInterval: const Duration(seconds: 2),
                         autoPlayAnimationDuration:
                         const Duration(milliseconds: 500),
-                        autoPlayCurve: Curves.decelerate,
-                        enlargeCenterPage: true,
-                        enlargeFactor: 0.3,
+                        viewportFraction: 0.8,
                         scrollDirection: Axis.horizontal,
                       ),
                     ),
                   ),
                 ),
-                // 🌍 Display the current language
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    AppLocalizations.of(context)!.helloWorld, // 🌍 Uses translated text
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    localizations.helloWorld, // Now safely used
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
           ),
           StreamBuilder<QuerySnapshot>(
-              stream:
-              FirebaseFirestore.instance.collection("sellers").snapshots(),
-              builder: (context, snapshot) {
-                return !snapshot.hasData
-                    ? SliverToBoxAdapter(
-                  child: Center(
-                    child: circularProgress(),
-                  ),
-                )
-                    : SliverStaggeredGrid.countBuilder(
-                  crossAxisCount: 1,
-                  staggeredTileBuilder: (context) =>
-                  const StaggeredTile.fit(1),
-                  itemBuilder: (context, index) {
-                    Sellers sModel = Sellers.fromJson(
-                        snapshot.data!.docs[index].data()
-                        as Map<String, dynamic>);
-
-                    return SellersDesignWidget(
-                      model: sModel,
-                      context: context,
-                    );
-                  },
-                  itemCount: snapshot.data!.docs.length,
+            stream:
+            FirebaseFirestore.instance.collection("sellers").snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return SliverToBoxAdapter(
+                  child: Center(child: circularProgress()),
                 );
-              }),
+              }
+
+              return SliverStaggeredGrid.countBuilder(
+                crossAxisCount: 1,
+                staggeredTileBuilder: (context) => const StaggeredTile.fit(1),
+                itemBuilder: (context, index) {
+                  Sellers sModel = Sellers.fromJson(
+                    snapshot.data!.docs[index].data()
+                    as Map<String, dynamic>,
+                  );
+                  return SellersDesignWidget(
+
+                    model: sModel,
+                    context: context,
+                  );
+                },
+                itemCount: snapshot.data!.docs.length,
+              );
+            },
+          ),
         ],
       ),
     );
