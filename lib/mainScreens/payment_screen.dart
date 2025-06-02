@@ -9,7 +9,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  bool _isProcessing = false; // 🔥 show loading spinner when paying
+  bool _isProcessing = false; //  show loading spinner when paying
 
   Future<void> _payNow() async {
     setState(() {
@@ -21,7 +21,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       // If success
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Payment Successful!')),
+        const SnackBar(content: Text(' Payment Successful!')),
       );
     } catch (e) {
       // If error
@@ -43,7 +43,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: _isProcessing
             ? const CircularProgressIndicator() //  show loading
             : ElevatedButton(
-          onPressed: _payNow, // 🔥 call pay function
+          onPressed: _payNow, //  call pay function
           child: const Text('Pay Now \$10'),
         ),
       ),
