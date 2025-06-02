@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        locale: localeProvider.locale, // 🔥 Language from Provider
+        locale: localeProvider.locale, //  Language from Provider
         supportedLocales: const [
           Locale('en'), // English
           Locale('ko'), // Korean
@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
           Locale('uk'), // Ukrainian
         ],
         localizationsDelegates: const [
-         // AppLocalizations.delegate, // 🔥 Generated localization
+         // AppLocalizations.delegate, //  Generated localization
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
