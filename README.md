@@ -328,6 +328,4 @@ Seeder no-op → check Firebase init & Firestore rules
 
 
 
----
 
-Do you want me to also **add a table of contents with clickable anchors** at the top so this README is easier 
