@@ -325,7 +325,8 @@ Location fails → check permissions
 Favorites not saved → ensure FavoritesProvider loads before UI
 
 Seeder no-op → check Firebase init & Firestore rules
-
+## 6) Current situation
+Fixing gettinglocation
 
 
 
