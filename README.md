@@ -326,7 +326,6 @@ Favorites not saved → ensure FavoritesProvider loads before UI
 
 Seeder no-op → check Firebase init & Firestore rules
 ## 6) Current situation
-Fixing gettinglocation
-
+Fter_google_places + google_maps_webservice. Set up _promptForAddress() → opens autocomplete overlay. Connected to Google Places Web Service API key. Debug logging added to detect issues (REQUEST_DENIED, etc.). Google Maps google_maps_flutter integrated for future use (Pickup tab, tracking driver, etc.). API key configuration Android: added to AndroidManifest.xml. iOS: added to Info.plist. Currently debugging Places Autocomplete (shows UI but no suggestions yet). 🛠️ Current Issue Google Places overlay opens, but no autocomplete results (keeps loading). Cause: API key configuration (most likely using Android/iOS SDK key instead of Web Service key, or API restrictions misconfigured). Next debugging step: log Places API response to confirm if REQUEST_DENIED.
 
 
