@@ -105,17 +105,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         .then((auth) {
       currentUser = auth.user;
     }).catchError((error) {
-      Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-              message: error.message.toString(),
-            );
-          });
+      if(!mounted) return;
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                message: error.message.toString(),
+              );
+            });
     });
     if (currentUser != null) {
       saveDataToFireStore(currentUser!).then((value) {
+        if(!mounted) return;
         Navigator.pop(context);
         Route newRoute =
             MaterialPageRoute(builder: (context) => const HomeScreen());
@@ -147,89 +149,87 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            const SizedBox(
-              height: 10,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          InkWell(
+            onTap: () {
+              _getImage();
+            },
+            child: CircleAvatar(
+                radius: MediaQuery.of(context).size.width * 0.20,
+                backgroundColor: Colors.white,
+                backgroundImage: imageXFile == null
+                    ? null
+                    : FileImage(
+                        File(imageXFile!.path),
+                      ),
+                child: imageXFile == null
+                    ? Icon(
+                        Icons.add_photo_alternate,
+                        size: MediaQuery.of(context).size.width * 0.20,
+                        color: Colors.grey,
+                      )
+                    : null),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                CustomTextField(
+                  data: Icons.person,
+                  controller: nameController,
+                  hintText: 'Name',
+                  isObsecre: false,
+                ),
+                CustomTextField(
+                  data: Icons.email,
+                  controller: emailController,
+                  hintText: 'Email',
+                  isObsecre: false,
+                ),
+                CustomTextField(
+                  data: Icons.lock,
+                  controller: passwordController,
+                  hintText: 'Password',
+                  isObsecre: true,
+                ),
+                CustomTextField(
+                  data: Icons.lock,
+                  controller: confirmePasswordController,
+                  hintText: 'Confirm Password',
+                  isObsecre: true,
+                ),
+              ],
             ),
-            InkWell(
-              onTap: () {
-                _getImage();
-              },
-              child: CircleAvatar(
-                  radius: MediaQuery.of(context).size.width * 0.20,
-                  backgroundColor: Colors.white,
-                  backgroundImage: imageXFile == null
-                      ? null
-                      : FileImage(
-                          File(imageXFile!.path),
-                        ),
-                  child: imageXFile == null
-                      ? Icon(
-                          Icons.add_photo_alternate,
-                          size: MediaQuery.of(context).size.width * 0.20,
-                          color: Colors.grey,
-                        )
-                      : null),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+            onPressed: () => {
+              formValidation(),
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink.shade300,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
+            child: const Text(
+              "Sign Up",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  CustomTextField(
-                    data: Icons.person,
-                    controller: nameController,
-                    hintText: 'Name',
-                    isObsecre: false,
-                  ),
-                  CustomTextField(
-                    data: Icons.email,
-                    controller: emailController,
-                    hintText: 'Email',
-                    isObsecre: false,
-                  ),
-                  CustomTextField(
-                    data: Icons.lock,
-                    controller: passwordController,
-                    hintText: 'Password',
-                    isObsecre: true,
-                  ),
-                  CustomTextField(
-                    data: Icons.lock,
-                    controller: confirmePasswordController,
-                    hintText: 'Confirm Password',
-                    isObsecre: true,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () => {
-                formValidation(),
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink.shade300,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
-              child: const Text(
-                "Sign Up",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            )
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 30,
+          )
+        ],
       ),
     );
   }

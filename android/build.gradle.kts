@@ -1,3 +1,19 @@
+import org.gradle.api.tasks.Delete
+import org.gradle.kotlin.dsl.register
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Android Gradle plugin
+        classpath("com.android.tools.build:gradle:8.2.1") 
+        // Google Services plugin for Firebase
+        classpath("com.google.gms:google-services:4.4.2") 
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -15,6 +31,7 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

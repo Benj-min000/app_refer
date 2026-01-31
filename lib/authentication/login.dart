@@ -20,11 +20,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   formValidation() {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-// login
-      loginNow();
-    } else {
+      loginNow(); // login
+    } 
+    else {
       showDialog(
           context: context,
           builder: (context) {
