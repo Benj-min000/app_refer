@@ -91,7 +91,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.green, // Payment Button Color
+                  backgroundColor: Colors.green, // Payment Button Color
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
                 child: const Text(

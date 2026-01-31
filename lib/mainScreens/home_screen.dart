@@ -11,7 +11,7 @@ import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/localization/locale_provider.dart';
 import 'package:user_app/mainScreens/language_selection_screen.dart';
-//import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,8 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final items = List.generate(
-      28, (index) => "assets/images/slider/$index.jpg");
+  final items = List.generate(28, (index) => "assets/images/slider/$index.jpg");
 
   @override
   void initState() {
@@ -32,15 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context);
-    final localizations = AppLocalizations.of(context);
+    // final localeProvider = Provider.of<LocaleProvider>(context);
+    // final localizations = AppLocalizations.of(context);
 
     // Null check fix
-    if (localizations == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    // if (localizations == null) {
+    //   return const Scaffold(
+    //     body: Center(child: CircularProgressIndicator()),
+    //   );
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -91,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Container(
                               width: MediaQuery.of(context).size.width,
                               margin:
-                              const EdgeInsets.symmetric(horizontal: 1.0),
+                                  const EdgeInsets.symmetric(horizontal: 1.0),
                               decoration: BoxDecoration(
                                 color: Colors.black,
                                 borderRadius: BorderRadius.circular(10),
@@ -114,19 +113,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         enlargeFactor: 0.3,
                         autoPlayInterval: const Duration(seconds: 2),
                         autoPlayAnimationDuration:
-                        const Duration(milliseconds: 500),
+                            const Duration(milliseconds: 500),
                         viewportFraction: 0.8,
                         scrollDirection: Axis.horizontal,
                       ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
-                    localizations.helloWorld, // Now safely used
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+                    // localizations.helloWorld, // Now safely used
+                    'Localization',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -134,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           StreamBuilder<QuerySnapshot>(
             stream:
-            FirebaseFirestore.instance.collection("sellers").snapshots(),
+                FirebaseFirestore.instance.collection("sellers").snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return SliverToBoxAdapter(
@@ -147,11 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 staggeredTileBuilder: (context) => const StaggeredTile.fit(1),
                 itemBuilder: (context, index) {
                   Sellers sModel = Sellers.fromJson(
-                    snapshot.data!.docs[index].data()
-                    as Map<String, dynamic>,
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>,
                   );
                   return SellersDesignWidget(
-
                     model: sModel,
                     context: context,
                   );

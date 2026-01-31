@@ -6,12 +6,12 @@ import 'package:user_app/global/global.dart';
 import 'package:user_app/mainScreens/home_screen.dart';
 
 class PlacedOrderScreen extends StatefulWidget {
-  String? addressID;
-  double? totolAmmount;
-  String? sellerUID;
+  final String? addressID;
+  final double? totolAmmount;
+  final String? sellerUID;
 
-  PlacedOrderScreen(
-      {super.key, this.addressID, this.totolAmmount, this.sellerUID});
+  const PlacedOrderScreen(
+      {super.key, required this.addressID, required this.totolAmmount, required this.sellerUID});
 
   @override
   State<PlacedOrderScreen> createState() => _PlacedOrderScreenState();

@@ -9,6 +9,8 @@ import 'package:user_app/widgets/simple_Appbar.dart';
 import 'package:user_app/widgets/text_field.dart';
 
 class SaveAddressScreen extends StatelessWidget {
+  SaveAddressScreen({super.key});
+
   final TextEditingController _name = TextEditingController();
   final TextEditingController _phoneNumber = TextEditingController();
   final TextEditingController _flatNumber = TextEditingController();
@@ -32,11 +34,11 @@ class SaveAddressScreen extends StatelessWidget {
     position = newPosition;
 
     placemarks =
-    await placemarkFromCoordinates(position!.latitude, position!.longitude);
+        await placemarkFromCoordinates(position!.latitude, position!.longitude);
 
     Placemark pMarks = placemarks![0];
     completeAddress =
-    '${pMarks.subThoroughfare} ${pMarks.thoroughfare},${pMarks.subLocality} ${pMarks.locality},${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ${pMarks.postalCode},${pMarks.country}';
+        '${pMarks.subThoroughfare} ${pMarks.thoroughfare},${pMarks.subLocality} ${pMarks.locality},${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ${pMarks.postalCode},${pMarks.country}';
     // _locationController.text = completeAddress;
 
     String fullAddress =
@@ -44,10 +46,10 @@ class SaveAddressScreen extends StatelessWidget {
 
     _locationController.text = fullAddress;
     _flatNumber.text =
-    '${pMarks.subThoroughfare} ${pMarks.thoroughfare}, ${pMarks.subLocality} ${pMarks.locality}, ';
+        '${pMarks.subThoroughfare} ${pMarks.thoroughfare}, ${pMarks.subLocality} ${pMarks.locality}, ';
 
     _city.text =
-    '${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ,${pMarks.postalCode}';
+        '${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ,${pMarks.postalCode}';
     _state.text = '${pMarks.country}';
 
     _completeAddress.text = fullAddress;
@@ -141,7 +143,7 @@ class SaveAddressScreen extends StatelessWidget {
                 color: Colors.white,
               ),
               style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                           side: const BorderSide(color: Colors.cyan)))),
