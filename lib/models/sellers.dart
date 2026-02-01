@@ -18,11 +18,11 @@ class Sellers {
     sellerEmail = json["sellerEmail"];
   }
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data["sellerUID"] = this.sellerUID;
-    data["sellerName"] = this.sellerName;
-    data["sellerAvtar"] = this.sellerAvtar;
-    data["sellerEmail"] = this.sellerEmail;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["sellerUID"] = sellerUID;
+    data["sellerName"] = sellerName;
+    data["sellerAvtar"] = sellerAvtar;
+    data["sellerEmail"] = sellerEmail;
     return data;
   }
 }

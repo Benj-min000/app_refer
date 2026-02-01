@@ -29,8 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
-          automaticallyImplyLeading:
-              false, //removes the default back arrow button from screen
+          automaticallyImplyLeading: false, //removes the default back arrow button from screen
           title: const Text(
             'I-Eat',
             style: TextStyle(
@@ -44,14 +43,29 @@ class _AuthScreenState extends State<AuthScreen> {
                   Icons.lock,
                   color: Colors.white,
                 ),
-                text: ('Login'),
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+                
               ),
               Tab(
                 icon: Icon(
                   Icons.lock,
                   color: Colors.white,
                 ),
-                text: ('Register'),
+                child: Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
               ),
             ],
             indicatorColor: Colors.white38,

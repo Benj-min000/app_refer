@@ -35,34 +35,31 @@ dependencies:
   timezone: ^0.11.0
   flutter_stripe: ^12.2.0
   http: ^1.2.0
-  flutter_map: ^8.2.2
-  latlong2: ^0.9.1
-  country_flags: ^4.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
   generate: true
 
   assets:
-    - assets/images/
-    - assets/images/slider/
+    - ../assets/images/
+    - ../assets/images/slider/
     # - assets/translations/
 
   fonts:
     - family: Acme
       fonts:
-        - asset: assets/fonts/Acme-Regular.ttf
+        - asset: ../assets/fonts/Acme-Regular.ttf
     - family: Kiwi
       fonts:
-        - asset: assets/fonts/KiwiMaru-Medium.ttf
+        - asset: ../assets/fonts/KiwiMaru-Medium.ttf
     - family: Signatra
       fonts:
-        - asset: assets/fonts/Signatra.ttf
+        - asset: ../assets/fonts/Signatra.ttf
     - family: Train
       fonts:
-        - asset: assets/fonts/TrainOne-Regular.ttf
+        - asset: ../assets/fonts/TrainOne-Regular.ttf

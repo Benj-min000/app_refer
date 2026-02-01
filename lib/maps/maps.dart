@@ -5,7 +5,7 @@ class MapsUtils {
   static Future<void> openMapWithPosition(
       String lattitude, String longitude) async {
     String googlMapUrl =
-        "https://www.google.com/maps/search/?api=1&query=${lattitude},${longitude}"; // opnen with lattitude and langitude
+        "https://www.google.com/maps/search/?api=1&query=$lattitude,$longitude"; // opnen with lattitude and langitude
 
     try {
       await launchUrl(Uri.parse(googlMapUrl));

@@ -4,41 +4,54 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final IconData? data;
   final String? hintText;
-  bool? isObsecre = true;
-  bool? enabled = true;
+  final bool isObsecre;
+  final bool enabled;
 
-  CustomTextField(
+  const CustomTextField(
       {super.key,
       this.controller,
       this.data,
       this.hintText,
-      this.isObsecre,
-      this.enabled});
+      this.isObsecre = true,
+      this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(
           Radius.circular(10),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.5), 
+            spreadRadius: 2, 
+            blurRadius: 5,   
+            offset: const Offset(0, 2), 
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(8.0),
       margin: const EdgeInsets.all(10),
       child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        
         enabled: enabled,
         controller: controller,
-        obscureText: isObsecre!,
+        obscureText: isObsecre,
         cursorColor: Theme.of(context).primaryColor,
         decoration: InputDecoration(
-            border: InputBorder.none,
-            prefix: Icon(
-              data,
-              color: Colors.grey,
-            ),
-            focusColor: Theme.of(context).primaryColor,
-            hintText: hintText),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+          prefixIcon: Icon(
+            data,
+            color: Colors.grey,
+          ),
+          focusColor: Theme.of(context).primaryColor,
+          hintText: hintText,
+        ),
       ),
     );
   }

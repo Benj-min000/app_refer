@@ -14,7 +14,7 @@ import '../global/global.dart';
 class OrderDetailsScreen extends StatefulWidget {
   final String? orderId;
 
-  const OrderDetailsScreen({this.orderId});
+  const OrderDetailsScreen({super.key, this.orderId});
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();

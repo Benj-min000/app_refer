@@ -6,7 +6,7 @@ class TotalAmmount extends ChangeNotifier {
 
   double get tAmmount=>_totalAmount;
 
-  displayTotolAmmount(double number) async{
+  Future<void> displayTotolAmmount(double number) async{
     _totalAmount=number;
 
     await Future.delayed(const Duration(microseconds: 100),(){

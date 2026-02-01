@@ -19,7 +19,7 @@ class PlacedOrderScreen extends StatefulWidget {
 
 class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
   String orderId = DateTime.now().microsecondsSinceEpoch.toString();
-  addOrderDetails() {
+  void addOrderDetails() {
     writeOrderDetailsForUser({
       "addressId": widget.addressID,
       "totolAmmount": widget.totolAmmount,

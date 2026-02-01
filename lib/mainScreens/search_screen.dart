@@ -14,7 +14,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   Future<QuerySnapshot>? restaurentsDocumentsList;
   String sellerNameText = "";
-  initSearchingRestaurents(String textEntered) {
+  void initSearchingRestaurents(String textEntered) {
     restaurentsDocumentsList = FirebaseFirestore.instance
         .collection("sellers")
         .where("sellerName", isEqualTo: textEntered)

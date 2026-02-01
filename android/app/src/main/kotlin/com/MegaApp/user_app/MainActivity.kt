@@ -1,4 +1,4 @@
-package com.MegaApp.user_app
+package com.megaapp.user_app
 
 import io.flutter.embedding.android.FlutterActivity
 

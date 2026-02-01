@@ -2,16 +2,18 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:provider/provider.dart';
 import 'package:user_app/Home/home.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/sellers.dart';
 import 'package:user_app/widgets/sellers_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/localization/locale_provider.dart';
 import 'package:user_app/mainScreens/language_selection_screen.dart';
-// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+// For Language
+import 'package:provider/provider.dart';
+import 'package:user_app/localization/locale_provider.dart';
+import 'package:user_app/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,22 +33,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final localeProvider = Provider.of<LocaleProvider>(context);
-    // final localizations = AppLocalizations.of(context);
-
-    // Null check fix
-    // if (localizations == null) {
-    //   return const Scaffold(
-    //     body: Center(child: CircularProgressIndicator()),
-    //   );
-    // }
+    final localeProvider = Provider.of<LocaleProvider>(context);
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.lightBlueAccent, Colors.lightBlueAccent],
+              colors: [Colors.cyanAccent, Colors.lightBlueAccent],
               begin: Alignment.topLeft,
               end: Alignment.topRight,
             ),
@@ -60,12 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.language),
+            icon: const Icon(Icons.language, color: Colors.black),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => LanguageSelectionScreen()),
+                    builder: (_) => LanguageSelectionScreen()),
               );
             },
           ),

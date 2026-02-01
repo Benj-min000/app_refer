@@ -3,10 +3,10 @@ import 'package:user_app/mainScreens/item_detail_screen.dart';
 import 'package:user_app/models/items.dart';
 
 class ItemsDesignWidget extends StatefulWidget {
-  Items? model;
-  BuildContext? context;
+  final Items? model;
+  final BuildContext? context;
 
-  ItemsDesignWidget({this.model, this.context});
+  const ItemsDesignWidget({super.key, this.model, this.context});
 
   @override
   State<ItemsDesignWidget> createState() => _ItemsDesignWidgetState();

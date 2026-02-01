@@ -7,7 +7,7 @@ class MyAppbar extends StatefulWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final String? sellerUID;
 
-  MyAppbar({super.key, this.bottom, this.sellerUID});
+  const MyAppbar({super.key, this.bottom, this.sellerUID});
 
   @override
   Size get preferredSize => bottom == null

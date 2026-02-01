@@ -25,7 +25,7 @@ class SaveAddressScreen extends StatelessWidget {
   Position? position;
 
   String completeAddress = '';
-  getUserLocationAddress() async {
+  Future<void> getUserLocationAddress() async {
     LocationPermission permission = await Geolocator.requestPermission();
     Position newPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
@@ -117,7 +117,7 @@ class SaveAddressScreen extends StatelessWidget {
                 color: Colors.black,
                 size: 35,
               ),
-              title: Container(
+              title: SizedBox(
                 width: 250,
                 child: const TextField(
                   style: TextStyle(

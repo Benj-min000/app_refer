@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 class Menus {
   String? menuId;
@@ -26,10 +26,10 @@ class Menus {
 
     thumbnailUrl = json["thumbnailUrl"];
     status = json["status"];
-    // publishedDate = json['publishedDate'];
+    publishedDate = json['publishedDate'];
   }
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data["menuId"] = menuId;
     data["sellerUID"] = sellerUID;
     data["menuTitle"] = menuTitle;

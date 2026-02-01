@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TextWidgetHeader extends SliverPersistentHeaderDelegate {
-  String? title;
+  final String? title;
   TextWidgetHeader({this.title});
 
   @override
@@ -13,8 +13,6 @@ class TextWidgetHeader extends SliverPersistentHeaderDelegate {
     return InkWell(
       onTap: () {},
       child: Container(
-        height: 80,
-        width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -43,16 +41,12 @@ class TextWidgetHeader extends SliverPersistentHeaderDelegate {
 
   @override
   double get maxExtent => 50;
-  @override
-  double get minExtent => 50;
 
   @override
-  bool shouldRebild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
+  double get minExtent => 80;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    // TODO: implement shouldRebuild
-    throw UnimplementedError();
+    return true;
   }
 }
