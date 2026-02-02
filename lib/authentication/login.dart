@@ -9,6 +9,8 @@ import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:user_app/mainScreens/home_screen.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
 
+import 'package:user_app/extensions/context_translate_ext.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -26,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const LoadingDialog(message: 'Checking Credentials'),
+      builder: (_) => LoadingDialog(message: context.t.checkingCredentials),
     );
 
     User? currentUser;
@@ -43,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pop(context); 
       showDialog(
         context: context,
-        builder: (_) => ErrorDialog(message: error.message ?? "Login failed"),
+        builder: (_) => ErrorDialog(message: error.message ?? context.t.errorLoginFailed),
       );
     }
 
@@ -68,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       showDialog(
         context: context,
-        builder: (_) => const ErrorDialog(message: "Please Enter Email or Password"),
+        builder: (_) => ErrorDialog(message: context.t.errorEnterEmailOrPassword),
       );
     }
   }
@@ -92,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         showDialog(
           context: context,
-          builder: (_) => const ErrorDialog(message: "No record found"),
+          builder: (_) => ErrorDialog(message: context.t.errorNoRecordFound),
         );
         return;
       }
@@ -100,8 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
       final data = snapshot.data()!;
       if (data["status"] != "Approved") {
         await firebaseAuth.signOut();
+        if(!mounted) return;
         Fluttertoast.showToast(
-          msg: "Admin has blocked your account\n\nMail to: admin@gmail.com",
+          msg: context.t.blockedAccountMessage,
         );
         return;
       }
@@ -125,11 +128,11 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pop(context);
 
       if (e.code == 'unavailable') {
-        Fluttertoast.showToast(msg: "Network unavailable. Please try again.");
+        Fluttertoast.showToast(msg: context.t.networkUnavailable);
       } else {
         showDialog(
           context: context,
-          builder: (_) => ErrorDialog(message: e.message ?? "Error fetching user data"),
+          builder: (_) => ErrorDialog(message: e.message ?? context.t.errorFetchingUserData),
         );
       }
     }
@@ -164,14 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         CustomTextField(
                           data: Icons.email,
                           controller: _emailController,
-                          hintText: 'Email',
+                          hintText: context.t.hintEmail,
                           isObsecre: false,
                         ),
 
                         CustomTextField(
                           data: Icons.lock,
                           controller: _passwordController,
-                          hintText: 'Password',
+                          hintText: context.t.hintPassword,
                           isObsecre: true,
                         ),
 
@@ -185,8 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: Colors.pink.shade300,
                             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                           ),
-                          child: const Text(
-                            "Login",
+                          child: Text(
+                            context.t.login,
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white, 

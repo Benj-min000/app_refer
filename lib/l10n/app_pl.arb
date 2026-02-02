@@ -1,15 +1,45 @@
 {
-  "helloWorld": "Witaj Świecie!",
+  "helloWorld": "Witaj świecie!",
   "changeLanguage": "Zmień język",
+  "findingLocalization": "Trwa lokalizowanie...",
+
+  "hintName": "Imię",
+  "hintEmail": "Email",
+  "hintPassword": "Hasło",
+  "hintConfPassword": "Potwierdź hasło",
+  "login": "Zaloguj",
+  "register": "Zarejestruj",
+  "signUp": "Załóż konto",
+
+  "registeringAccount": "Rejestrowanie konta...",
+  "checkingCredentials": "Sprawdzanie danych...",
+  "errorEnterEmailOrPassword": "Wprowadź email i hasło",
+  "errorEnterRegInfo": "Wprowadź wymagane informacje do rejestracji",
+  "errorSelectImage": "Wybierz obraz",
+  "errorNoMatchPasswords": "Hasła nie są zgodne!",
+
+  "errorLoginFailed": "Logowanie nieudane",
+  "errorNoRecordFound": "Nie znaleziono rekordu",
+  "blockedAccountMessage": "Administrator zablokował Twoje konto\n\nWyślij maila na: admin@gmail.com",
+  "networkUnavailable": "Sieć niedostępna. Spróbuj ponownie",
+  "errorFetchingUserData": "Błąd podczas pobierania danych użytkownika",
+  "storageError": "Błąd pamięci: {error}",
+  "@storageError": {
+    "description": "Dialog błędu, gdy wystąpi problem z pamięcią, {error} to komunikat błędu",
+    "placeholders": {
+      "error": {}
+    }
+  },
+
   "welcomeMessage": "Witamy w naszej aplikacji!",
   "payment": "Płatność",
   "checkout": "Przejdź do kasy",
-  "totalAmount": "Całkowita kwota",
+  "totalAmount": "Łączna kwota",
   "orderSummary": "Podsumowanie zamówienia",
   "settings": "Ustawienia",
   "offers": "Oferty",
-  "whatsOnYourMind": "Co masz na myśli?",
-  "bookDining": "Rezerwacja stolika",
-  "softDrinks": "Napoje gazowane",
+  "whatsOnYourMind": "O czym myślisz?",
+  "bookDining": "Rezerwacja posiłku",
+  "softDrinks": "Napoje bezalkoholowe",
   "deliveryTime": "45-50 min"
 }

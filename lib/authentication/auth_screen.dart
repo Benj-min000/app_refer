@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:user_app/authentication/login.dart';
 import 'package:user_app/authentication/register.dart';
 
+import 'package:user_app/extensions/context_translate_ext.dart';
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -12,6 +14,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -36,15 +39,15 @@ class _AuthScreenState extends State<AuthScreen> {
                 fontSize: 50, color: Colors.white, fontFamily: "Train"),
           ),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
               Tab(
-                icon: Icon(
+                icon: const Icon(
                   Icons.lock,
                   color: Colors.white,
                 ),
                 child: Text(
-                  'Login',
+                  context.t.login,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -54,12 +57,12 @@ class _AuthScreenState extends State<AuthScreen> {
                 
               ),
               Tab(
-                icon: Icon(
+                icon: const Icon(
                   Icons.lock,
                   color: Colors.white,
                 ),
                 child: Text(
-                  'Register',
+                  context.t.register,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,

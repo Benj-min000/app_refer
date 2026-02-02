@@ -1,15 +1,45 @@
 {
-  "helloWorld": "Привіт Світ!",
+  "helloWorld": "Привіт, світ!",
   "changeLanguage": "Змінити мову",
+  "findingLocalization": "Визначення вашого місцезнаходження...",
+
+  "hintName": "Ім'я",
+  "hintEmail": "Електронна пошта",
+  "hintPassword": "Пароль",
+  "hintConfPassword": "Підтвердьте пароль",
+  "login": "Увійти",
+  "register": "Зареєструватися",
+  "signUp": "Створити акаунт",
+
+  "registeringAccount": "Реєстрація акаунта...",
+  "checkingCredentials": "Перевірка даних...",
+  "errorEnterEmailOrPassword": "Будь ласка, введіть електронну пошту та пароль",
+  "errorEnterRegInfo": "Будь ласка, введіть необхідну інформацію для реєстрації",
+  "errorSelectImage": "Будь ласка, виберіть зображення",
+  "errorNoMatchPasswords": "Паролі не збігаються!",
+
+  "errorLoginFailed": "Помилка входу",
+  "errorNoRecordFound": "Запис не знайдено",
+  "blockedAccountMessage": "Адміністратор заблокував ваш акаунт\n\nНапишіть на: admin@gmail.com",
+  "networkUnavailable": "Мережа недоступна. Спробуйте ще раз",
+  "errorFetchingUserData": "Помилка отримання даних користувача",
+  "storageError": "Помилка сховища: {error}",
+  "@storageError": {
+    "description": "Діалог помилки, коли виникає проблема зі сховищем, {error} — повідомлення про помилку",
+    "placeholders": {
+      "error": {}
+    }
+  },
+
   "welcomeMessage": "Ласкаво просимо до нашого додатку!",
   "payment": "Оплата",
-  "checkout": "Перейти до оформлення",
+  "checkout": "Перейти до оплати",
   "totalAmount": "Загальна сума",
   "orderSummary": "Підсумок замовлення",
   "settings": "Налаштування",
   "offers": "Пропозиції",
-  "whatsOnYourMind": "Що вас цікавить?",
-  "bookDining": "Бронювання столика",
+  "whatsOnYourMind": "Про що ви думаєте?",
+  "bookDining": "Забронювати обід",
   "softDrinks": "Безалкогольні напої",
   "deliveryTime": "45-50 хв"
 }

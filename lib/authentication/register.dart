@@ -15,6 +15,8 @@ import 'package:user_app/mainScreens/home_screen.dart';
 
 import 'package:user_app/global/global.dart';
 
+import 'package:user_app/extensions/context_translate_ext.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -43,17 +45,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> formValidation() async {
     if (imageXFile == null) {
-      showDialog(context: context, builder: (_) => const ErrorDialog(message: "Please select an image")
+      showDialog(context: context, builder: (_) => ErrorDialog(message: context.t.errorSelectImage)
       );
     }
 
     if (_passwordController.text != _confirmePasswordController.text) {
-      showDialog(context: context, builder: (_) => const ErrorDialog(message: "Passwords don't match"));
+      showDialog(context: context, builder: (_) => ErrorDialog(message: context.t.errorNoMatchPasswords));
       return;
     }
 
     if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-      showDialog(context: context, builder: (_) => const LoadingDialog(message: "Registering Account..."));
+      showDialog(context: context, builder: (_) => LoadingDialog(message: context.t.registeringAccount));
       try {
         String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -74,12 +76,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } catch (error) {
           if(!mounted) return;
           Navigator.pop(context); 
-          showDialog(context: context, builder: (_) => ErrorDialog(message: "Storage Error: $error"));
+          showDialog(context: context, builder: (_) => ErrorDialog(message: context.t.storageError(error)));
         }
     } else {
       showDialog(
         context: context,
-        builder: (_) => const ErrorDialog(message: "Please Enter Required info for registration")
+        builder: (_) => ErrorDialog(message: context.t.errorEnterRegInfo)
       );
     }
   }
@@ -169,25 +171,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 CustomTextField(
                   data: Icons.person,
                   controller: _nameController,
-                  hintText: 'Name',
+                  hintText: context.t.hintName,
                   isObsecre: false,
                 ),
                 CustomTextField(
                   data: Icons.email,
                   controller: _emailController,
-                  hintText: 'Email',
+                  hintText: context.t.hintEmail,
                   isObsecre: false,
                 ),
                 CustomTextField(
                   data: Icons.lock,
                   controller: _passwordController,
-                  hintText: 'Password',
+                  hintText: context.t.hintPassword,
                   isObsecre: true,
                 ),
                 CustomTextField(
                   data: Icons.lock,
                   controller: _confirmePasswordController,
-                  hintText: 'Confirm Password',
+                  hintText: context.t.hintConfPassword,
                   isObsecre: true,
                 ),
               ],
@@ -204,8 +206,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               backgroundColor: Colors.pink.shade300,
               padding:
                 const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
-            child: const Text(
-              "Sign Up",
+            child: Text(
+              context.t.signUp,
               style:
                 TextStyle(
                   fontSize: 16,

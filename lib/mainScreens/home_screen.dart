@@ -13,7 +13,7 @@ import 'package:user_app/mainScreens/language_selection_screen.dart';
 // For Language
 import 'package:provider/provider.dart';
 import 'package:user_app/localization/locale_provider.dart';
-import 'package:user_app/l10n/app_localizations.dart';
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = context.t;
 
     return Scaffold(
       appBar: AppBar(

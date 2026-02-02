@@ -9,10 +9,72 @@ class AppLocalizationsPl extends AppLocalizations {
   AppLocalizationsPl([String locale = 'pl']) : super(locale);
 
   @override
-  String get helloWorld => 'Witaj Świecie!';
+  String get helloWorld => 'Witaj świecie!';
 
   @override
   String get changeLanguage => 'Zmień język';
+
+  @override
+  String get findingLocalization => 'Trwa lokalizowanie...';
+
+  @override
+  String get hintName => 'Imię';
+
+  @override
+  String get hintEmail => 'Email';
+
+  @override
+  String get hintPassword => 'Hasło';
+
+  @override
+  String get hintConfPassword => 'Potwierdź hasło';
+
+  @override
+  String get login => 'Zaloguj';
+
+  @override
+  String get register => 'Zarejestruj';
+
+  @override
+  String get signUp => 'Załóż konto';
+
+  @override
+  String get registeringAccount => 'Rejestrowanie konta...';
+
+  @override
+  String get checkingCredentials => 'Sprawdzanie danych...';
+
+  @override
+  String get errorEnterEmailOrPassword => 'Wprowadź email i hasło';
+
+  @override
+  String get errorEnterRegInfo => 'Wprowadź wymagane informacje do rejestracji';
+
+  @override
+  String get errorSelectImage => 'Wybierz obraz';
+
+  @override
+  String get errorNoMatchPasswords => 'Hasła nie są zgodne!';
+
+  @override
+  String get errorLoginFailed => 'Logowanie nieudane';
+
+  @override
+  String get errorNoRecordFound => 'Nie znaleziono rekordu';
+
+  @override
+  String get blockedAccountMessage => 'Administrator zablokował Twoje konto\n\nWyślij maila na: admin@gmail.com';
+
+  @override
+  String get networkUnavailable => 'Sieć niedostępna. Spróbuj ponownie';
+
+  @override
+  String get errorFetchingUserData => 'Błąd podczas pobierania danych użytkownika';
+
+  @override
+  String storageError(Object error) {
+    return 'Błąd pamięci: $error';
+  }
 
   @override
   String get welcomeMessage => 'Witamy w naszej aplikacji!';
@@ -24,7 +86,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get checkout => 'Przejdź do kasy';
 
   @override
-  String get totalAmount => 'Całkowita kwota';
+  String get totalAmount => 'Łączna kwota';
 
   @override
   String get orderSummary => 'Podsumowanie zamówienia';
@@ -36,13 +98,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get offers => 'Oferty';
 
   @override
-  String get whatsOnYourMind => 'Co masz na myśli?';
+  String get whatsOnYourMind => 'O czym myślisz?';
 
   @override
-  String get bookDining => 'Rezerwacja stolika';
+  String get bookDining => 'Rezerwacja posiłku';
 
   @override
-  String get softDrinks => 'Napoje gazowane';
+  String get softDrinks => 'Napoje bezalkoholowe';
 
   @override
   String get deliveryTime => '45-50 min';

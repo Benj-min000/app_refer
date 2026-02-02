@@ -12,7 +12,10 @@ import 'package:user_app/Home/HomePageMediumItems.dart';
 import 'package:user_app/Home/HomepageItems4.dart';
 
 import "package:user_app/services/location_service.dart";
+import 'package:provider/provider.dart';
+import 'package:user_app/localization/locale_provider.dart';
 
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,25 +26,54 @@ class Home extends StatefulWidget {
 
 class _DiningPagePageState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
-  // final String _location = "동래구 충렬대로428번가길 19";
-  String _location = "Downloading the localization...";
+  String _location = "";
 
+  // State variable for changing the visibility of the whole address
+  //  false: address in 1 line
+  //  true: address in 2 or more lines
   bool _showFullAddress = false;
 
+  // didChangeDependencies() will be creating new listeners every time it runs
+  // so I've added this flag to prevent this
+  bool _listenerAdded = false;
+
   @override
-  void initState() {
-    super.initState();
-    _getUserLocation();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_listenerAdded) {
+      final localeProvider = Provider.of<LocaleProvider>(context);
+      localeProvider.addListener(_updateAddress);
+      _listenerAdded = true;
+    }
+
+    // Updating the address every thime we change the language
+    _updateAddress();
   }
 
-  Future<void> _getUserLocation() async {
-    String address = await LocationService.fetchCurrentAddress();
+  void _updateAddress() async {
+    setState(() {
+      _location = context.t.findingLocalization;
+    });
     
+    final languageCode =
+      Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
+
+    final address = await LocationService.fetchCurrentAddress(languageCode);
+
     if (mounted) {
       setState(() {
         _location = address;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+    localeProvider.removeListener(_updateAddress);
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override

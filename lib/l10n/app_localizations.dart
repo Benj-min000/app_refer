@@ -113,6 +113,126 @@ abstract class AppLocalizations {
   /// **'Change Language'**
   String get changeLanguage;
 
+  /// No description provided for @findingLocalization.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding your localization...'**
+  String get findingLocalization;
+
+  /// No description provided for @hintName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get hintName;
+
+  /// No description provided for @hintEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get hintEmail;
+
+  /// No description provided for @hintPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get hintPassword;
+
+  /// No description provided for @hintConfPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get hintConfPassword;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @register.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get register;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @registeringAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Registering Account...'**
+  String get registeringAccount;
+
+  /// No description provided for @checkingCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking Credentials...'**
+  String get checkingCredentials;
+
+  /// No description provided for @errorEnterEmailOrPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Enter Email or Password'**
+  String get errorEnterEmailOrPassword;
+
+  /// No description provided for @errorEnterRegInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Enter required information for Registration'**
+  String get errorEnterRegInfo;
+
+  /// No description provided for @errorSelectImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Select an Image'**
+  String get errorSelectImage;
+
+  /// No description provided for @errorNoMatchPasswords.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don\'t match!'**
+  String get errorNoMatchPasswords;
+
+  /// No description provided for @errorLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Failed'**
+  String get errorLoginFailed;
+
+  /// No description provided for @errorNoRecordFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No record found'**
+  String get errorNoRecordFound;
+
+  /// No description provided for @blockedAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin has blocked your account\n\nMail to: admin@gmail.com'**
+  String get blockedAccountMessage;
+
+  /// No description provided for @networkUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Network unavailable. Please try again'**
+  String get networkUnavailable;
+
+  /// No description provided for @errorFetchingUserData.
+  ///
+  /// In en, this message translates to:
+  /// **'Error fetching user data'**
+  String get errorFetchingUserData;
+
+  /// Error dialog when storage fails, {error} is the error message
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Error: {error}'**
+  String storageError(Object error);
+
   /// No description provided for @welcomeMessage.
   ///
   /// In en, this message translates to:

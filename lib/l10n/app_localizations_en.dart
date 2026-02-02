@@ -15,6 +15,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeLanguage => 'Change Language';
 
   @override
+  String get findingLocalization => 'Finding your localization...';
+
+  @override
+  String get hintName => 'Name';
+
+  @override
+  String get hintEmail => 'Email';
+
+  @override
+  String get hintPassword => 'Password';
+
+  @override
+  String get hintConfPassword => 'Confirm Password';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get register => 'Register';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get registeringAccount => 'Registering Account...';
+
+  @override
+  String get checkingCredentials => 'Checking Credentials...';
+
+  @override
+  String get errorEnterEmailOrPassword => 'Please Enter Email or Password';
+
+  @override
+  String get errorEnterRegInfo => 'Please Enter required information for Registration';
+
+  @override
+  String get errorSelectImage => 'Please Select an Image';
+
+  @override
+  String get errorNoMatchPasswords => 'Passwords don\'t match!';
+
+  @override
+  String get errorLoginFailed => 'Login Failed';
+
+  @override
+  String get errorNoRecordFound => 'No record found';
+
+  @override
+  String get blockedAccountMessage => 'Admin has blocked your account\n\nMail to: admin@gmail.com';
+
+  @override
+  String get networkUnavailable => 'Network unavailable. Please try again';
+
+  @override
+  String get errorFetchingUserData => 'Error fetching user data';
+
+  @override
+  String storageError(Object error) {
+    return 'Storage Error: $error';
+  }
+
+  @override
   String get welcomeMessage => 'Welcome to our app!';
 
   @override

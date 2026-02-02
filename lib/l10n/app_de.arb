@@ -1,6 +1,36 @@
 {
   "helloWorld": "Hallo Welt!",
   "changeLanguage": "Sprache ändern",
+  "findingLocalization": "Standort wird ermittelt...",
+
+  "hintName": "Name",
+  "hintEmail": "E-Mail",
+  "hintPassword": "Passwort",
+  "hintConfPassword": "Passwort bestätigen",
+  "login": "Anmelden",
+  "register": "Registrieren",
+  "signUp": "Konto erstellen",
+
+  "registeringAccount": "Registrierung des Kontos...",
+  "checkingCredentials": "Überprüfung der Zugangsdaten...",
+  "errorEnterEmailOrPassword": "Bitte E-Mail und Passwort eingeben",
+  "errorEnterRegInfo": "Bitte geben Sie die erforderlichen Informationen für die Registrierung ein",
+  "errorSelectImage": "Bitte wählen Sie ein Bild aus",
+  "errorNoMatchPasswords": "Passwörter stimmen nicht überein!",
+
+  "errorLoginFailed": "Anmeldung fehlgeschlagen",
+  "errorNoRecordFound": "Kein Eintrag gefunden",
+  "blockedAccountMessage": "Der Administrator hat Ihr Konto gesperrt\n\nMail senden an: admin@gmail.com",
+  "networkUnavailable": "Netzwerk nicht verfügbar. Bitte erneut versuchen",
+  "errorFetchingUserData": "Fehler beim Abrufen der Benutzerdaten",
+  "storageError": "Speicherfehler: {error}",
+  "@storageError": {
+    "description": "Fehlerdialog, wenn ein Speicherfehler auftritt, {error} ist die Fehlermeldung",
+    "placeholders": {
+      "error": {}
+    }
+  },
+
   "welcomeMessage": "Willkommen in unserer App!",
   "payment": "Zahlung",
   "checkout": "Zur Kasse",
@@ -8,8 +38,8 @@
   "orderSummary": "Bestellübersicht",
   "settings": "Einstellungen",
   "offers": "Angebote",
-  "whatsOnYourMind": "Was hast du auf dem Herzen?",
+  "whatsOnYourMind": "Woran denkst du?",
   "bookDining": "Tisch reservieren",
-  "softDrinks": "Alkoholfreie Getränke",
-  "deliveryTime": "45-50 Min."
+  "softDrinks": "Erfrischungsgetränke",
+  "deliveryTime": "45-50 Min"
 }

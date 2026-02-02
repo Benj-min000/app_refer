@@ -77,7 +77,6 @@ class LanguageSelectionScreen extends StatelessWidget {
                 : null,
             onTap: () async {
               await localeProvider.setLocale(Locale(lang.code));
-              localeProvider.setLocale(Locale(lang.code));
             },
           );
         }

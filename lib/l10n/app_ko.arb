@@ -1,15 +1,45 @@
 {
   "helloWorld": "안녕하세요!",
   "changeLanguage": "언어 변경",
-  "welcomeMessage": "우리 앱에 오신 것을 환영합니다!",
+  "findingLocalization": "위치를 찾는 중...",
+
+  "hintName": "이름",
+  "hintEmail": "이메일",
+  "hintPassword": "비밀번호",
+  "hintConfPassword": "비밀번호 확인",
+  "login": "로그인",
+  "register": "회원가입",
+  "signUp": "가입하기",
+
+  "registeringAccount": "계정 등록 중...",
+  "checkingCredentials": "자격 증명 확인 중...",
+  "errorEnterEmailOrPassword": "이메일과 비밀번호를 입력하세요",
+  "errorEnterRegInfo": "회원가입에 필요한 정보를 입력하세요",
+  "errorSelectImage": "이미지를 선택하세요",
+  "errorNoMatchPasswords": "비밀번호가 일치하지 않습니다!",
+
+  "errorLoginFailed": "로그인 실패",
+  "errorNoRecordFound": "기록을 찾을 수 없습니다",
+  "blockedAccountMessage": "관리자가 계정을 차단했습니다\n\n메일 보내기: admin@gmail.com",
+  "networkUnavailable": "네트워크를 사용할 수 없습니다. 다시 시도하세요",
+  "errorFetchingUserData": "사용자 데이터를 가져오는 중 오류 발생",
+  "storageError": "스토리지 오류: {error}",
+  "@storageError": {
+    "description": "스토리지 오류가 발생했을 때 다이얼로그 표시, {error}는 오류 메시지",
+    "placeholders": {
+      "error": {}
+    }
+  },
+
+  "welcomeMessage": "앱에 오신 것을 환영합니다!",
   "payment": "결제",
   "checkout": "결제 진행",
   "totalAmount": "총 금액",
   "orderSummary": "주문 요약",
   "settings": "설정",
-  "offers": "할인 행사",
-  "whatsOnYourMind": "무엇을 드시고 싶나요?",
+  "offers": "혜택",
+  "whatsOnYourMind": "무엇을 생각하고 계신가요?",
   "bookDining": "식사 예약",
-  "softDrinks": "탄산음료",
+  "softDrinks": "청량 음료",
   "deliveryTime": "45-50분"
 }

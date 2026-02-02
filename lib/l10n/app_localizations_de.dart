@@ -15,6 +15,68 @@ class AppLocalizationsDe extends AppLocalizations {
   String get changeLanguage => 'Sprache ändern';
 
   @override
+  String get findingLocalization => 'Standort wird ermittelt...';
+
+  @override
+  String get hintName => 'Name';
+
+  @override
+  String get hintEmail => 'E-Mail';
+
+  @override
+  String get hintPassword => 'Passwort';
+
+  @override
+  String get hintConfPassword => 'Passwort bestätigen';
+
+  @override
+  String get login => 'Anmelden';
+
+  @override
+  String get register => 'Registrieren';
+
+  @override
+  String get signUp => 'Konto erstellen';
+
+  @override
+  String get registeringAccount => 'Registrierung des Kontos...';
+
+  @override
+  String get checkingCredentials => 'Überprüfung der Zugangsdaten...';
+
+  @override
+  String get errorEnterEmailOrPassword => 'Bitte E-Mail und Passwort eingeben';
+
+  @override
+  String get errorEnterRegInfo => 'Bitte geben Sie die erforderlichen Informationen für die Registrierung ein';
+
+  @override
+  String get errorSelectImage => 'Bitte wählen Sie ein Bild aus';
+
+  @override
+  String get errorNoMatchPasswords => 'Passwörter stimmen nicht überein!';
+
+  @override
+  String get errorLoginFailed => 'Anmeldung fehlgeschlagen';
+
+  @override
+  String get errorNoRecordFound => 'Kein Eintrag gefunden';
+
+  @override
+  String get blockedAccountMessage => 'Der Administrator hat Ihr Konto gesperrt\n\nMail senden an: admin@gmail.com';
+
+  @override
+  String get networkUnavailable => 'Netzwerk nicht verfügbar. Bitte erneut versuchen';
+
+  @override
+  String get errorFetchingUserData => 'Fehler beim Abrufen der Benutzerdaten';
+
+  @override
+  String storageError(Object error) {
+    return 'Speicherfehler: $error';
+  }
+
+  @override
   String get welcomeMessage => 'Willkommen in unserer App!';
 
   @override
@@ -36,14 +98,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get offers => 'Angebote';
 
   @override
-  String get whatsOnYourMind => 'Was hast du auf dem Herzen?';
+  String get whatsOnYourMind => 'Woran denkst du?';
 
   @override
   String get bookDining => 'Tisch reservieren';
 
   @override
-  String get softDrinks => 'Alkoholfreie Getränke';
+  String get softDrinks => 'Erfrischungsgetränke';
 
   @override
-  String get deliveryTime => '45-50 Min.';
+  String get deliveryTime => '45-50 Min';
 }

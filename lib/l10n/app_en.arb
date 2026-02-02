@@ -1,6 +1,37 @@
 {
   "helloWorld": "Hello World!",
   "changeLanguage": "Change Language",
+  "findingLocalization": "Finding your localization...",
+
+  "hintName": "Name",
+  "hintEmail": "Email",
+  "hintPassword": "Password",
+  "hintConfPassword": "Confirm Password",
+  "login": "Login",
+  "register": "Register",
+  "signUp": "Sign Up",
+  
+  "registeringAccount": "Registering Account...",
+  "checkingCredentials": "Checking Credentials...",
+  "errorEnterEmailOrPassword": "Please Enter Email or Password",
+  "errorEnterRegInfo": "Please Enter required information for Registration",
+  "errorSelectImage": "Please Select an Image",
+  "errorNoMatchPasswords": "Passwords don't match!",
+
+
+  "errorLoginFailed": "Login Failed",
+  "errorNoRecordFound": "No record found",
+  "blockedAccountMessage": "Admin has blocked your account\n\nMail to: admin@gmail.com",
+  "networkUnavailable": "Network unavailable. Please try again",
+  "errorFetchingUserData": "Error fetching user data",
+  "storageError": "Storage Error: {error}",
+  "@storageError": {
+    "description": "Error dialog when storage fails, {error} is the error message",
+    "placeholders": {
+      "error": {}
+    }
+  },
+
   "welcomeMessage": "Welcome to our app!",
   "payment": "Payment",
   "checkout": "Proceed to Checkout",
