@@ -17,6 +17,9 @@ import 'package:user_app/localization/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 
+import 'package:user_app/Home/home_category_items.dart';
+import 'package:user_app/Home/home_tabs.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -59,7 +62,7 @@ class _DiningPagePageState extends State<Home> {
     final languageCode =
       Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
 
-    final address = await LocationService.fetchCurrentAddress(languageCode);
+    final address = await LocationService.fetchUserLocationAddress(languageCode);
 
     if (mounted) {
       setState(() {
@@ -76,8 +79,25 @@ class _DiningPagePageState extends State<Home> {
     super.dispose();
   }
 
+  Widget categoryBox(HomeCategoryItem item) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 24,
+          backgroundColor: Colors.redAccent.shade100,
+          child: Icon(item.icon, color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        Text(item.label, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final homeCategories = getHomeCategories(context);
+    final homeTabs = getHomeTabs(context);
+
     return DefaultTabController(
       length: 6,
       initialIndex: 2,
@@ -134,9 +154,12 @@ class _DiningPagePageState extends State<Home> {
                   ),
                   child: TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                      icon: Icon(Icons.search),
-                      hintText: 'Search for food or stores...',
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.search),
+                      hintText: context.t.hintSearch,
+                      hintStyle: TextStyle(
+                        fontSize: 13.5,
+                      ),
                       border: InputBorder.none,
                     ),
                   ),
@@ -146,21 +169,16 @@ class _DiningPagePageState extends State<Home> {
           ),
 
           // Horizontal TabBar
-          const TabBar(
+          TabBar(
             isScrollable: true,
             labelColor: Colors.redAccent,
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.redAccent,
-            tabs: [
-              Tab(text: '음식배달'),
-              Tab(text: '가게배달'),
-              Tab(text: '장보기·쇼핑'),
-              Tab(text: '픽업'),
-              Tab(text: '선물하기'),
-              Tab(text: '혜택'),
-            ],
+            physics: const ClampingScrollPhysics(),
+            padding: EdgeInsets.zero, 
+            tabs: homeTabs.map((tab) => Tab(text: tab.label)).toList(),
           ),
-
+          
           const SizedBox(height: 16),
 
           // Category Grid
@@ -173,73 +191,50 @@ class _DiningPagePageState extends State<Home> {
               childAspectRatio: 0.8,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              children: [
-                categoryBox(Icons.fastfood, "음식"),
-                categoryBox(Icons.store, "마트"),
-                categoryBox(Icons.local_cafe, "카페"),
-                categoryBox(Icons.liquor, "주류"),
-                categoryBox(Icons.cake, "디저트"),
-                categoryBox(Icons.delivery_dining, "배달"),
-                categoryBox(Icons.pets, "반려"),
-                categoryBox(Icons.phonelink, "전자"),
-                categoryBox(Icons.home, "생활"),
-                categoryBox(Icons.more_horiz, "더보기"),
-              ],
+              children: homeCategories.map(categoryBox).toList(),
             ),
           ),
 
           // Your Existing Widgets (unchanged)
           const SizedBox(height: 250, width: double.infinity, child: HomeLargeItems()),
           const Padding(
-            padding: EdgeInsets.all(30.0),
+            padding: EdgeInsets.all(20.0),
             child: Text('EXPLORE',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
           const SizedBox(height: 180, width: double.infinity, child: HomeMediumItems()),
           const Padding(
-            padding: EdgeInsets.all(30.0),
+            padding: EdgeInsets.all(20.0),
             child: Text('WHATS ON YOUR MIND?',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
           const SizedBox(height: 100, width: double.infinity, child: HomePageItems3()),
           const SizedBox(height: 100, width: double.infinity, child: HomePageItems4()),
           const Padding(
-            padding: EdgeInsets.all(30.0),
+            padding: EdgeInsets.all(20.0),
             child: Text('IN THE SPOTLIGHT',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
           const SizedBox(height: 220, width: double.infinity, child: CakeItems1()),
           const Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(20.0),
             child: Text('OUR RESTAURENTS',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('FEATURES',
-                style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 126, 126, 126))),
-          ),
+          
           const SizedBox(height: 300, width: double.infinity, child: Restaurent1()),
           const SizedBox(height: 300, width: double.infinity, child: Restaurent2()),
           const SizedBox(height: 300, width: double.infinity, child: Restaurent3()),
           const SizedBox(height: 300, width: double.infinity, child: Restaurent4()),
           const SizedBox(height: 300, width: double.infinity, child: Restaurent5()),
+
+          const Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text('FEATURES',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget categoryBox(IconData icon, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: Colors.redAccent.shade100,
-          child: Icon(icon, color: Colors.white),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
     );
   }
 }

@@ -1,45 +1,155 @@
 {
+  "@@locale": "de",
+  "hintSearch": "Suche nach Gerichten oder Geschäften",
+  "@hintSearch": {"description": "Platzhalter für die Suche nach Gerichten oder Geschäften"},
+
+  "tabFoodDelivery": "Essenslieferung",
+  "@tabFoodDelivery": {"description": "Tab-Label für Essenslieferung"},
+
+  "tabStoreDelivery": "Lieferung vom Geschäft",
+  "@tabStoreDelivery": {"description": "Tab-Label für Lieferung vom Geschäft"},
+
+  "tabGroceryShopping": "Lebensmittel · Einkaufen",
+  "@tabGroceryShopping": {"description": "Tab-Label für Lebensmittel und Einkaufen"},
+
+  "tabPickup": "Abholung",
+  "@tabPickup": {"description": "Tab-Label für Abholung"},
+
+  "tabGifting": "Geschenke senden",
+  "@tabGifting": {"description": "Tab-Label für Geschenke senden"},
+
+  "tabBenefits": "Angebote",
+  "@tabBenefits": {"description": "Tab-Label für Angebote"},
+
+  "categoryFood": "Essen",
+  "@categoryFood": {"description": "Kategorie für Essen"},
+
+  "categoryGrocery": "Supermarkt",
+  "@categoryGrocery": {"description": "Kategorie für Supermarkt"},
+
+  "categoryCafe": "Café",
+  "@categoryCafe": {"description": "Kategorie für Café"},
+
+  "categoryAlcohol": "Alkohol",
+  "@categoryAlcohol": {"description": "Kategorie für Alkohol"},
+
+  "categoryDessert": "Desserts",
+  "@categoryDessert": {"description": "Kategorie für Desserts"},
+
+  "categoryDelivery": "Lieferung",
+  "@categoryDelivery": {"description": "Kategorie für Lieferung"},
+
+  "categoryPets": "Haustiere",
+  "@categoryPets": {"description": "Kategorie für Haustiere"},
+
+  "categoryElectronics": "Elektronik",
+  "@categoryElectronics": {"description": "Kategorie für Elektronik"},
+
+  "categoryHousehold": "Haushalt",
+  "@categoryHousehold": {"description": "Kategorie für Haushalt"},
+
+  "categoryMore": "Mehr",
+  "@categoryMore": {"description": "Kategorie für 'Mehr' oder 'Weitere'"},
+
   "helloWorld": "Hallo Welt!",
+  "@helloWorld": {"description": "Begrüßungstext"},
+
   "changeLanguage": "Sprache ändern",
+  "@changeLanguage": {"description": "Button- oder Menü-Text zum Ändern der Sprache"},
+
   "findingLocalization": "Standort wird ermittelt...",
+  "@findingLocalization": {"description": "Anzeige während der Standortermittlung"},
 
   "hintName": "Name",
+  "@hintName": {"description": "Platzhalter für Name"},
+
   "hintEmail": "E-Mail",
+  "@hintEmail": {"description": "Platzhalter für E-Mail"},
+
   "hintPassword": "Passwort",
+  "@hintPassword": {"description": "Platzhalter für Passwort"},
+
   "hintConfPassword": "Passwort bestätigen",
+  "@hintConfPassword": {"description": "Platzhalter für Passwort bestätigen"},
+
   "login": "Anmelden",
+  "@login": {"description": "Button- oder Menü-Text für Anmeldung"},
+
   "register": "Registrieren",
+  "@register": {"description": "Button- oder Menü-Text für Registrierung"},
+
   "signUp": "Konto erstellen",
+  "@signUp": {"description": "Button-Text für Kontoerstellung"},
 
   "registeringAccount": "Registrierung des Kontos...",
+  "@registeringAccount": {"description": "Status-Text während Konto-Registrierung"},
+
   "checkingCredentials": "Überprüfung der Zugangsdaten...",
+  "@checkingCredentials": {"description": "Status-Text während Login-Prüfung"},
+
   "errorEnterEmailOrPassword": "Bitte E-Mail und Passwort eingeben",
+  "@errorEnterEmailOrPassword": {"description": "Fehlermeldung, wenn E-Mail oder Passwort fehlt"},
+
   "errorEnterRegInfo": "Bitte geben Sie die erforderlichen Informationen für die Registrierung ein",
+  "@errorEnterRegInfo": {"description": "Fehlermeldung, wenn Registrierungsinformationen fehlen"},
+
   "errorSelectImage": "Bitte wählen Sie ein Bild aus",
+  "@errorSelectImage": {"description": "Fehlermeldung, wenn kein Bild ausgewählt wurde"},
+
   "errorNoMatchPasswords": "Passwörter stimmen nicht überein!",
+  "@errorNoMatchPasswords": {"description": "Fehlermeldung, wenn Passwörter nicht übereinstimmen"},
 
   "errorLoginFailed": "Anmeldung fehlgeschlagen",
+  "@errorLoginFailed": {"description": "Fehlermeldung bei fehlgeschlagener Anmeldung"},
+
   "errorNoRecordFound": "Kein Eintrag gefunden",
+  "@errorNoRecordFound": {"description": "Fehlermeldung, wenn kein Datensatz gefunden wurde"},
+
   "blockedAccountMessage": "Der Administrator hat Ihr Konto gesperrt\n\nMail senden an: admin@gmail.com",
+  "@blockedAccountMessage": {"description": "Meldung, wenn Konto gesperrt wurde"},
+
   "networkUnavailable": "Netzwerk nicht verfügbar. Bitte erneut versuchen",
+  "@networkUnavailable": {"description": "Fehlermeldung bei fehlendem Netzwerk"},
+
   "errorFetchingUserData": "Fehler beim Abrufen der Benutzerdaten",
+  "@errorFetchingUserData": {"description": "Fehlermeldung beim Abrufen von Benutzerdaten"},
+
   "storageError": "Speicherfehler: {error}",
   "@storageError": {
-    "description": "Fehlerdialog, wenn ein Speicherfehler auftritt, {error} ist die Fehlermeldung",
-    "placeholders": {
-      "error": {}
-    }
+    "description": "Fehlerdialog, wenn ein Speicherfehler auftritt",
+    "placeholders": {"error": {}}
   },
 
   "welcomeMessage": "Willkommen in unserer App!",
+  "@welcomeMessage": {"description": "Begrüßungstext auf der Startseite"},
+
   "payment": "Zahlung",
+  "@payment": {"description": "Label für Zahlungsbereich"},
+
   "checkout": "Zur Kasse",
+  "@checkout": {"description": "Button-Text für Kasse"},
+
   "totalAmount": "Gesamtbetrag",
+  "@totalAmount": {"description": "Label für Gesamtbetrag"},
+
   "orderSummary": "Bestellübersicht",
+  "@orderSummary": {"description": "Überschrift für Bestellübersicht"},
+
   "settings": "Einstellungen",
+  "@settings": {"description": "Label für Einstellungen"},
+
   "offers": "Angebote",
+  "@offers": {"description": "Label für Angebote"},
+
   "whatsOnYourMind": "Woran denkst du?",
+  "@whatsOnYourMind": {"description": "Überschrift für User-Input / Gedanken"},
+
   "bookDining": "Tisch reservieren",
+  "@bookDining": {"description": "Button-Text für Tischreservierung"},
+
   "softDrinks": "Erfrischungsgetränke",
-  "deliveryTime": "45-50 Min"
+  "@softDrinks": {"description": "Label für Softdrinks"},
+
+  "deliveryTime": "45-50 Min",
+  "@deliveryTime": {"description": "Anzeige der Lieferzeit"}
 }

@@ -1,46 +1,156 @@
 {
+  "@@locale": "en",
+
+  "hintSearch": "Search for dishes or stores",
+  "@hintSearch": {"description": "Placeholder text for the search bar"},
+
+  "tabFoodDelivery": "Food Delivery",
+  "@tabFoodDelivery": {"description": "Tab label for Food Delivery"},
+
+  "tabStoreDelivery": "Store Delivery",
+  "@tabStoreDelivery": {"description": "Tab label for Store Delivery"},
+
+  "tabGroceryShopping": "Grocery · Shopping",
+  "@tabGroceryShopping": {"description": "Tab label for Grocery / Shopping"},
+
+  "tabPickup": "Pickup",
+  "@tabPickup": {"description": "Tab label for Pickup orders"},
+
+  "tabGifting": "Send Gifts",
+  "@tabGifting": {"description": "Tab label for sending gifts"},
+
+  "tabBenefits": "Deals",
+  "@tabBenefits": {"description": "Tab label for deals and offers"},
+
+  "categoryFood": "Food",
+  "@categoryFood": {"description": "Category label for Food"},
+
+  "categoryGrocery": "Grocery",
+  "@categoryGrocery": {"description": "Category label for Grocery / Supermarket"},
+
+  "categoryCafe": "Cafe",
+  "@categoryCafe": {"description": "Category label for Cafe"},
+
+  "categoryAlcohol": "Alcohol",
+  "@categoryAlcohol": {"description": "Category label for Alcohol"},
+
+  "categoryDessert": "Desserts",
+  "@categoryDessert": {"description": "Category label for Desserts"},
+
+  "categoryDelivery": "Delivery",
+  "@categoryDelivery": {"description": "Category label for Delivery"},
+
+  "categoryPets": "Pets",
+  "@categoryPets": {"description": "Category label for Pets"},
+
+  "categoryElectronics": "Electronics",
+  "@categoryElectronics": {"description": "Category label for Electronics"},
+
+  "categoryHousehold": "Household",
+  "@categoryHousehold": {"description": "Category label for Household items"},
+
+  "categoryMore": "More",
+  "@categoryMore": {"description": "Category label for More / Other items"},
+
   "helloWorld": "Hello World!",
+  "@helloWorld": {"description": "Generic hello world text"},
+
   "changeLanguage": "Change Language",
+  "@changeLanguage": {"description": "Button or menu label to change language"},
+
   "findingLocalization": "Finding your localization...",
+  "@findingLocalization": {"description": "Text shown while app detects location"},
 
   "hintName": "Name",
-  "hintEmail": "Email",
-  "hintPassword": "Password",
-  "hintConfPassword": "Confirm Password",
-  "login": "Login",
-  "register": "Register",
-  "signUp": "Sign Up",
-  
-  "registeringAccount": "Registering Account...",
-  "checkingCredentials": "Checking Credentials...",
-  "errorEnterEmailOrPassword": "Please Enter Email or Password",
-  "errorEnterRegInfo": "Please Enter required information for Registration",
-  "errorSelectImage": "Please Select an Image",
-  "errorNoMatchPasswords": "Passwords don't match!",
+  "@hintName": {"description": "Placeholder for name input field"},
 
+  "hintEmail": "Email",
+  "@hintEmail": {"description": "Placeholder for email input field"},
+
+  "hintPassword": "Password",
+  "@hintPassword": {"description": "Placeholder for password input field"},
+
+  "hintConfPassword": "Confirm Password",
+  "@hintConfPassword": {"description": "Placeholder for confirm password input field"},
+
+  "login": "Login",
+  "@login": {"description": "Button text for login"},
+
+  "register": "Register",
+  "@register": {"description": "Button text for register"},
+
+  "signUp": "Sign Up",
+  "@signUp": {"description": "Button text for signing up"},
+
+  "registeringAccount": "Registering Account...",
+  "@registeringAccount": {"description": "Status text while registering account"},
+
+  "checkingCredentials": "Checking Credentials...",
+  "@checkingCredentials": {"description": "Status text while checking login credentials"},
+
+  "errorEnterEmailOrPassword": "Please Enter Email or Password",
+  "@errorEnterEmailOrPassword": {"description": "Error when email or password is missing"},
+
+  "errorEnterRegInfo": "Please Enter required information for Registration",
+  "@errorEnterRegInfo": {"description": "Error when registration info is incomplete"},
+
+  "errorSelectImage": "Please Select an Image",
+  "@errorSelectImage": {"description": "Error when no image is selected"},
+
+  "errorNoMatchPasswords": "Passwords don't match!",
+  "@errorNoMatchPasswords": {"description": "Error when passwords do not match"},
 
   "errorLoginFailed": "Login Failed",
+  "@errorLoginFailed": {"description": "Error when login fails"},
+
   "errorNoRecordFound": "No record found",
+  "@errorNoRecordFound": {"description": "Error when no database record is found"},
+
   "blockedAccountMessage": "Admin has blocked your account\n\nMail to: admin@gmail.com",
+  "@blockedAccountMessage": {"description": "Message shown when account is blocked"},
+
   "networkUnavailable": "Network unavailable. Please try again",
+  "@networkUnavailable": {"description": "Error when network is unavailable"},
+
   "errorFetchingUserData": "Error fetching user data",
+  "@errorFetchingUserData": {"description": "Error when fetching user data fails"},
+
   "storageError": "Storage Error: {error}",
   "@storageError": {
-    "description": "Error dialog when storage fails, {error} is the error message",
-    "placeholders": {
-      "error": {}
-    }
+    "description": "Error dialog when storage fails",
+    "placeholders": {"error": {}}
   },
 
   "welcomeMessage": "Welcome to our app!",
+  "@welcomeMessage": {"description": "Welcome message on home screen"},
+
   "payment": "Payment",
+  "@payment": {"description": "Label for payment section"},
+
   "checkout": "Proceed to Checkout",
+  "@checkout": {"description": "Button label for checkout"},
+
   "totalAmount": "Total Amount",
+  "@totalAmount": {"description": "Label for total amount"},
+
   "orderSummary": "Order Summary",
+  "@orderSummary": {"description": "Label for order summary section"},
+
   "settings": "Settings",
+  "@settings": {"description": "Label for settings page"},
+
   "offers": "Offers",
+  "@offers": {"description": "Label for offers section"},
+
   "whatsOnYourMind": "What's on your mind?",
+  "@whatsOnYourMind": {"description": "Section heading for user thoughts or suggestions"},
+
   "bookDining": "Book Dining",
+  "@bookDining": {"description": "Button to book dining / table"},
+
   "softDrinks": "Soft Drinks",
-  "deliveryTime": "45-50 mins"
+  "@softDrinks": {"description": "Label for soft drinks"},
+
+  "deliveryTime": "45-50 mins",
+  "@deliveryTime": {"description": "Estimated delivery time"}
 }

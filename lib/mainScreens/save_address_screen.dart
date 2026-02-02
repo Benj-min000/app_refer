@@ -1,16 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+
 import 'package:user_app/global/global.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/widgets/simple_Appbar.dart';
 import 'package:user_app/widgets/text_field.dart';
 
-class SaveAddressScreen extends StatelessWidget {
-  SaveAddressScreen({super.key});
+import "package:user_app/services/location_service.dart";
+import 'package:provider/provider.dart';
+import 'package:user_app/localization/locale_provider.dart';
 
+class SaveAddressScreen extends StatefulWidget {
+  const SaveAddressScreen({super.key});
+
+  @override
+  State<SaveAddressScreen> createState() => _SaveAddressScreenState();
+}
+
+class _SaveAddressScreenState extends State<SaveAddressScreen> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _phoneNumber = TextEditingController();
   final TextEditingController _flatNumber = TextEditingController();
@@ -20,39 +28,55 @@ class SaveAddressScreen extends StatelessWidget {
   final TextEditingController _locationController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+  double lat = 0.0;
+  double lng = 0.0; 
 
-  List<Placemark>? placemarks;
-  Position? position;
-
-  String completeAddress = '';
+  /// Fetches user's current location and updates text fields
   Future<void> getUserLocationAddress() async {
-    LocationPermission permission = await Geolocator.requestPermission();
-    Position newPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    setState(() => isLoading = true);
+    
+    try {
+      // Get language code from Provider
+      final languageCode =
+          Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
 
-    position = newPosition;
+      // Fetch full address and split into parts from LocationService
+      final addressParts =
+          await LocationService.fetchUserLocationAddressParts(languageCode);
 
-    placemarks =
-        await placemarkFromCoordinates(position!.latitude, position!.longitude);
+      if (!mounted) return;
 
-    Placemark pMarks = placemarks![0];
-    completeAddress =
-        '${pMarks.subThoroughfare} ${pMarks.thoroughfare},${pMarks.subLocality} ${pMarks.locality},${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ${pMarks.postalCode},${pMarks.country}';
-    // _locationController.text = completeAddress;
+      setState(() {
+        _locationController.text = addressParts['fullAddress'] ?? '';
+        _completeAddress.text = addressParts['fullAddress'] ?? '';
+        _flatNumber.text = addressParts['flatNumber'] ?? '';
+        _city.text = addressParts['city'] ?? '';
+        _state.text = addressParts['state'] ?? '';
 
-    String fullAddress =
-        '${pMarks.subThoroughfare} ${pMarks.thoroughfare}, ${pMarks.subLocality} ${pMarks.locality}, ${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ${pMarks.postalCode}, ${pMarks.country} ';
+        lat = addressParts['lat'] ?? 0.0;
+        lng = addressParts['lng'] ?? 0.0;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to get location: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
 
-    _locationController.text = fullAddress;
-    _flatNumber.text =
-        '${pMarks.subThoroughfare} ${pMarks.thoroughfare}, ${pMarks.subLocality} ${pMarks.locality}, ';
-
-    _city.text =
-        '${pMarks.subAdministrativeArea}, ${pMarks.administrativeArea} ,${pMarks.postalCode}';
-    _state.text = '${pMarks.country}';
-
-    _completeAddress.text = fullAddress;
+  @override
+  void dispose() {
+    _name.dispose();
+    _phoneNumber.dispose();
+    _flatNumber.dispose();
+    _city.dispose();
+    _state.dispose();
+    _completeAddress.dispose();
+    _locationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,8 +96,8 @@ class SaveAddressScreen extends StatelessWidget {
               phoneNumber: _phoneNumber.text.trim(),
               flatNumber: _flatNumber.text.trim(),
               city: _city.text.trim(),
-              lat: position!.latitude.toString(),
-              lng: position!.longitude.toString(),
+              lat: lat.toString(),
+              lng: lng.toString(),
               // locationController: _locationController.text.trim(),
             ).toJson();
 

@@ -101,199 +101,301 @@ abstract class AppLocalizations {
     Locale('uk')
   ];
 
-  /// No description provided for @helloWorld.
+  /// Placeholder text for the search bar
+  ///
+  /// In en, this message translates to:
+  /// **'Search for dishes or stores'**
+  String get hintSearch;
+
+  /// Tab label for Food Delivery
+  ///
+  /// In en, this message translates to:
+  /// **'Food Delivery'**
+  String get tabFoodDelivery;
+
+  /// Tab label for Store Delivery
+  ///
+  /// In en, this message translates to:
+  /// **'Store Delivery'**
+  String get tabStoreDelivery;
+
+  /// Tab label for Grocery / Shopping
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery · Shopping'**
+  String get tabGroceryShopping;
+
+  /// Tab label for Pickup orders
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup'**
+  String get tabPickup;
+
+  /// Tab label for sending gifts
+  ///
+  /// In en, this message translates to:
+  /// **'Send Gifts'**
+  String get tabGifting;
+
+  /// Tab label for deals and offers
+  ///
+  /// In en, this message translates to:
+  /// **'Deals'**
+  String get tabBenefits;
+
+  /// Category label for Food
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get categoryFood;
+
+  /// Category label for Grocery / Supermarket
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery'**
+  String get categoryGrocery;
+
+  /// Category label for Cafe
+  ///
+  /// In en, this message translates to:
+  /// **'Cafe'**
+  String get categoryCafe;
+
+  /// Category label for Alcohol
+  ///
+  /// In en, this message translates to:
+  /// **'Alcohol'**
+  String get categoryAlcohol;
+
+  /// Category label for Desserts
+  ///
+  /// In en, this message translates to:
+  /// **'Desserts'**
+  String get categoryDessert;
+
+  /// Category label for Delivery
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get categoryDelivery;
+
+  /// Category label for Pets
+  ///
+  /// In en, this message translates to:
+  /// **'Pets'**
+  String get categoryPets;
+
+  /// Category label for Electronics
+  ///
+  /// In en, this message translates to:
+  /// **'Electronics'**
+  String get categoryElectronics;
+
+  /// Category label for Household items
+  ///
+  /// In en, this message translates to:
+  /// **'Household'**
+  String get categoryHousehold;
+
+  /// Category label for More / Other items
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get categoryMore;
+
+  /// Generic hello world text
   ///
   /// In en, this message translates to:
   /// **'Hello World!'**
   String get helloWorld;
 
-  /// No description provided for @changeLanguage.
+  /// Button or menu label to change language
   ///
   /// In en, this message translates to:
   /// **'Change Language'**
   String get changeLanguage;
 
-  /// No description provided for @findingLocalization.
+  /// Text shown while app detects location
   ///
   /// In en, this message translates to:
   /// **'Finding your localization...'**
   String get findingLocalization;
 
-  /// No description provided for @hintName.
+  /// Placeholder for name input field
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get hintName;
 
-  /// No description provided for @hintEmail.
+  /// Placeholder for email input field
   ///
   /// In en, this message translates to:
   /// **'Email'**
   String get hintEmail;
 
-  /// No description provided for @hintPassword.
+  /// Placeholder for password input field
   ///
   /// In en, this message translates to:
   /// **'Password'**
   String get hintPassword;
 
-  /// No description provided for @hintConfPassword.
+  /// Placeholder for confirm password input field
   ///
   /// In en, this message translates to:
   /// **'Confirm Password'**
   String get hintConfPassword;
 
-  /// No description provided for @login.
+  /// Button text for login
   ///
   /// In en, this message translates to:
   /// **'Login'**
   String get login;
 
-  /// No description provided for @register.
+  /// Button text for register
   ///
   /// In en, this message translates to:
   /// **'Register'**
   String get register;
 
-  /// No description provided for @signUp.
+  /// Button text for signing up
   ///
   /// In en, this message translates to:
   /// **'Sign Up'**
   String get signUp;
 
-  /// No description provided for @registeringAccount.
+  /// Status text while registering account
   ///
   /// In en, this message translates to:
   /// **'Registering Account...'**
   String get registeringAccount;
 
-  /// No description provided for @checkingCredentials.
+  /// Status text while checking login credentials
   ///
   /// In en, this message translates to:
   /// **'Checking Credentials...'**
   String get checkingCredentials;
 
-  /// No description provided for @errorEnterEmailOrPassword.
+  /// Error when email or password is missing
   ///
   /// In en, this message translates to:
   /// **'Please Enter Email or Password'**
   String get errorEnterEmailOrPassword;
 
-  /// No description provided for @errorEnterRegInfo.
+  /// Error when registration info is incomplete
   ///
   /// In en, this message translates to:
   /// **'Please Enter required information for Registration'**
   String get errorEnterRegInfo;
 
-  /// No description provided for @errorSelectImage.
+  /// Error when no image is selected
   ///
   /// In en, this message translates to:
   /// **'Please Select an Image'**
   String get errorSelectImage;
 
-  /// No description provided for @errorNoMatchPasswords.
+  /// Error when passwords do not match
   ///
   /// In en, this message translates to:
   /// **'Passwords don\'t match!'**
   String get errorNoMatchPasswords;
 
-  /// No description provided for @errorLoginFailed.
+  /// Error when login fails
   ///
   /// In en, this message translates to:
   /// **'Login Failed'**
   String get errorLoginFailed;
 
-  /// No description provided for @errorNoRecordFound.
+  /// Error when no database record is found
   ///
   /// In en, this message translates to:
   /// **'No record found'**
   String get errorNoRecordFound;
 
-  /// No description provided for @blockedAccountMessage.
+  /// Message shown when account is blocked
   ///
   /// In en, this message translates to:
   /// **'Admin has blocked your account\n\nMail to: admin@gmail.com'**
   String get blockedAccountMessage;
 
-  /// No description provided for @networkUnavailable.
+  /// Error when network is unavailable
   ///
   /// In en, this message translates to:
   /// **'Network unavailable. Please try again'**
   String get networkUnavailable;
 
-  /// No description provided for @errorFetchingUserData.
+  /// Error when fetching user data fails
   ///
   /// In en, this message translates to:
   /// **'Error fetching user data'**
   String get errorFetchingUserData;
 
-  /// Error dialog when storage fails, {error} is the error message
+  /// Error dialog when storage fails
   ///
   /// In en, this message translates to:
   /// **'Storage Error: {error}'**
   String storageError(Object error);
 
-  /// No description provided for @welcomeMessage.
+  /// Welcome message on home screen
   ///
   /// In en, this message translates to:
   /// **'Welcome to our app!'**
   String get welcomeMessage;
 
-  /// No description provided for @payment.
+  /// Label for payment section
   ///
   /// In en, this message translates to:
   /// **'Payment'**
   String get payment;
 
-  /// No description provided for @checkout.
+  /// Button label for checkout
   ///
   /// In en, this message translates to:
   /// **'Proceed to Checkout'**
   String get checkout;
 
-  /// No description provided for @totalAmount.
+  /// Label for total amount
   ///
   /// In en, this message translates to:
   /// **'Total Amount'**
   String get totalAmount;
 
-  /// No description provided for @orderSummary.
+  /// Label for order summary section
   ///
   /// In en, this message translates to:
   /// **'Order Summary'**
   String get orderSummary;
 
-  /// No description provided for @settings.
+  /// Label for settings page
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @offers.
+  /// Label for offers section
   ///
   /// In en, this message translates to:
   /// **'Offers'**
   String get offers;
 
-  /// No description provided for @whatsOnYourMind.
+  /// Section heading for user thoughts or suggestions
   ///
   /// In en, this message translates to:
   /// **'What\'s on your mind?'**
   String get whatsOnYourMind;
 
-  /// No description provided for @bookDining.
+  /// Button to book dining / table
   ///
   /// In en, this message translates to:
   /// **'Book Dining'**
   String get bookDining;
 
-  /// No description provided for @softDrinks.
+  /// Label for soft drinks
   ///
   /// In en, this message translates to:
   /// **'Soft Drinks'**
   String get softDrinks;
 
-  /// No description provided for @deliveryTime.
+  /// Estimated delivery time
   ///
   /// In en, this message translates to:
   /// **'45-50 mins'**

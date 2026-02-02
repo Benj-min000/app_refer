@@ -9,6 +9,57 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get hintSearch => 'Suche nach Gerichten oder Geschäften';
+
+  @override
+  String get tabFoodDelivery => 'Essenslieferung';
+
+  @override
+  String get tabStoreDelivery => 'Lieferung vom Geschäft';
+
+  @override
+  String get tabGroceryShopping => 'Lebensmittel · Einkaufen';
+
+  @override
+  String get tabPickup => 'Abholung';
+
+  @override
+  String get tabGifting => 'Geschenke senden';
+
+  @override
+  String get tabBenefits => 'Angebote';
+
+  @override
+  String get categoryFood => 'Essen';
+
+  @override
+  String get categoryGrocery => 'Supermarkt';
+
+  @override
+  String get categoryCafe => 'Café';
+
+  @override
+  String get categoryAlcohol => 'Alkohol';
+
+  @override
+  String get categoryDessert => 'Desserts';
+
+  @override
+  String get categoryDelivery => 'Lieferung';
+
+  @override
+  String get categoryPets => 'Haustiere';
+
+  @override
+  String get categoryElectronics => 'Elektronik';
+
+  @override
+  String get categoryHousehold => 'Haushalt';
+
+  @override
+  String get categoryMore => 'Mehr';
+
+  @override
   String get helloWorld => 'Hallo Welt!';
 
   @override

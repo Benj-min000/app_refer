@@ -9,6 +9,57 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
+  String get hintSearch => 'Пошук страв або магазинів';
+
+  @override
+  String get tabFoodDelivery => 'Доставка їжі';
+
+  @override
+  String get tabStoreDelivery => 'Доставка з магазину';
+
+  @override
+  String get tabGroceryShopping => 'Продукти · Покупки';
+
+  @override
+  String get tabPickup => 'Самовивіз';
+
+  @override
+  String get tabGifting => 'Подарунки';
+
+  @override
+  String get tabBenefits => 'Акції';
+
+  @override
+  String get categoryFood => 'Їжа';
+
+  @override
+  String get categoryGrocery => 'Магазин';
+
+  @override
+  String get categoryCafe => 'Кафе';
+
+  @override
+  String get categoryAlcohol => 'Алкоголь';
+
+  @override
+  String get categoryDessert => 'Десерти';
+
+  @override
+  String get categoryDelivery => 'Доставка';
+
+  @override
+  String get categoryPets => 'Домашні тварини';
+
+  @override
+  String get categoryElectronics => 'Електроніка';
+
+  @override
+  String get categoryHousehold => 'Побут';
+
+  @override
+  String get categoryMore => 'Більше';
+
+  @override
   String get helloWorld => 'Привіт, світ!';
 
   @override

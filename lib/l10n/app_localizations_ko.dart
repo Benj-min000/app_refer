@@ -9,6 +9,57 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String get hintSearch => '음식이나 가게를 검색하세요';
+
+  @override
+  String get tabFoodDelivery => '음식배달';
+
+  @override
+  String get tabStoreDelivery => '가게배달';
+
+  @override
+  String get tabGroceryShopping => '장보기·쇼핑';
+
+  @override
+  String get tabPickup => '픽업';
+
+  @override
+  String get tabGifting => '선물하기';
+
+  @override
+  String get tabBenefits => '혜택';
+
+  @override
+  String get categoryFood => '음식';
+
+  @override
+  String get categoryGrocery => '마트';
+
+  @override
+  String get categoryCafe => '카페';
+
+  @override
+  String get categoryAlcohol => '주류';
+
+  @override
+  String get categoryDessert => '디저트';
+
+  @override
+  String get categoryDelivery => '배달';
+
+  @override
+  String get categoryPets => '반려';
+
+  @override
+  String get categoryElectronics => '전자';
+
+  @override
+  String get categoryHousehold => '생활';
+
+  @override
+  String get categoryMore => '더보기';
+
+  @override
   String get helloWorld => '안녕하세요!';
 
   @override

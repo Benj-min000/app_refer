@@ -10,11 +10,6 @@ import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/mainScreens/language_selection_screen.dart';
 
-// For Language
-import 'package:provider/provider.dart';
-import 'package:user_app/localization/locale_provider.dart';
-import 'package:user_app/extensions/context_translate_ext.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -33,9 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context);
-    final localizations = context.t;
-
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -80,37 +72,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: CarouselSlider(
                       items: items.map((imagePath) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 1.0),
+                        return Center(
+                          child: SizedBox(
+                            width: 360,
+                            height: 260,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4.0),
                               decoration: BoxDecoration(
                                 color: Colors.black,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              padding: const EdgeInsets.all(4.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
                                 child: Image.asset(
                                   imagePath,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         );
                       }).toList(),
                       options: CarouselOptions(
-                        height: 500,
+                        height: 300, // reduce carousel height
                         autoPlay: true,
                         enlargeCenterPage: true,
-                        enlargeFactor: 0.3,
-                        autoPlayInterval: const Duration(seconds: 2),
-                        autoPlayAnimationDuration:
-                            const Duration(milliseconds: 500),
+                        enlargeFactor: 0.2,
+                        autoPlayInterval: const Duration(seconds: 3),
+                        autoPlayAnimationDuration: const Duration(milliseconds: 600),
                         viewportFraction: 0.8,
-                        scrollDirection: Axis.horizontal,
                       ),
                     ),
                   ),

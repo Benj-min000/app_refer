@@ -9,6 +9,57 @@ class AppLocalizationsPl extends AppLocalizations {
   AppLocalizationsPl([String locale = 'pl']) : super(locale);
 
   @override
+  String get hintSearch => 'Wyszukaj dania lub sklepy';
+
+  @override
+  String get tabFoodDelivery => 'Dostawa jedzenia';
+
+  @override
+  String get tabStoreDelivery => 'Dostawa ze sklepu';
+
+  @override
+  String get tabGroceryShopping => 'Zakupy spożywcze';
+
+  @override
+  String get tabPickup => 'Odbiór osobisty';
+
+  @override
+  String get tabGifting => 'Wyślij prezent';
+
+  @override
+  String get tabBenefits => 'Oferty';
+
+  @override
+  String get categoryFood => 'Jedzenie';
+
+  @override
+  String get categoryGrocery => 'Sklep';
+
+  @override
+  String get categoryCafe => 'Kawiarnia';
+
+  @override
+  String get categoryAlcohol => 'Alkohol';
+
+  @override
+  String get categoryDessert => 'Desery';
+
+  @override
+  String get categoryDelivery => 'Dostawa';
+
+  @override
+  String get categoryPets => 'Zwierzęta';
+
+  @override
+  String get categoryElectronics => 'Elektronika';
+
+  @override
+  String get categoryHousehold => 'Dom';
+
+  @override
+  String get categoryMore => 'Więcej';
+
+  @override
   String get helloWorld => 'Witaj świecie!';
 
   @override

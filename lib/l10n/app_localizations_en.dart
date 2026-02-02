@@ -9,6 +9,57 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get hintSearch => 'Search for dishes or stores';
+
+  @override
+  String get tabFoodDelivery => 'Food Delivery';
+
+  @override
+  String get tabStoreDelivery => 'Store Delivery';
+
+  @override
+  String get tabGroceryShopping => 'Grocery · Shopping';
+
+  @override
+  String get tabPickup => 'Pickup';
+
+  @override
+  String get tabGifting => 'Send Gifts';
+
+  @override
+  String get tabBenefits => 'Deals';
+
+  @override
+  String get categoryFood => 'Food';
+
+  @override
+  String get categoryGrocery => 'Grocery';
+
+  @override
+  String get categoryCafe => 'Cafe';
+
+  @override
+  String get categoryAlcohol => 'Alcohol';
+
+  @override
+  String get categoryDessert => 'Desserts';
+
+  @override
+  String get categoryDelivery => 'Delivery';
+
+  @override
+  String get categoryPets => 'Pets';
+
+  @override
+  String get categoryElectronics => 'Electronics';
+
+  @override
+  String get categoryHousehold => 'Household';
+
+  @override
+  String get categoryMore => 'More';
+
+  @override
   String get helloWorld => 'Hello World!';
 
   @override
