@@ -1,6 +1,9 @@
 {
   "@@locale": "ko",
 
+  "errorAddressNotFound": "Address not Found",
+  "@errorAddressNotFound": {},
+
   "hintSearch": "음식이나 가게를 검색하세요",
   "@hintSearch": {"description": "검색창 플레이스홀더 텍스트"},
 

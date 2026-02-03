@@ -1,6 +1,9 @@
 {
   "@@locale": "pl",
 
+  "errorAddressNotFound": "Address not Found",
+  "@errorAddressNotFound": {},
+
   "hintSearch": "Wyszukaj dania lub sklepy",
   "@hintSearch": {"description": "Placeholder text for search bar"},
 

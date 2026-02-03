@@ -1,6 +1,9 @@
 {
   "@@locale": "en",
 
+  "errorAddressNotFound": "Address not Found",
+  "@errorAddressNotFound": {},
+
   "hintSearch": "Search for dishes or stores",
   "@hintSearch": {"description": "Placeholder text for the search bar"},
 

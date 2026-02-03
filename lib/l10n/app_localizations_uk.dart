@@ -9,6 +9,9 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
+  String get errorAddressNotFound => 'Address not Found';
+
+  @override
   String get hintSearch => 'Пошук страв або магазинів';
 
   @override

@@ -42,8 +42,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
           Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
 
       // Fetch full address and split into parts from LocationService
-      final addressParts =
-          await LocationService.fetchUserLocationAddressParts(languageCode);
+      final Map<String, dynamic> addressParts =  await LocationService.fetchUserLocationAddress(languageCode);
 
       if (!mounted) return;
 

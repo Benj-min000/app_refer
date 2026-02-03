@@ -62,11 +62,11 @@ class _DiningPagePageState extends State<Home> {
     final languageCode =
       Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
 
-    final address = await LocationService.fetchUserLocationAddress(languageCode);
+    final Map<String, dynamic> addressMap = await LocationService.fetchUserLocationAddress(languageCode);
 
     if (mounted) {
       setState(() {
-        _location = address;
+        _location = addressMap['fullAddress'] ?? context.t.errorAddressNotFound;
       });
     }
   }

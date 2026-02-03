@@ -1,6 +1,9 @@
 {
   "@@locale": "uk",
 
+  "errorAddressNotFound": "Address not Found",
+  "@errorAddressNotFound": {},
+
   "hintSearch": "Пошук страв або магазинів",
   "@hintSearch": {"description": "Placeholder text for search bar"},
 

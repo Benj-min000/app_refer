@@ -9,6 +9,9 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String get errorAddressNotFound => 'Address not Found';
+
+  @override
   String get hintSearch => '음식이나 가게를 검색하세요';
 
   @override

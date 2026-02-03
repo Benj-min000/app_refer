@@ -1,5 +1,9 @@
 {
   "@@locale": "de",
+
+  "errorAddressNotFound": "Address not Found",
+  "@errorAddressNotFound": {},
+
   "hintSearch": "Suche nach Gerichten oder Geschäften",
   "@hintSearch": {"description": "Platzhalter für die Suche nach Gerichten oder Geschäften"},
 

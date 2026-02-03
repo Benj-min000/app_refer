@@ -101,6 +101,12 @@ abstract class AppLocalizations {
     Locale('uk')
   ];
 
+  /// No description provided for @errorAddressNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Address not Found'**
+  String get errorAddressNotFound;
+
   /// Placeholder text for the search bar
   ///
   /// In en, this message translates to:

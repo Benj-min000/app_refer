@@ -9,6 +9,9 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get errorAddressNotFound => 'Address not Found';
+
+  @override
   String get hintSearch => 'Suche nach Gerichten oder Geschäften';
 
   @override
