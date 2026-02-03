@@ -98,21 +98,16 @@ List<int> separateItemQuantities() {
   return separateItemQuantityList;
 }
 
-void clearCartNow(context) {
-  // -----------------------------------------------------------------------
-  //  The app after login didn't work so I just commented everything out
-  // -----------------------------------------------------------------------
-  
-  // sharedPreferences!.setStringList("userCart", ['garbageValue']);
+void clearCartNow(context) { 
+  sharedPreferences!.setStringList("userCart", ['garbageValue']);
 
-  // List<String>? emptyList = sharedPreferences!.getStringList("userCart");
+  List<String>? emptyList = sharedPreferences!.getStringList("userCart");
 
-  // FirebaseFirestore.instance.collection("users")
-  //     .doc(firebaseAuth.currentUser!.uid)
-  //     .update({"userCart": emptyList}).then((value) {
-  //   sharedPreferences!.setStringList("userCart", emptyList!);
-  //   Provider.of<CartItemCounter>(context, listen: false)
-  //       .displayCartListItemsNumber();
-  // });
-  // -----------------------------------------------------------------------
+  FirebaseFirestore.instance.collection("users")
+      .doc(firebaseAuth.currentUser!.uid)
+      .update({"userCart": emptyList}).then((value) {
+    sharedPreferences!.setStringList("userCart", emptyList!);
+    Provider.of<CartItemCounter>(context, listen: false)
+        .displayCartListItemsNumber();
+  });
 }

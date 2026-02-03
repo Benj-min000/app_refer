@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.cyanAccent, Colors.lightBlueAccent],
+              colors: [Colors.blueAccent, Colors.lightBlueAccent],
               begin: Alignment.topLeft,
               end: Alignment.topRight,
             ),
@@ -47,7 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.language, color: Colors.black),
+            icon: Icon(
+              Icons.language, 
+              color: Colors.white, 
+              shadows: [
+                Shadow(
+                  color: Colors.pink.withValues(alpha: 0.3),
+                  offset: const Offset(1.0, 1.0),
+                  
+                  blurRadius: 6.0,
+                ),
+              ],
+            ),
             onPressed: () {
               Navigator.push(
                 context,

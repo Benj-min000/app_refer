@@ -65,7 +65,8 @@ import 'app_localizations_uk.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -73,7 +74,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,7 +87,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -110,7 +113,7 @@ abstract class AppLocalizations {
   /// Placeholder text for the search bar
   ///
   /// In en, this message translates to:
-  /// **'Search for dishes or stores'**
+  /// **'Find it! Delicious Dishes'**
   String get hintSearch;
 
   /// Tab label for Food Delivery
@@ -119,22 +122,16 @@ abstract class AppLocalizations {
   /// **'Food Delivery'**
   String get tabFoodDelivery;
 
-  /// Tab label for Store Delivery
-  ///
-  /// In en, this message translates to:
-  /// **'Store Delivery'**
-  String get tabStoreDelivery;
-
   /// Tab label for Grocery / Shopping
   ///
   /// In en, this message translates to:
-  /// **'Grocery · Shopping'**
+  /// **'Grocery & Shopping'**
   String get tabGroceryShopping;
 
   /// Tab label for Pickup orders
   ///
   /// In en, this message translates to:
-  /// **'Pickup'**
+  /// **'Pick-up'**
   String get tabPickup;
 
   /// Tab label for sending gifts
@@ -143,77 +140,77 @@ abstract class AppLocalizations {
   /// **'Send Gifts'**
   String get tabGifting;
 
-  /// Tab label for deals and offers
+  /// Tab label for viewing all benefits
   ///
   /// In en, this message translates to:
-  /// **'Deals'**
+  /// **'View All Benefits'**
   String get tabBenefits;
 
-  /// Category label for Food
+  /// Label for the discount icon
   ///
   /// In en, this message translates to:
-  /// **'Food'**
-  String get categoryFood;
+  /// **'Daily Discounts'**
+  String get categoryDiscounts;
 
-  /// Category label for Grocery / Supermarket
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Grocery'**
-  String get categoryGrocery;
+  /// **'Boiled Pork'**
+  String get categoryPork;
 
-  /// Category label for Cafe
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Cafe'**
-  String get categoryCafe;
+  /// **'Tonkatsu & Sashimi'**
+  String get categoryTonkatsuSashimi;
 
-  /// Category label for Alcohol
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Alcohol'**
-  String get categoryAlcohol;
+  /// **'Pizza'**
+  String get categoryPizza;
 
-  /// Category label for Desserts
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Desserts'**
-  String get categoryDessert;
+  /// **'Steamed Stew'**
+  String get categoryStew;
 
-  /// Category label for Delivery
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Delivery'**
-  String get categoryDelivery;
+  /// **'Chinese Food'**
+  String get categoryChinese;
 
-  /// Category label for Pets
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Pets'**
-  String get categoryPets;
+  /// **'Chicken'**
+  String get categoryChicken;
 
-  /// Category label for Electronics
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Electronics'**
-  String get categoryElectronics;
+  /// **'Korean Food'**
+  String get categoryKorean;
 
-  /// Category label for Household items
+  ///
   ///
   /// In en, this message translates to:
-  /// **'Household'**
-  String get categoryHousehold;
+  /// **'One-bowl Meals'**
+  String get categoryOneBowl;
 
   /// Category label for More / Other items
   ///
   /// In en, this message translates to:
   /// **'More'**
-  String get categoryMore;
+  String get categoryPichupDiscount;
 
-  /// Generic hello world text
+  /// No description provided for @seeMoreFoodDelivery.
   ///
   /// In en, this message translates to:
-  /// **'Hello World!'**
-  String get helloWorld;
+  /// **'See more more in Food Delivery'**
+  String get seeMoreFoodDelivery;
 
   /// Button or menu label to change language
   ///
@@ -341,6 +338,12 @@ abstract class AppLocalizations {
   /// **'Storage Error: {error}'**
   String storageError(Object error);
 
+  /// Generic hello world text
+  ///
+  /// In en, this message translates to:
+  /// **'Hello World!'**
+  String get helloWorld;
+
   /// Welcome message on home screen
   ///
   /// In en, this message translates to:
@@ -408,7 +411,8 @@ abstract class AppLocalizations {
   String get deliveryTime;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -417,28 +421,31 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['de', 'en', 'ko', 'pl', 'uk'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['de', 'en', 'ko', 'pl', 'uk'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de': return AppLocalizationsDe();
-    case 'en': return AppLocalizationsEn();
-    case 'ko': return AppLocalizationsKo();
-    case 'pl': return AppLocalizationsPl();
-    case 'uk': return AppLocalizationsUk();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pl':
+      return AppLocalizationsPl();
+    case 'uk':
+      return AppLocalizationsUk();
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

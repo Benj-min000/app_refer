@@ -18,9 +18,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get tabFoodDelivery => 'Доставка їжі';
 
   @override
-  String get tabStoreDelivery => 'Доставка з магазину';
-
-  @override
   String get tabGroceryShopping => 'Продукти · Покупки';
 
   @override
@@ -33,37 +30,37 @@ class AppLocalizationsUk extends AppLocalizations {
   String get tabBenefits => 'Акції';
 
   @override
-  String get categoryFood => 'Їжа';
+  String get categoryDiscounts => 'Щоденні знижки';
 
   @override
-  String get categoryGrocery => 'Магазин';
+  String get categoryPork => 'Свинячі лапки/Варенна свинина';
 
   @override
-  String get categoryCafe => 'Кафе';
+  String get categoryTonkatsuSashimi => 'Тонкацу і сашимі';
 
   @override
-  String get categoryAlcohol => 'Алкоголь';
+  String get categoryPizza => 'Піца';
 
   @override
-  String get categoryDessert => 'Десерти';
+  String get categoryStew => 'Тушкована страва на пару';
 
   @override
-  String get categoryDelivery => 'Доставка';
+  String get categoryChinese => 'Китайська їжа';
 
   @override
-  String get categoryPets => 'Домашні тварини';
+  String get categoryChicken => 'Курка';
 
   @override
-  String get categoryElectronics => 'Електроніка';
+  String get categoryKorean => 'Корейська кухня';
 
   @override
-  String get categoryHousehold => 'Побут';
+  String get categoryOneBowl => 'Страви з однієї миски';
 
   @override
-  String get categoryMore => 'Більше';
+  String get categoryPichupDiscount => 'Більше';
 
   @override
-  String get helloWorld => 'Привіт, світ!';
+  String get seeMoreFoodDelivery => 'Дивіться більше про доставку їжі';
 
   @override
   String get changeLanguage => 'Змінити мову';
@@ -99,10 +96,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get checkingCredentials => 'Перевірка даних...';
 
   @override
-  String get errorEnterEmailOrPassword => 'Будь ласка, введіть електронну пошту та пароль';
+  String get errorEnterEmailOrPassword =>
+      'Будь ласка, введіть електронну пошту та пароль';
 
   @override
-  String get errorEnterRegInfo => 'Будь ласка, введіть необхідну інформацію для реєстрації';
+  String get errorEnterRegInfo =>
+      'Будь ласка, введіть необхідну інформацію для реєстрації';
 
   @override
   String get errorSelectImage => 'Будь ласка, виберіть зображення';
@@ -117,7 +116,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get errorNoRecordFound => 'Запис не знайдено';
 
   @override
-  String get blockedAccountMessage => 'Адміністратор заблокував ваш акаунт\n\nНапишіть на: admin@gmail.com';
+  String get blockedAccountMessage =>
+      'Адміністратор заблокував ваш акаунт\n\nНапишіть на: admin@gmail.com';
 
   @override
   String get networkUnavailable => 'Мережа недоступна. Спробуйте ще раз';
@@ -129,6 +129,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String storageError(Object error) {
     return 'Помилка сховища: $error';
   }
+
+  @override
+  String get helloWorld => 'Привіт, світ!';
 
   @override
   String get welcomeMessage => 'Ласкаво просимо до нашого додатку!';

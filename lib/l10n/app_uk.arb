@@ -1,159 +1,54 @@
 {
-  "@@locale": "uk",
-
-  "errorAddressNotFound": "Address not Found",
-  "@errorAddressNotFound": {},
-
-  "hintSearch": "Пошук страв або магазинів",
-  "@hintSearch": {"description": "Placeholder text for search bar"},
-
-  "tabFoodDelivery": "Доставка їжі",
-  "@tabFoodDelivery": {"description": "Tab label for Food Delivery"},
-
-  "tabStoreDelivery": "Доставка з магазину",
-  "@tabStoreDelivery": {"description": "Tab label for Store Delivery"},
-
-  "tabGroceryShopping": "Продукти · Покупки",
-  "@tabGroceryShopping": {"description": "Tab label for Grocery / Shopping"},
-
-  "tabPickup": "Самовивіз",
-  "@tabPickup": {"description": "Tab label for Pickup orders"},
-
-  "tabGifting": "Подарунки",
-  "@tabGifting": {"description": "Tab label for sending gifts"},
-
-  "tabBenefits": "Акції",
-  "@tabBenefits": {"description": "Tab label for deals and offers"},
-
-  "categoryFood": "Їжа",
-  "@categoryFood": {"description": "Category label for Food"},
-
-  "categoryGrocery": "Магазин",
-  "@categoryGrocery": {"description": "Category label for Grocery / Supermarket"},
-
-  "categoryCafe": "Кафе",
-  "@categoryCafe": {"description": "Category label for Cafe"},
-
-  "categoryAlcohol": "Алкоголь",
-  "@categoryAlcohol": {"description": "Category label for Alcohol"},
-
-  "categoryDessert": "Десерти",
-  "@categoryDessert": {"description": "Category label for Desserts"},
-
-  "categoryDelivery": "Доставка",
-  "@categoryDelivery": {"description": "Category label for Delivery"},
-
-  "categoryPets": "Домашні тварини",
-  "@categoryPets": {"description": "Category label for Pets"},
-
-  "categoryElectronics": "Електроніка",
-  "@categoryElectronics": {"description": "Category label for Electronics"},
-
-  "categoryHousehold": "Побут",
-  "@categoryHousehold": {"description": "Category label for Household items"},
-
-  "categoryMore": "Більше",
-  "@categoryMore": {"description": "Category label for More / Other items"},
-
-  "helloWorld": "Привіт, світ!",
-  "@helloWorld": {"description": "Generic hello world text"},
-
-  "changeLanguage": "Змінити мову",
-  "@changeLanguage": {"description": "Button or menu label to change language"},
-
-  "findingLocalization": "Визначення вашого місцезнаходження...",
-  "@findingLocalization": {"description": "Text shown while app detects location"},
-
-  "hintName": "Ім'я",
-  "@hintName": {"description": "Placeholder for name input field"},
-
-  "hintEmail": "Електронна пошта",
-  "@hintEmail": {"description": "Placeholder for email input field"},
-
-  "hintPassword": "Пароль",
-  "@hintPassword": {"description": "Placeholder for password input field"},
-
-  "hintConfPassword": "Підтвердьте пароль",
-  "@hintConfPassword": {"description": "Placeholder for confirm password input field"},
-
-  "login": "Увійти",
-  "@login": {"description": "Button text for login"},
-
-  "register": "Зареєструватися",
-  "@register": {"description": "Button text for register"},
-
-  "signUp": "Створити акаунт",
-  "@signUp": {"description": "Button text for signing up"},
-
-  "registeringAccount": "Реєстрація акаунта...",
-  "@registeringAccount": {"description": "Status text while registering account"},
-
-  "checkingCredentials": "Перевірка даних...",
-  "@checkingCredentials": {"description": "Status text while checking login credentials"},
-
-  "errorEnterEmailOrPassword": "Будь ласка, введіть електронну пошту та пароль",
-  "@errorEnterEmailOrPassword": {"description": "Error when email or password is missing"},
-
-  "errorEnterRegInfo": "Будь ласка, введіть необхідну інформацію для реєстрації",
-  "@errorEnterRegInfo": {"description": "Error when registration info is incomplete"},
-
-  "errorSelectImage": "Будь ласка, виберіть зображення",
-  "@errorSelectImage": {"description": "Error when no image is selected"},
-
-  "errorNoMatchPasswords": "Паролі не збігаються!",
-  "@errorNoMatchPasswords": {"description": "Error when passwords do not match"},
-
-  "errorLoginFailed": "Помилка входу",
-  "@errorLoginFailed": {"description": "Error when login fails"},
-
-  "errorNoRecordFound": "Запис не знайдено",
-  "@errorNoRecordFound": {"description": "Error when no database record is found"},
-
-  "blockedAccountMessage": "Адміністратор заблокував ваш акаунт\n\nНапишіть на: admin@gmail.com",
-  "@blockedAccountMessage": {"description": "Message shown when account is blocked"},
-
-  "networkUnavailable": "Мережа недоступна. Спробуйте ще раз",
-  "@networkUnavailable": {"description": "Error when network is unavailable"},
-
-  "errorFetchingUserData": "Помилка отримання даних користувача",
-  "@errorFetchingUserData": {"description": "Error when fetching user data fails"},
-
-  "storageError": "Помилка сховища: {error}",
-  "@storageError": {
-    "description": "Error dialog when storage fails",
-    "placeholders": {"error": {}}
-  },
-
-  "welcomeMessage": "Ласкаво просимо до нашого додатку!",
-  "@welcomeMessage": {"description": "Welcome message on home screen"},
-
-  "payment": "Оплата",
-  "@payment": {"description": "Label for payment section"},
-
-  "checkout": "Перейти до оплати",
-  "@checkout": {"description": "Button label for checkout"},
-
-  "totalAmount": "Загальна сума",
-  "@totalAmount": {"description": "Label for total amount"},
-
-  "orderSummary": "Підсумок замовлення",
-  "@orderSummary": {"description": "Label for order summary section"},
-
-  "settings": "Налаштування",
-  "@settings": {"description": "Label for settings page"},
-
-  "offers": "Пропозиції",
-  "@offers": {"description": "Label for offers section"},
-
-  "whatsOnYourMind": "Про що ви думаєте?",
-  "@whatsOnYourMind": {"description": "Section heading for user thoughts or suggestions"},
-
-  "bookDining": "Забронювати обід",
-  "@bookDining": {"description": "Button to book dining / table"},
-
-  "softDrinks": "Безалкогольні напої",
-  "@softDrinks": {"description": "Label for soft drinks"},
-
-  "deliveryTime": "45-50 хв",
-  "@deliveryTime": {"description": "Estimated delivery time"}
+    "@@locale": "uk",
+    "errorAddressNotFound": "Address not Found",
+    "hintSearch": "Пошук страв або магазинів",
+    "tabFoodDelivery": "Доставка їжі",
+    "tabGroceryShopping": "Продукти · Покупки",
+    "tabPickup": "Самовивіз",
+    "tabGifting": "Подарунки",
+    "tabBenefits": "Акції",
+    "categoryDiscounts": "Щоденні знижки",
+    "categoryPork": "Свинячі лапки/Варенна свинина",
+    "categoryTonkatsuSashimi": "Тонкацу і сашимі",
+    "categoryPizza": "Піца",
+    "categoryStew": "Тушкована страва на пару",
+    "categoryChinese": "Китайська їжа",
+    "categoryChicken": "Курка",
+    "categoryKorean": "Корейська кухня",
+    "categoryOneBowl": "Страви з однієї миски",
+    "categoryPichupDiscount": "Більше",
+    "seeMoreFoodDelivery": "Дивіться більше про доставку їжі",
+    "changeLanguage": "Змінити мову",
+    "findingLocalization": "Визначення вашого місцезнаходження...",
+    "hintName": "Ім'я",
+    "hintEmail": "Електронна пошта",
+    "hintPassword": "Пароль",
+    "hintConfPassword": "Підтвердьте пароль",
+    "login": "Увійти",
+    "register": "Зареєструватися",
+    "signUp": "Створити акаунт",
+    "registeringAccount": "Реєстрація акаунта...",
+    "checkingCredentials": "Перевірка даних...",
+    "errorEnterEmailOrPassword": "Будь ласка, введіть електронну пошту та пароль",
+    "errorEnterRegInfo": "Будь ласка, введіть необхідну інформацію для реєстрації",
+    "errorSelectImage": "Будь ласка, виберіть зображення",
+    "errorNoMatchPasswords": "Паролі не збігаються!",
+    "errorLoginFailed": "Помилка входу",
+    "errorNoRecordFound": "Запис не знайдено",
+    "blockedAccountMessage": "Адміністратор заблокував ваш акаунт\n\nНапишіть на: admin@gmail.com",
+    "networkUnavailable": "Мережа недоступна. Спробуйте ще раз",
+    "errorFetchingUserData": "Помилка отримання даних користувача",
+    "storageError": "Помилка сховища: {error}",
+    "helloWorld": "Привіт, світ!",
+    "welcomeMessage": "Ласкаво просимо до нашого додатку!",
+    "payment": "Оплата",
+    "checkout": "Перейти до оплати",
+    "totalAmount": "Загальна сума",
+    "orderSummary": "Підсумок замовлення",
+    "settings": "Налаштування",
+    "offers": "Пропозиції",
+    "whatsOnYourMind": "Про що ви думаєте?",
+    "bookDining": "Забронювати обід",
+    "softDrinks": "Безалкогольні напої",
+    "deliveryTime": "45-50 хв"
 }

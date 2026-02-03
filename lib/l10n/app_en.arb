@@ -4,59 +4,64 @@
   "errorAddressNotFound": "Address not Found",
   "@errorAddressNotFound": {},
 
-  "hintSearch": "Search for dishes or stores",
+
+
+  "hintSearch": "Find it! Delicious Dishes",
   "@hintSearch": {"description": "Placeholder text for the search bar"},
+
+
 
   "tabFoodDelivery": "Food Delivery",
   "@tabFoodDelivery": {"description": "Tab label for Food Delivery"},
 
-  "tabStoreDelivery": "Store Delivery",
-  "@tabStoreDelivery": {"description": "Tab label for Store Delivery"},
-
-  "tabGroceryShopping": "Grocery · Shopping",
+  "tabGroceryShopping": "Grocery & Shopping",
   "@tabGroceryShopping": {"description": "Tab label for Grocery / Shopping"},
 
-  "tabPickup": "Pickup",
+  "tabPickup": "Pick-up",
   "@tabPickup": {"description": "Tab label for Pickup orders"},
 
   "tabGifting": "Send Gifts",
   "@tabGifting": {"description": "Tab label for sending gifts"},
 
-  "tabBenefits": "Deals",
-  "@tabBenefits": {"description": "Tab label for deals and offers"},
+  "tabBenefits": "View All Benefits",
+  "@tabBenefits": {"description": "Tab label for viewing all benefits"},
 
-  "categoryFood": "Food",
-  "@categoryFood": {"description": "Category label for Food"},
 
-  "categoryGrocery": "Grocery",
-  "@categoryGrocery": {"description": "Category label for Grocery / Supermarket"},
 
-  "categoryCafe": "Cafe",
-  "@categoryCafe": {"description": "Category label for Cafe"},
+  "categoryDiscounts": "Daily Discounts",
+  "@categoryDiscounts": {"description": "Label for the discount icon"},
 
-  "categoryAlcohol": "Alcohol",
-  "@categoryAlcohol": {"description": "Category label for Alcohol"},
+  "categoryPork": "Boiled Pork",
+  "@categoryPork": {"description": ""},
 
-  "categoryDessert": "Desserts",
-  "@categoryDessert": {"description": "Category label for Desserts"},
+  "categoryTonkatsuSashimi": "Tonkatsu & Sashimi",
+  "@categoryTonkatsuSashimi": {"description": ""},
 
-  "categoryDelivery": "Delivery",
-  "@categoryDelivery": {"description": "Category label for Delivery"},
+  "categoryPizza": "Pizza",
+  "@categoryPizza": {"description": ""},
 
-  "categoryPets": "Pets",
-  "@categoryPets": {"description": "Category label for Pets"},
+  "categoryStew": "Steamed Stew",
+  "@categoryStew": {"description": ""},
 
-  "categoryElectronics": "Electronics",
-  "@categoryElectronics": {"description": "Category label for Electronics"},
+  "categoryChinese": "Chinese Food",
+  "@categoryChinese": {"description": ""},
 
-  "categoryHousehold": "Household",
-  "@categoryHousehold": {"description": "Category label for Household items"},
+  "categoryChicken": "Chicken",
+  "@categoryChicken": {"description": ""},
 
-  "categoryMore": "More",
-  "@categoryMore": {"description": "Category label for More / Other items"},
+  "categoryKorean": "Korean Food",
+  "@categoryKorean": {"description": ""},
 
-  "helloWorld": "Hello World!",
-  "@helloWorld": {"description": "Generic hello world text"},
+  "categoryOneBowl": "One-bowl Meals",
+  "@categoryOneBowl": {"description": ""},
+
+  "categoryPichupDiscount": "More",
+  "@categoryPichupDiscount": {"description": "Category label for More / Other items"},
+
+  "seeMoreFoodDelivery": "See more more in Food Delivery",
+  "@seeMoreFoodDelivery": {},
+
+
 
   "changeLanguage": "Change Language",
   "@changeLanguage": {"description": "Button or menu label to change language"},
@@ -124,8 +129,15 @@
     "placeholders": {"error": {}}
   },
 
+
+  
+  "helloWorld": "Hello World!",
+  "@helloWorld": {"description": "Generic hello world text"},
+
   "welcomeMessage": "Welcome to our app!",
   "@welcomeMessage": {"description": "Welcome message on home screen"},
+
+
 
   "payment": "Payment",
   "@payment": {"description": "Label for payment section"},

@@ -12,58 +12,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorAddressNotFound => 'Address not Found';
 
   @override
-  String get hintSearch => 'Search for dishes or stores';
+  String get hintSearch => 'Find it! Delicious Dishes';
 
   @override
   String get tabFoodDelivery => 'Food Delivery';
 
   @override
-  String get tabStoreDelivery => 'Store Delivery';
+  String get tabGroceryShopping => 'Grocery & Shopping';
 
   @override
-  String get tabGroceryShopping => 'Grocery · Shopping';
-
-  @override
-  String get tabPickup => 'Pickup';
+  String get tabPickup => 'Pick-up';
 
   @override
   String get tabGifting => 'Send Gifts';
 
   @override
-  String get tabBenefits => 'Deals';
+  String get tabBenefits => 'View All Benefits';
 
   @override
-  String get categoryFood => 'Food';
+  String get categoryDiscounts => 'Daily Discounts';
 
   @override
-  String get categoryGrocery => 'Grocery';
+  String get categoryPork => 'Boiled Pork';
 
   @override
-  String get categoryCafe => 'Cafe';
+  String get categoryTonkatsuSashimi => 'Tonkatsu & Sashimi';
 
   @override
-  String get categoryAlcohol => 'Alcohol';
+  String get categoryPizza => 'Pizza';
 
   @override
-  String get categoryDessert => 'Desserts';
+  String get categoryStew => 'Steamed Stew';
 
   @override
-  String get categoryDelivery => 'Delivery';
+  String get categoryChinese => 'Chinese Food';
 
   @override
-  String get categoryPets => 'Pets';
+  String get categoryChicken => 'Chicken';
 
   @override
-  String get categoryElectronics => 'Electronics';
+  String get categoryKorean => 'Korean Food';
 
   @override
-  String get categoryHousehold => 'Household';
+  String get categoryOneBowl => 'One-bowl Meals';
 
   @override
-  String get categoryMore => 'More';
+  String get categoryPichupDiscount => 'More';
 
   @override
-  String get helloWorld => 'Hello World!';
+  String get seeMoreFoodDelivery => 'See more more in Food Delivery';
 
   @override
   String get changeLanguage => 'Change Language';
@@ -102,7 +99,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorEnterEmailOrPassword => 'Please Enter Email or Password';
 
   @override
-  String get errorEnterRegInfo => 'Please Enter required information for Registration';
+  String get errorEnterRegInfo =>
+      'Please Enter required information for Registration';
 
   @override
   String get errorSelectImage => 'Please Select an Image';
@@ -117,7 +115,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorNoRecordFound => 'No record found';
 
   @override
-  String get blockedAccountMessage => 'Admin has blocked your account\n\nMail to: admin@gmail.com';
+  String get blockedAccountMessage =>
+      'Admin has blocked your account\n\nMail to: admin@gmail.com';
 
   @override
   String get networkUnavailable => 'Network unavailable. Please try again';
@@ -129,6 +128,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String storageError(Object error) {
     return 'Storage Error: $error';
   }
+
+  @override
+  String get helloWorld => 'Hello World!';
 
   @override
   String get welcomeMessage => 'Welcome to our app!';

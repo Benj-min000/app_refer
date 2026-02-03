@@ -81,14 +81,25 @@ class _DiningPagePageState extends State<Home> {
 
   Widget categoryBox(HomeCategoryItem item) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
           radius: 24,
           backgroundColor: Colors.redAccent.shade100,
           child: Icon(item.icon, color: Colors.white),
         ),
+        
         const SizedBox(height: 8),
-        Text(item.label, style: const TextStyle(fontSize: 12)),
+
+        Text(
+          item.label, 
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          style: const TextStyle(
+            fontSize: 12,
+            height: 1.2,
+          ),
+        ),
       ],
     );
   }
@@ -99,13 +110,12 @@ class _DiningPagePageState extends State<Home> {
     final homeTabs = getHomeTabs(context);
 
     return DefaultTabController(
-      length: 6,
-      initialIndex: 2,
+      length: homeTabs.length,
+      initialIndex: 0,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Location + Search
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.redAccent,
@@ -158,7 +168,7 @@ class _DiningPagePageState extends State<Home> {
                       icon: const Icon(Icons.search),
                       hintText: context.t.hintSearch,
                       hintStyle: TextStyle(
-                        fontSize: 13.5,
+                        fontSize: 13,
                       ),
                       border: InputBorder.none,
                     ),
@@ -171,29 +181,62 @@ class _DiningPagePageState extends State<Home> {
           // Horizontal TabBar
           TabBar(
             isScrollable: true,
+            tabAlignment: TabAlignment.start, // Forces tabs to align to the far left
+            labelPadding: const EdgeInsets.symmetric(horizontal: 16.0), // Consistent spacing between tabs
             labelColor: Colors.redAccent,
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.redAccent,
+            indicatorSize: TabBarIndicatorSize.label, // Indicator matches text width, not tab width
             physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.zero, 
+            padding: EdgeInsets.zero, // Removes any extra padding around the bar itself
             tabs: homeTabs.map((tab) => Tab(text: tab.label)).toList(),
           ),
           
-          const SizedBox(height: 16),
-
           // Category Grid
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(
+              left: 16.0, 
+              right: 16.0, 
+              top: 16.0, 
+              bottom: 0.0, 
+            ),
             child: GridView.count(
+              padding: EdgeInsets.zero,
               crossAxisCount: 5,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 0.8,
+              childAspectRatio: 0.65,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               children: homeCategories.map(categoryBox).toList(),
             ),
           ),
+
+          Divider(),
+
+          InkWell(
+            onTap: () { },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    context.t.seeMoreFoodDelivery,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
+                ],
+              ),
+            ),
+          ),
+          Divider(),
+
+          const SizedBox(height: 30),
 
           // Your Existing Widgets (unchanged)
           const SizedBox(height: 250, width: double.infinity, child: HomeLargeItems()),

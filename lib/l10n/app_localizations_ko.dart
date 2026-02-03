@@ -18,9 +18,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tabFoodDelivery => '음식배달';
 
   @override
-  String get tabStoreDelivery => '가게배달';
-
-  @override
   String get tabGroceryShopping => '장보기·쇼핑';
 
   @override
@@ -33,37 +30,37 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tabBenefits => '혜택';
 
   @override
-  String get categoryFood => '음식';
+  String get categoryDiscounts => '일일 할인';
 
   @override
-  String get categoryGrocery => '마트';
+  String get categoryPork => '돼지족발/삶은 돼지고기';
 
   @override
-  String get categoryCafe => '카페';
+  String get categoryTonkatsuSashimi => '돈까스 & 사시미';
 
   @override
-  String get categoryAlcohol => '주류';
+  String get categoryPizza => '피자';
 
   @override
-  String get categoryDessert => '디저트';
+  String get categoryStew => '찜 스튜';
 
   @override
-  String get categoryDelivery => '배달';
+  String get categoryChinese => '중국 음식';
 
   @override
-  String get categoryPets => '반려';
+  String get categoryChicken => '닭';
 
   @override
-  String get categoryElectronics => '전자';
+  String get categoryKorean => '한국 음식';
 
   @override
-  String get categoryHousehold => '생활';
+  String get categoryOneBowl => '한 그릇 요리';
 
   @override
-  String get categoryMore => '더보기';
+  String get categoryPichupDiscount => '더';
 
   @override
-  String get helloWorld => '안녕하세요!';
+  String get seeMoreFoodDelivery => '음식 배달 관련 더 많은 정보를 보려면';
 
   @override
   String get changeLanguage => '언어 변경';
@@ -117,7 +114,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get errorNoRecordFound => '기록을 찾을 수 없습니다';
 
   @override
-  String get blockedAccountMessage => '관리자가 계정을 차단했습니다\n\n메일 보내기: admin@gmail.com';
+  String get blockedAccountMessage =>
+      '관리자가 계정을 차단했습니다\n\n메일 보내기: admin@gmail.com';
 
   @override
   String get networkUnavailable => '네트워크를 사용할 수 없습니다. 다시 시도하세요';
@@ -129,6 +127,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String storageError(Object error) {
     return '스토리지 오류: $error';
   }
+
+  @override
+  String get helloWorld => '안녕하세요!';
 
   @override
   String get welcomeMessage => '앱에 오신 것을 환영합니다!';

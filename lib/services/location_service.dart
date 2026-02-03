@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
+  static const String _googleMapsApiKey = "AIzaSyB8ddVBv7Ash6VkOqZ772T6iRM4YBh6uag";
+
   static Future<Map<String, dynamic>> getUserLocationAddressFromOSM(
     double lat, 
     double lon, 
@@ -38,6 +40,49 @@ class LocationService {
     }
   }
 
+  static Future<Map<String, dynamic>> getUserLocationAddressFromGoogle(
+    double lat, 
+    double lon, 
+    String languageCode,
+  ) async {
+    
+    final url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lon&language=$languageCode&key=$_googleMapsApiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data['status'] == 'OK') {
+        final result = data['results'][0];
+        final List components = result['address_components'];
+
+        String findComponent(String type) {
+          final match = components.firstWhere(
+            (entry) => (entry['types'] as List).contains(type),
+            orElse: () => null,
+          );
+          return match != null ? match['long_name'] : '';
+        }
+
+        return {
+          'fullAddress': result['formatted_address'],
+          'houseNumber': findComponent('street_number'),
+          'road': findComponent('route'),
+          'city': findComponent('locality').isNotEmpty 
+                  ? findComponent('locality') 
+                  : findComponent('administrative_area_level_2'),
+          'state': findComponent('administrative_area_level_1'),
+          'postcode': findComponent('postal_code'),
+        };
+      } else {
+        throw Exception('Google API Error: ${data['status']} - ${data['error_message'] ?? ''}');
+      }
+    } else {
+      throw Exception('Server error Google Maps: ${response.statusCode}');
+    }
+  }
+
   static Future<Map<String, dynamic>> fetchUserLocationAddress(String languageCode) async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -64,7 +109,7 @@ class LocationService {
       
       Position position = await Geolocator.getCurrentPosition(locationSettings: locationSettings);
 
-      final osmData = await getUserLocationAddressFromOSM(position.latitude, position.longitude, languageCode);
+      final osmData = await getUserLocationAddressFromGoogle(position.latitude, position.longitude, languageCode);
 
       return {
         'fullAddress': osmData['fullAddress'],

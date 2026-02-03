@@ -11,17 +11,17 @@ class HomeCategoryItem {
 List<HomeCategoryItem> getHomeCategories(BuildContext context) {
   final t = context.t;
 
-  return [
-    HomeCategoryItem(icon: Icons.fastfood, label: t.categoryFood),
-    HomeCategoryItem(icon: Icons.store, label: t.categoryGrocery),
-    HomeCategoryItem(icon: Icons.local_cafe, label: t.categoryCafe),
-    HomeCategoryItem(icon: Icons.liquor, label: t.categoryAlcohol),
-    HomeCategoryItem(icon: Icons.cake, label: t.categoryDessert),
-    HomeCategoryItem(icon: Icons.delivery_dining, label: t.categoryDelivery),
-    HomeCategoryItem(icon: Icons.pets, label: t.categoryPets),
-    HomeCategoryItem(icon: Icons.phonelink, label: t.categoryElectronics),
-    HomeCategoryItem(icon: Icons.home, label: t.categoryHousehold),
-    HomeCategoryItem(icon: Icons.more_horiz, label: t.categoryMore),
+ return [
+    HomeCategoryItem(icon: Icons.percent, label: t.categoryDiscounts),
+    HomeCategoryItem(icon: Icons.kebab_dining, label: t.categoryPork),
+    HomeCategoryItem(icon: Icons.set_meal, label: t.categoryTonkatsuSashimi),
+    HomeCategoryItem(icon: Icons.local_pizza, label: t.categoryPizza),
+    HomeCategoryItem(icon: Icons.soup_kitchen, label: t.categoryStew),
+    HomeCategoryItem(icon: Icons.restaurant, label: t.categoryChinese),
+    HomeCategoryItem(icon: Icons.lunch_dining, label: t.categoryChicken),
+    HomeCategoryItem(icon: Icons.rice_bowl, label: t.categoryKorean),
+    HomeCategoryItem(icon: Icons.ramen_dining, label: t.categoryOneBowl),
+    HomeCategoryItem(icon: Icons.percent_outlined, label: t.categoryPichupDiscount),
   ];
 }
 

@@ -18,9 +18,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tabFoodDelivery => 'Essenslieferung';
 
   @override
-  String get tabStoreDelivery => 'Lieferung vom Geschäft';
-
-  @override
   String get tabGroceryShopping => 'Lebensmittel · Einkaufen';
 
   @override
@@ -33,37 +30,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tabBenefits => 'Angebote';
 
   @override
-  String get categoryFood => 'Essen';
+  String get categoryDiscounts => 'Tägliche Rabatte';
 
   @override
-  String get categoryGrocery => 'Supermarkt';
+  String get categoryPork => 'Schweinsfüße/Gekochtes Schweinefleisch';
 
   @override
-  String get categoryCafe => 'Café';
+  String get categoryTonkatsuSashimi => 'Tonkatsu und Sashimi';
 
   @override
-  String get categoryAlcohol => 'Alkohol';
+  String get categoryPizza => 'Pizza';
 
   @override
-  String get categoryDessert => 'Desserts';
+  String get categoryStew => 'Gedämpfter Eintopf';
 
   @override
-  String get categoryDelivery => 'Lieferung';
+  String get categoryChinese => 'Chinesisches Essen';
 
   @override
-  String get categoryPets => 'Haustiere';
+  String get categoryChicken => 'Huhn';
 
   @override
-  String get categoryElectronics => 'Elektronik';
+  String get categoryKorean => 'Koreanisches Essen';
 
   @override
-  String get categoryHousehold => 'Haushalt';
+  String get categoryOneBowl => 'Ein-Schüssel-Gerichte';
 
   @override
-  String get categoryMore => 'Mehr';
+  String get categoryPichupDiscount => 'Mehr';
 
   @override
-  String get helloWorld => 'Hallo Welt!';
+  String get seeMoreFoodDelivery => 'Mehr zum Thema Essenslieferung';
 
   @override
   String get changeLanguage => 'Sprache ändern';
@@ -102,7 +99,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorEnterEmailOrPassword => 'Bitte E-Mail und Passwort eingeben';
 
   @override
-  String get errorEnterRegInfo => 'Bitte geben Sie die erforderlichen Informationen für die Registrierung ein';
+  String get errorEnterRegInfo =>
+      'Bitte geben Sie die erforderlichen Informationen für die Registrierung ein';
 
   @override
   String get errorSelectImage => 'Bitte wählen Sie ein Bild aus';
@@ -117,10 +115,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorNoRecordFound => 'Kein Eintrag gefunden';
 
   @override
-  String get blockedAccountMessage => 'Der Administrator hat Ihr Konto gesperrt\n\nMail senden an: admin@gmail.com';
+  String get blockedAccountMessage =>
+      'Der Administrator hat Ihr Konto gesperrt\n\nMail senden an: admin@gmail.com';
 
   @override
-  String get networkUnavailable => 'Netzwerk nicht verfügbar. Bitte erneut versuchen';
+  String get networkUnavailable =>
+      'Netzwerk nicht verfügbar. Bitte erneut versuchen';
 
   @override
   String get errorFetchingUserData => 'Fehler beim Abrufen der Benutzerdaten';
@@ -129,6 +129,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String storageError(Object error) {
     return 'Speicherfehler: $error';
   }
+
+  @override
+  String get helloWorld => 'Hallo Welt!';
 
   @override
   String get welcomeMessage => 'Willkommen in unserer App!';

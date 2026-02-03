@@ -24,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> loginNow() async {
-    // Show loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -50,17 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (currentUser != null) {
-      // -----------------------------------------------------------------------
-      // This code needs to be commented out if using the app with FireStorage
-      // -----------------------------------------------------------------------
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-      // -----------------------------------------------------------------------
-
-      //await readDataAndSetDataLocally(currentUser);
+      await readDataAndSetDataLocally(currentUser);
     }
   }
 

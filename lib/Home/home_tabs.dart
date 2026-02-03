@@ -11,11 +11,10 @@ List<HomeTab> getHomeTabs(BuildContext context) {
   final t = context.t;
 
   return [
-    HomeTab(label: t.tabFoodDelivery),    
-    HomeTab(label: t.tabStoreDelivery),    
-    HomeTab(label: t.tabGroceryShopping),  
-    HomeTab(label: t.tabPickup),           
-    HomeTab(label: t.tabGifting),          
-    HomeTab(label: t.tabBenefits),        
+    HomeTab(label: t.tabFoodDelivery), 
+    HomeTab(label: t.tabPickup),      
+    HomeTab(label: t.tabGroceryShopping), 
+    HomeTab(label: t.tabGifting),       
+    HomeTab(label: t.tabBenefits),       
   ];
 }

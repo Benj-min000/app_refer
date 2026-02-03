@@ -1,159 +1,54 @@
 {
-  "@@locale": "ko",
-
-  "errorAddressNotFound": "Address not Found",
-  "@errorAddressNotFound": {},
-
-  "hintSearch": "음식이나 가게를 검색하세요",
-  "@hintSearch": {"description": "검색창 플레이스홀더 텍스트"},
-
-  "tabFoodDelivery": "음식배달",
-  "@tabFoodDelivery": {"description": "음식 배달 탭 레이블"},
-
-  "tabStoreDelivery": "가게배달",
-  "@tabStoreDelivery": {"description": "가게 배달 탭 레이블"},
-
-  "tabGroceryShopping": "장보기·쇼핑",
-  "@tabGroceryShopping": {"description": "장보기 및 쇼핑 탭 레이블"},
-
-  "tabPickup": "픽업",
-  "@tabPickup": {"description": "픽업 탭 레이블"},
-
-  "tabGifting": "선물하기",
-  "@tabGifting": {"description": "선물 보내기 탭 레이블"},
-
-  "tabBenefits": "혜택",
-  "@tabBenefits": {"description": "혜택 / 프로모션 탭 레이블"},
-
-  "categoryFood": "음식",
-  "@categoryFood": {"description": "음식 카테고리 레이블"},
-
-  "categoryGrocery": "마트",
-  "@categoryGrocery": {"description": "마트 / 식료품 카테고리 레이블"},
-
-  "categoryCafe": "카페",
-  "@categoryCafe": {"description": "카페 카테고리 레이블"},
-
-  "categoryAlcohol": "주류",
-  "@categoryAlcohol": {"description": "주류 카테고리 레이블"},
-
-  "categoryDessert": "디저트",
-  "@categoryDessert": {"description": "디저트 카테고리 레이블"},
-
-  "categoryDelivery": "배달",
-  "@categoryDelivery": {"description": "배달 카테고리 레이블"},
-
-  "categoryPets": "반려",
-  "@categoryPets": {"description": "반려동물 카테고리 레이블"},
-
-  "categoryElectronics": "전자",
-  "@categoryElectronics": {"description": "전자 제품 카테고리 레이블"},
-
-  "categoryHousehold": "생활",
-  "@categoryHousehold": {"description": "생활용품 카테고리 레이블"},
-
-  "categoryMore": "더보기",
-  "@categoryMore": {"description": "기타 카테고리 레이블"},
-
-  "helloWorld": "안녕하세요!",
-  "@helloWorld": {"description": "일반적인 인사 텍스트"},
-
-  "changeLanguage": "언어 변경",
-  "@changeLanguage": {"description": "언어 변경 버튼 또는 메뉴 레이블"},
-
-  "findingLocalization": "위치를 찾는 중...",
-  "@findingLocalization": {"description": "앱에서 위치를 찾는 동안 표시되는 텍스트"},
-
-  "hintName": "이름",
-  "@hintName": {"description": "이름 입력 필드 플레이스홀더"},
-
-  "hintEmail": "이메일",
-  "@hintEmail": {"description": "이메일 입력 필드 플레이스홀더"},
-
-  "hintPassword": "비밀번호",
-  "@hintPassword": {"description": "비밀번호 입력 필드 플레이스홀더"},
-
-  "hintConfPassword": "비밀번호 확인",
-  "@hintConfPassword": {"description": "비밀번호 확인 입력 필드 플레이스홀더"},
-
-  "login": "로그인",
-  "@login": {"description": "로그인 버튼 텍스트"},
-
-  "register": "회원가입",
-  "@register": {"description": "회원가입 버튼 텍스트"},
-
-  "signUp": "가입하기",
-  "@signUp": {"description": "계정 생성 버튼 텍스트"},
-
-  "registeringAccount": "계정 등록 중...",
-  "@registeringAccount": {"description": "계정 등록 진행 상태 텍스트"},
-
-  "checkingCredentials": "자격 증명 확인 중...",
-  "@checkingCredentials": {"description": "로그인 자격 증명 확인 중 상태 텍스트"},
-
-  "errorEnterEmailOrPassword": "이메일과 비밀번호를 입력하세요",
-  "@errorEnterEmailOrPassword": {"description": "이메일 또는 비밀번호 미입력 시 오류 메시지"},
-
-  "errorEnterRegInfo": "회원가입에 필요한 정보를 입력하세요",
-  "@errorEnterRegInfo": {"description": "회원가입 정보가 불완전할 때 오류 메시지"},
-
-  "errorSelectImage": "이미지를 선택하세요",
-  "@errorSelectImage": {"description": "이미지를 선택하지 않았을 때 오류 메시지"},
-
-  "errorNoMatchPasswords": "비밀번호가 일치하지 않습니다!",
-  "@errorNoMatchPasswords": {"description": "비밀번호 불일치 시 오류 메시지"},
-
-  "errorLoginFailed": "로그인 실패",
-  "@errorLoginFailed": {"description": "로그인 실패 시 오류 메시지"},
-
-  "errorNoRecordFound": "기록을 찾을 수 없습니다",
-  "@errorNoRecordFound": {"description": "데이터베이스에서 레코드가 없을 때 오류 메시지"},
-
-  "blockedAccountMessage": "관리자가 계정을 차단했습니다\n\n메일 보내기: admin@gmail.com",
-  "@blockedAccountMessage": {"description": "계정이 차단되었을 때 표시되는 메시지"},
-
-  "networkUnavailable": "네트워크를 사용할 수 없습니다. 다시 시도하세요",
-  "@networkUnavailable": {"description": "네트워크 오류 시 표시되는 메시지"},
-
-  "errorFetchingUserData": "사용자 데이터를 가져오는 중 오류 발생",
-  "@errorFetchingUserData": {"description": "사용자 데이터 가져오기 실패 시 오류 메시지"},
-
-  "storageError": "스토리지 오류: {error}",
-  "@storageError": {
-    "description": "스토리지 실패 시 표시되는 다이얼로그",
-    "placeholders": {"error": {}}
-  },
-
-  "welcomeMessage": "앱에 오신 것을 환영합니다!",
-  "@welcomeMessage": {"description": "홈 화면 환영 메시지"},
-
-  "payment": "결제",
-  "@payment": {"description": "결제 섹션 레이블"},
-
-  "checkout": "결제 진행",
-  "@checkout": {"description": "체크아웃 버튼 레이블"},
-
-  "totalAmount": "총 금액",
-  "@totalAmount": {"description": "총 금액 레이블"},
-
-  "orderSummary": "주문 요약",
-  "@orderSummary": {"description": "주문 요약 섹션 레이블"},
-
-  "settings": "설정",
-  "@settings": {"description": "설정 페이지 레이블"},
-
-  "offers": "혜택",
-  "@offers": {"description": "프로모션 / 혜택 섹션 레이블"},
-
-  "whatsOnYourMind": "무엇을 생각하고 계신가요?",
-  "@whatsOnYourMind": {"description": "사용자 의견 / 아이디어 섹션 제목"},
-
-  "bookDining": "식사 예약",
-  "@bookDining": {"description": "식사 예약 버튼 레이블"},
-
-  "softDrinks": "청량 음료",
-  "@softDrinks": {"description": "청량 음료 레이블"},
-
-  "deliveryTime": "45-50분",
-  "@deliveryTime": {"description": "예상 배달 시간"}
+    "@@locale": "ko",
+    "errorAddressNotFound": "Address not Found",
+    "hintSearch": "음식이나 가게를 검색하세요",
+    "tabFoodDelivery": "음식배달",
+    "tabGroceryShopping": "장보기·쇼핑",
+    "tabPickup": "픽업",
+    "tabGifting": "선물하기",
+    "tabBenefits": "혜택",
+    "categoryDiscounts": "일일 할인",
+    "categoryPork": "돼지족발/삶은 돼지고기",
+    "categoryTonkatsuSashimi": "돈까스 & 사시미",
+    "categoryPizza": "피자",
+    "categoryStew": "찜 스튜",
+    "categoryChinese": "중국 음식",
+    "categoryChicken": "닭",
+    "categoryKorean": "한국 음식",
+    "categoryOneBowl": "한 그릇 요리",
+    "categoryPichupDiscount": "더",
+    "seeMoreFoodDelivery": "음식 배달 관련 더 많은 정보를 보려면",
+    "changeLanguage": "언어 변경",
+    "findingLocalization": "위치를 찾는 중...",
+    "hintName": "이름",
+    "hintEmail": "이메일",
+    "hintPassword": "비밀번호",
+    "hintConfPassword": "비밀번호 확인",
+    "login": "로그인",
+    "register": "회원가입",
+    "signUp": "가입하기",
+    "registeringAccount": "계정 등록 중...",
+    "checkingCredentials": "자격 증명 확인 중...",
+    "errorEnterEmailOrPassword": "이메일과 비밀번호를 입력하세요",
+    "errorEnterRegInfo": "회원가입에 필요한 정보를 입력하세요",
+    "errorSelectImage": "이미지를 선택하세요",
+    "errorNoMatchPasswords": "비밀번호가 일치하지 않습니다!",
+    "errorLoginFailed": "로그인 실패",
+    "errorNoRecordFound": "기록을 찾을 수 없습니다",
+    "blockedAccountMessage": "관리자가 계정을 차단했습니다\n\n메일 보내기: admin@gmail.com",
+    "networkUnavailable": "네트워크를 사용할 수 없습니다. 다시 시도하세요",
+    "errorFetchingUserData": "사용자 데이터를 가져오는 중 오류 발생",
+    "storageError": "스토리지 오류: {error}",
+    "helloWorld": "안녕하세요!",
+    "welcomeMessage": "앱에 오신 것을 환영합니다!",
+    "payment": "결제",
+    "checkout": "결제 진행",
+    "totalAmount": "총 금액",
+    "orderSummary": "주문 요약",
+    "settings": "설정",
+    "offers": "혜택",
+    "whatsOnYourMind": "무엇을 생각하고 계신가요?",
+    "bookDining": "식사 예약",
+    "softDrinks": "청량 음료",
+    "deliveryTime": "45-50분"
 }

@@ -1,159 +1,54 @@
 {
-  "@@locale": "pl",
-
-  "errorAddressNotFound": "Address not Found",
-  "@errorAddressNotFound": {},
-
-  "hintSearch": "Wyszukaj dania lub sklepy",
-  "@hintSearch": {"description": "Placeholder text for search bar"},
-
-  "tabFoodDelivery": "Dostawa jedzenia",
-  "@tabFoodDelivery": {"description": "Tab label for Food Delivery"},
-
-  "tabStoreDelivery": "Dostawa ze sklepu",
-  "@tabStoreDelivery": {"description": "Tab label for Store Delivery"},
-
-  "tabGroceryShopping": "Zakupy spożywcze",
-  "@tabGroceryShopping": {"description": "Tab label for Grocery / Shopping"},
-
-  "tabPickup": "Odbiór osobisty",
-  "@tabPickup": {"description": "Tab label for Pickup orders"},
-
-  "tabGifting": "Wyślij prezent",
-  "@tabGifting": {"description": "Tab label for sending gifts"},
-
-  "tabBenefits": "Oferty",
-  "@tabBenefits": {"description": "Tab label for deals and offers"},
-
-  "categoryFood": "Jedzenie",
-  "@categoryFood": {"description": "Category label for Food"},
-
-  "categoryGrocery": "Sklep",
-  "@categoryGrocery": {"description": "Category label for Grocery / Supermarket"},
-
-  "categoryCafe": "Kawiarnia",
-  "@categoryCafe": {"description": "Category label for Cafe"},
-
-  "categoryAlcohol": "Alkohol",
-  "@categoryAlcohol": {"description": "Category label for Alcohol"},
-
-  "categoryDessert": "Desery",
-  "@categoryDessert": {"description": "Category label for Desserts"},
-
-  "categoryDelivery": "Dostawa",
-  "@categoryDelivery": {"description": "Category label for Delivery"},
-
-  "categoryPets": "Zwierzęta",
-  "@categoryPets": {"description": "Category label for Pets"},
-
-  "categoryElectronics": "Elektronika",
-  "@categoryElectronics": {"description": "Category label for Electronics"},
-
-  "categoryHousehold": "Dom",
-  "@categoryHousehold": {"description": "Category label for Household items"},
-
-  "categoryMore": "Więcej",
-  "@categoryMore": {"description": "Category label for More / Other items"},
-
-  "helloWorld": "Witaj świecie!",
-  "@helloWorld": {"description": "Generic hello world text"},
-
-  "changeLanguage": "Zmień język",
-  "@changeLanguage": {"description": "Button or menu label to change language"},
-
-  "findingLocalization": "Trwa lokalizowanie...",
-  "@findingLocalization": {"description": "Text shown while app detects location"},
-
-  "hintName": "Imię",
-  "@hintName": {"description": "Placeholder for name input field"},
-
-  "hintEmail": "Email",
-  "@hintEmail": {"description": "Placeholder for email input field"},
-
-  "hintPassword": "Hasło",
-  "@hintPassword": {"description": "Placeholder for password input field"},
-
-  "hintConfPassword": "Potwierdź hasło",
-  "@hintConfPassword": {"description": "Placeholder for confirm password input field"},
-
-  "login": "Zaloguj",
-  "@login": {"description": "Button text for login"},
-
-  "register": "Zarejestruj",
-  "@register": {"description": "Button text for register"},
-
-  "signUp": "Załóż konto",
-  "@signUp": {"description": "Button text for signing up"},
-
-  "registeringAccount": "Rejestrowanie konta...",
-  "@registeringAccount": {"description": "Status text while registering account"},
-
-  "checkingCredentials": "Sprawdzanie danych...",
-  "@checkingCredentials": {"description": "Status text while checking login credentials"},
-
-  "errorEnterEmailOrPassword": "Wprowadź email i hasło",
-  "@errorEnterEmailOrPassword": {"description": "Error when email or password is missing"},
-
-  "errorEnterRegInfo": "Wprowadź wymagane informacje do rejestracji",
-  "@errorEnterRegInfo": {"description": "Error when registration info is incomplete"},
-
-  "errorSelectImage": "Wybierz obraz",
-  "@errorSelectImage": {"description": "Error when no image is selected"},
-
-  "errorNoMatchPasswords": "Hasła nie są zgodne!",
-  "@errorNoMatchPasswords": {"description": "Error when passwords do not match"},
-
-  "errorLoginFailed": "Logowanie nieudane",
-  "@errorLoginFailed": {"description": "Error when login fails"},
-
-  "errorNoRecordFound": "Nie znaleziono rekordu",
-  "@errorNoRecordFound": {"description": "Error when no database record is found"},
-
-  "blockedAccountMessage": "Administrator zablokował Twoje konto\n\nWyślij maila na: admin@gmail.com",
-  "@blockedAccountMessage": {"description": "Message shown when account is blocked"},
-
-  "networkUnavailable": "Sieć niedostępna. Spróbuj ponownie",
-  "@networkUnavailable": {"description": "Error when network is unavailable"},
-
-  "errorFetchingUserData": "Błąd podczas pobierania danych użytkownika",
-  "@errorFetchingUserData": {"description": "Error when fetching user data fails"},
-
-  "storageError": "Błąd pamięci: {error}",
-  "@storageError": {
-    "description": "Error dialog when storage fails",
-    "placeholders": {"error": {}}
-  },
-
-  "welcomeMessage": "Witamy w naszej aplikacji!",
-  "@welcomeMessage": {"description": "Welcome message on home screen"},
-
-  "payment": "Płatność",
-  "@payment": {"description": "Label for payment section"},
-
-  "checkout": "Przejdź do kasy",
-  "@checkout": {"description": "Button label for checkout"},
-
-  "totalAmount": "Łączna kwota",
-  "@totalAmount": {"description": "Label for total amount"},
-
-  "orderSummary": "Podsumowanie zamówienia",
-  "@orderSummary": {"description": "Label for order summary section"},
-
-  "settings": "Ustawienia",
-  "@settings": {"description": "Label for settings page"},
-
-  "offers": "Oferty",
-  "@offers": {"description": "Label for offers section"},
-
-  "whatsOnYourMind": "O czym myślisz?",
-  "@whatsOnYourMind": {"description": "Section heading for user thoughts or suggestions"},
-
-  "bookDining": "Rezerwacja posiłku",
-  "@bookDining": {"description": "Button to book dining / table"},
-
-  "softDrinks": "Napoje bezalkoholowe",
-  "@softDrinks": {"description": "Label for soft drinks"},
-
-  "deliveryTime": "45-50 min",
-  "@deliveryTime": {"description": "Estimated delivery time"}
+    "@@locale": "pl",
+    "errorAddressNotFound": "Address not Found",
+    "hintSearch": "Wyszukaj dania lub sklepy",
+    "tabFoodDelivery": "Dostawa jedzenia",
+    "tabGroceryShopping": "Zakupy spożywcze",
+    "tabPickup": "Odbiór osobisty",
+    "tabGifting": "Wyślij prezent",
+    "tabBenefits": "Oferty",
+    "categoryDiscounts": "Codzienne zniżki",
+    "categoryPork": "Nóżki wieprzowe/Gotowana wieprzowina",
+    "categoryTonkatsuSashimi": "Tonkatsu i Sashimi",
+    "categoryPizza": "Pizza",
+    "categoryStew": "Gulasz na parze",
+    "categoryChinese": "Chińskie jedzenie",
+    "categoryChicken": "Kurczak",
+    "categoryKorean": "Koreańskie jedzenie",
+    "categoryOneBowl": "Posiłki jednogarnkowe",
+    "categoryPichupDiscount": "Więcej",
+    "seeMoreFoodDelivery": "Zobacz więcej w dostawie jedzenia",
+    "changeLanguage": "Zmień język",
+    "findingLocalization": "Trwa lokalizowanie...",
+    "hintName": "Imię",
+    "hintEmail": "Email",
+    "hintPassword": "Hasło",
+    "hintConfPassword": "Potwierdź hasło",
+    "login": "Zaloguj",
+    "register": "Zarejestruj",
+    "signUp": "Załóż konto",
+    "registeringAccount": "Rejestrowanie konta...",
+    "checkingCredentials": "Sprawdzanie danych...",
+    "errorEnterEmailOrPassword": "Wprowadź email i hasło",
+    "errorEnterRegInfo": "Wprowadź wymagane informacje do rejestracji",
+    "errorSelectImage": "Wybierz obraz",
+    "errorNoMatchPasswords": "Hasła nie są zgodne!",
+    "errorLoginFailed": "Logowanie nieudane",
+    "errorNoRecordFound": "Nie znaleziono rekordu",
+    "blockedAccountMessage": "Administrator zablokował Twoje konto\n\nWyślij maila na: admin@gmail.com",
+    "networkUnavailable": "Sieć niedostępna. Spróbuj ponownie",
+    "errorFetchingUserData": "Błąd podczas pobierania danych użytkownika",
+    "storageError": "Błąd pamięci: {error}",
+    "helloWorld": "Witaj świecie!",
+    "welcomeMessage": "Witamy w naszej aplikacji!",
+    "payment": "Płatność",
+    "checkout": "Przejdź do kasy",
+    "totalAmount": "Łączna kwota",
+    "orderSummary": "Podsumowanie zamówienia",
+    "settings": "Ustawienia",
+    "offers": "Oferty",
+    "whatsOnYourMind": "O czym myślisz?",
+    "bookDining": "Rezerwacja posiłku",
+    "softDrinks": "Napoje bezalkoholowe",
+    "deliveryTime": "45-50 min"
 }

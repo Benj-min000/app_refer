@@ -45,8 +45,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> formValidation() async {
     if (imageXFile == null) {
-      showDialog(context: context, builder: (_) => ErrorDialog(message: context.t.errorSelectImage)
+      showDialog(
+        context: context, 
+        builder: (_) => ErrorDialog(message: context.t.errorSelectImage)
       );
+      return;
     }
 
     if (_passwordController.text != _confirmePasswordController.text) {
@@ -55,61 +58,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-      showDialog(context: context, builder: (_) => LoadingDialog(message: context.t.registeringAccount));
+      showDialog(
+        context: context, 
+        barrierDismissible: false,
+        builder: (_) => LoadingDialog(message: context.t.registeringAccount)
+      );
+
       try {
-        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        UserCredential auth = await firebaseAuth.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
 
-        fStorage.Reference reference = fStorage.FirebaseStorage.instance
-          .ref()
-          .child('users')
-          .child(fileName);
+        User? currentUser = auth.user;
 
-        fStorage.UploadTask uploadTask = reference.putFile(File(imageXFile!.path));
+        if (currentUser != null) {
+          String fileName = currentUser.uid; 
+          fStorage.Reference reference = fStorage.FirebaseStorage.instance
+            .ref()
+            .child('users')
+            .child(fileName);
+          
+          fStorage.UploadTask uploadTask = reference.putFile(File(imageXFile!.path));
+          fStorage.TaskSnapshot taskSnapshot = await uploadTask;
 
-        fStorage.TaskSnapshot taskSnapshot = await uploadTask;
+          sellerImageUrl = await taskSnapshot.ref.getDownloadURL();
 
-        // Get the URL only AFTER success
-        sellerImageUrl = await taskSnapshot.ref.getDownloadURL();
+          await saveDataToFireStore(currentUser);
 
-        authenticateSellerAndSignUp();
-
+          if (!mounted) return;
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context, 
+            MaterialPageRoute(builder: (_) => const HomeScreen())
+          );
+        }
       } catch (error) {
           if(!mounted) return;
           Navigator.pop(context); 
-          showDialog(context: context, builder: (_) => ErrorDialog(message: context.t.storageError(error)));
+          showDialog(
+            context: context, 
+            builder: (_) => ErrorDialog(message: context.t.storageError(error))
+          );
         }
     } else {
       showDialog(
         context: context,
         builder: (_) => ErrorDialog(message: context.t.errorEnterRegInfo)
       );
-    }
-  }
-
-  Future<void> authenticateSellerAndSignUp() async {
-    User? currentUser;
-
-    await firebaseAuth.createUserWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    ).then((auth) {
-      currentUser = auth.user;
-    }).catchError((error) {
-      if(!mounted) return;
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (_) =>  ErrorDialog(message: error.message.toString())
-        );
-    });
-    if (currentUser != null) {
-      saveDataToFireStore(currentUser!).then((value) {
-        if(!mounted) return;
-        Navigator.pop(context);
-        Route newRoute =
-            MaterialPageRoute(builder: (context) => const HomeScreen());
-        Navigator.pushReplacement(context, newRoute);
-      });
     }
   }
 

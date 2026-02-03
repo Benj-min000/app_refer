@@ -20,8 +20,12 @@ migrate_working_dir/
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
 .vscode/
-/android/app/google-services.json
+./android/app/google-services.json
 
+translator_key
+clean.bat
+run.bat
+build_apk.bat
 
 # Flutter/Dart/Pub related
 **/doc/api/

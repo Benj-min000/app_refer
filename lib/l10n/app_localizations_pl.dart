@@ -18,9 +18,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get tabFoodDelivery => 'Dostawa jedzenia';
 
   @override
-  String get tabStoreDelivery => 'Dostawa ze sklepu';
-
-  @override
   String get tabGroceryShopping => 'Zakupy spożywcze';
 
   @override
@@ -33,37 +30,37 @@ class AppLocalizationsPl extends AppLocalizations {
   String get tabBenefits => 'Oferty';
 
   @override
-  String get categoryFood => 'Jedzenie';
+  String get categoryDiscounts => 'Codzienne zniżki';
 
   @override
-  String get categoryGrocery => 'Sklep';
+  String get categoryPork => 'Nóżki wieprzowe/Gotowana wieprzowina';
 
   @override
-  String get categoryCafe => 'Kawiarnia';
+  String get categoryTonkatsuSashimi => 'Tonkatsu i Sashimi';
 
   @override
-  String get categoryAlcohol => 'Alkohol';
+  String get categoryPizza => 'Pizza';
 
   @override
-  String get categoryDessert => 'Desery';
+  String get categoryStew => 'Gulasz na parze';
 
   @override
-  String get categoryDelivery => 'Dostawa';
+  String get categoryChinese => 'Chińskie jedzenie';
 
   @override
-  String get categoryPets => 'Zwierzęta';
+  String get categoryChicken => 'Kurczak';
 
   @override
-  String get categoryElectronics => 'Elektronika';
+  String get categoryKorean => 'Koreańskie jedzenie';
 
   @override
-  String get categoryHousehold => 'Dom';
+  String get categoryOneBowl => 'Posiłki jednogarnkowe';
 
   @override
-  String get categoryMore => 'Więcej';
+  String get categoryPichupDiscount => 'Więcej';
 
   @override
-  String get helloWorld => 'Witaj świecie!';
+  String get seeMoreFoodDelivery => 'Zobacz więcej w dostawie jedzenia';
 
   @override
   String get changeLanguage => 'Zmień język';
@@ -117,18 +114,23 @@ class AppLocalizationsPl extends AppLocalizations {
   String get errorNoRecordFound => 'Nie znaleziono rekordu';
 
   @override
-  String get blockedAccountMessage => 'Administrator zablokował Twoje konto\n\nWyślij maila na: admin@gmail.com';
+  String get blockedAccountMessage =>
+      'Administrator zablokował Twoje konto\n\nWyślij maila na: admin@gmail.com';
 
   @override
   String get networkUnavailable => 'Sieć niedostępna. Spróbuj ponownie';
 
   @override
-  String get errorFetchingUserData => 'Błąd podczas pobierania danych użytkownika';
+  String get errorFetchingUserData =>
+      'Błąd podczas pobierania danych użytkownika';
 
   @override
   String storageError(Object error) {
     return 'Błąd pamięci: $error';
   }
+
+  @override
+  String get helloWorld => 'Witaj świecie!';
 
   @override
   String get welcomeMessage => 'Witamy w naszej aplikacji!';

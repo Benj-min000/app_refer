@@ -38,6 +38,8 @@ dependencies:
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
   country_flags: ^4.1.2
+  google_maps_flutter: ^2.14.0
+  auto_translator: ^2.3.5
 
 dev_dependencies:
   flutter_test:

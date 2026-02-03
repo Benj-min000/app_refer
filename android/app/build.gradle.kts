@@ -5,6 +5,8 @@ plugins {
     id("com.google.gms.google-services")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
+    
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
