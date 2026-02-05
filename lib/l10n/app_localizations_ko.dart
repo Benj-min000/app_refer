@@ -12,6 +12,29 @@ class AppLocalizationsKo extends AppLocalizations {
   String get errorAddressNotFound => 'Address not Found';
 
   @override
+  String get unknownLocation => '위치 알 수 없음';
+
+  @override
+  String get searchAddress => '주소 검색...';
+
+  @override
+  String errorReverseGeo(Object error) {
+    return '역지오코딩 오류: $error';
+  }
+
+  @override
+  String get goBack => '뒤로 가기';
+
+  @override
+  String get suggestedMatch => '추천 매치';
+
+  @override
+  String get confirmContinue => '확인 후 계속 진행';
+
+  @override
+  String get refreshLocation => '위치 새로 고침';
+
+  @override
   String get hintSearch => '음식이나 가게를 검색하세요';
 
   @override

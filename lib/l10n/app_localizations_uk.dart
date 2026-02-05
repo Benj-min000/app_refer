@@ -12,6 +12,29 @@ class AppLocalizationsUk extends AppLocalizations {
   String get errorAddressNotFound => 'Address not Found';
 
   @override
+  String get unknownLocation => 'Невідоме місцезнаходження';
+
+  @override
+  String get searchAddress => 'Пошук адреси...';
+
+  @override
+  String errorReverseGeo(Object error) {
+    return 'Помилка зворотного геокодування: $error';
+  }
+
+  @override
+  String get goBack => 'Назад';
+
+  @override
+  String get suggestedMatch => 'Пропонований збіг';
+
+  @override
+  String get confirmContinue => 'Підтвердити та продовжити';
+
+  @override
+  String get refreshLocation => 'Оновити місцезнаходження';
+
+  @override
   String get hintSearch => 'Пошук страв або магазинів';
 
   @override

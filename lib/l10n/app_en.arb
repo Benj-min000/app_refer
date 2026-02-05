@@ -4,7 +4,30 @@
   "errorAddressNotFound": "Address not Found",
   "@errorAddressNotFound": {},
 
+  "unknownLocation": "Unknown Location",
+  "@unknownLocation": {},
 
+  "searchAddress": "Search address...",
+  "@searchAddress": {},
+
+  "errorReverseGeo": "Error reverse geocoding: {error}",
+  "@errorReverseGeo": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+
+  "goBack": "Go Back",
+  "@goBack": {},
+
+  "suggestedMatch": "Suggested match",
+  "@suggestedMatch": {},
+
+  "confirmContinue": "Confirm & Continue",
+  "@confirmContinue": {},
+
+  "refreshLocation": "Refresh Location",
+  "@refreshLocation": {},
 
   "hintSearch": "Find it! Delicious Dishes",
   "@hintSearch": {"description": "Placeholder text for the search bar"},

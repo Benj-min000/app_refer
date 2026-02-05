@@ -54,7 +54,6 @@ void addItemToCart(String? foodItemId, BuildContext context, int itemCounter) {
     sharedPreferences!.setStringList("userCart", tempList);
 
     //update the page
-
     Provider.of<CartItemCounter>(context, listen: false)
         .displayCartListItemsNumber();
   });

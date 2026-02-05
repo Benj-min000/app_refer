@@ -1,6 +1,13 @@
 {
     "@@locale": "uk",
     "errorAddressNotFound": "Address not Found",
+    "unknownLocation": "Невідоме місцезнаходження",
+    "searchAddress": "Пошук адреси...",
+    "errorReverseGeo": "Помилка зворотного геокодування: {error}",
+    "goBack": "Назад",
+    "suggestedMatch": "Пропонований збіг",
+    "confirmContinue": "Підтвердити та продовжити",
+    "refreshLocation": "Оновити місцезнаходження",
     "hintSearch": "Пошук страв або магазинів",
     "tabFoodDelivery": "Доставка їжі",
     "tabGroceryShopping": "Продукти · Покупки",

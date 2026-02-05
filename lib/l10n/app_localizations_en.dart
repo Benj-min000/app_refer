@@ -12,6 +12,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorAddressNotFound => 'Address not Found';
 
   @override
+  String get unknownLocation => 'Unknown Location';
+
+  @override
+  String get searchAddress => 'Search address...';
+
+  @override
+  String errorReverseGeo(Object error) {
+    return 'Error reverse geocoding: $error';
+  }
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get suggestedMatch => 'Suggested match';
+
+  @override
+  String get confirmContinue => 'Confirm & Continue';
+
+  @override
+  String get refreshLocation => 'Refresh Location';
+
+  @override
   String get hintSearch => 'Find it! Delicious Dishes';
 
   @override

@@ -110,6 +110,48 @@ abstract class AppLocalizations {
   /// **'Address not Found'**
   String get errorAddressNotFound;
 
+  /// No description provided for @unknownLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Location'**
+  String get unknownLocation;
+
+  /// No description provided for @searchAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Search address...'**
+  String get searchAddress;
+
+  /// No description provided for @errorReverseGeo.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reverse geocoding: {error}'**
+  String errorReverseGeo(Object error);
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// No description provided for @suggestedMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested match'**
+  String get suggestedMatch;
+
+  /// No description provided for @confirmContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Continue'**
+  String get confirmContinue;
+
+  /// No description provided for @refreshLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Location'**
+  String get refreshLocation;
+
   /// Placeholder text for the search bar
   ///
   /// In en, this message translates to:

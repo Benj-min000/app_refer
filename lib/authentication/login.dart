@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> formValidation() async {
     if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-      await loginNow(); // login
+      await loginNow();
     } else {
       showDialog(
         context: context,
@@ -126,6 +126,14 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    
+    super.dispose();
   }
 
   @override

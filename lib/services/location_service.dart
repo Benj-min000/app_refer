@@ -5,41 +5,6 @@ import 'package:geolocator/geolocator.dart';
 class LocationService {
   static final String googleMapsApiKey = "AIzaSyB8ddVBv7Ash6VkOqZ772T6iRM4YBh6uag";
 
-  static Future<Map<String, dynamic>> getUserLocationAddressFromOSM(
-    double lat, 
-    double lon, 
-    String languageCode
-    ) async {
-
-    final url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon';
-    
-    final response = await http.get(
-      Uri.parse(url), 
-      headers: {
-        'User-Agent': 'AppRefer_Flutter_App_v1.0',
-        'Accept-Language': languageCode,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      
-      // The 'address' field in OSM is a nested Map with clean keys
-      final addressInfo = data['address'] as Map<String, dynamic>;
-
-      return {
-        'fullAddress': data['display_name'], // The long string
-        'houseNumber': addressInfo['house_number'] ?? '',
-        'road': addressInfo['road'] ?? '',
-        'city': addressInfo['city'] ?? addressInfo['town'] ?? addressInfo['village'] ?? '',
-        'state': addressInfo['state'] ?? '',
-        'postcode': addressInfo['postcode'] ?? '',
-      };
-    } else {
-      throw Exception('Server error OSM: ${response.statusCode}');
-    }
-  }
-
   static Future<Map<String, dynamic>> getUserLocationAddressFromGoogle(
     double lat, 
     double lon, 

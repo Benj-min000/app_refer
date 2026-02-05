@@ -1,6 +1,13 @@
 {
     "@@locale": "de",
     "errorAddressNotFound": "Address not Found",
+    "unknownLocation": "Unbekannter Ort",
+    "searchAddress": "Adresse suchen...",
+    "errorReverseGeo": "Fehler bei der umgekehrten Geokodierung: {error}",
+    "goBack": "Geh zurück",
+    "suggestedMatch": "Vorschlag für eine passende Übereinstimmung",
+    "confirmContinue": "Bestätigen & Fortfahren",
+    "refreshLocation": "Standort aktualisieren",
     "hintSearch": "Suche nach Gerichten oder Geschäften",
     "tabFoodDelivery": "Essenslieferung",
     "tabGroceryShopping": "Lebensmittel · Einkaufen",

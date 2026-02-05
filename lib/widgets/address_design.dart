@@ -8,8 +8,7 @@ import 'package:user_app/models/address.dart';
 import 'package:user_app/global/global.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
-
-// import '../maps/maps.dart';
+import "package:user_app/mainScreens/map_screen.dart";
 
 class AddressDesign extends StatefulWidget {
   final Address? model;
@@ -148,19 +147,17 @@ class _AddressDesignState extends State<AddressDesign> {
                     children: [
                       TextButton.icon(
                         onPressed: () async {
-                          // LAST WORKED HERE
-
-                          // Map<String, double>? coords = await LocationService.getUserCurrentCoordinates();
-                          // if (!mounted) return;
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (_) => MapScreen(
-                          //         initialLat: coords?['lat'],
-                          //         initialLng: coords?['lng'],
-                          //       )
-                          //     ),
-                          //   );
+                          if (!mounted) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MapScreen(
+                                  initialLat: double.parse(widget.model?.lat ?? '0.0'),
+                                  initialLng: double.parse(widget.model?.lng ?? '0.0'),
+                                  isSightSeeing: true,
+                                )
+                              ),
+                            );
                         },
                         icon: const Icon(Icons.map_outlined, size: 18),
                         label: const Text("See in Maps"),

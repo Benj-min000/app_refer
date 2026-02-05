@@ -2,13 +2,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:user_app/services/location_service.dart'; // Using your existing service
+
+import 'package:user_app/services/location_service.dart';
+import 'package:provider/provider.dart';
+import 'package:user_app/localization/locale_provider.dart';
+
+import 'package:user_app/extensions/context_translate_ext.dart';
+import 'package:user_app/widgets/loading_dialog.dart';
 
 class MapScreen extends StatefulWidget {
   final double? initialLat;
   final double? initialLng;
+  final bool isSightSeeing;
 
-  const MapScreen({super.key, this.initialLat, this.initialLng});
+  const MapScreen({super.key, this.initialLat, this.initialLng, this.isSightSeeing = false});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -16,11 +23,23 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController _mapController;
-  String _currentAddress = "Select location...";
-  late LatLng _pickedLocation; // Default
+
+  String _currentAddress = "";
+
+  late LatLng _pickedLocation;
   
+  // List of search suggestions
   List<dynamic> _suggestions = [];
+
   final String _googleMapsApiKey = LocationService.googleMapsApiKey;
+
+  void _refreshCamera() {
+    _mapController.animateCamera(
+    CameraUpdate.newLatLng(
+      LatLng(widget.initialLat ?? 0.0, widget.initialLng ?? 0.0),
+    )
+    );
+  }
 
   // Logic to fetch suggestions as user types
   void _getSuggestions(String input) async {
@@ -61,17 +80,24 @@ class _MapScreenState extends State<MapScreen> {
 
   void _reverseGeocode(LatLng location) async {
     try {
-      // Reusing your existing LocationService logic
+      final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+      final languageCode = localeProvider.locale.languageCode;
+      
       final result = await LocationService.getUserLocationAddressFromGoogle(
         location.latitude, 
         location.longitude, 
-        "en" // You can pass your dynamic languageCode here
+        languageCode,
       );
       setState(() {
-        _currentAddress = result['fullAddress'] ?? "Unknown Location";
+        _currentAddress = result['fullAddress'] ?? context.t.unknownLocation;
       });
     } catch (e) {
-      debugPrint("Error reverse geocoding: $e");
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => LoadingDialog(message: context.t.errorReverseGeo(e)),
+      );
     }
   }
 
@@ -85,7 +111,7 @@ class _MapScreenState extends State<MapScreen> {
       widget.initialLng ?? -122.0841,
     );
     
-    // If we have coordinates, start reverse geocoding immediately
+    // If we have coordinates, reverse geocoding immediately
     if (widget.initialLat != null && widget.initialLng != null) {
       _reverseGeocode(_pickedLocation);
     }
@@ -93,6 +119,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+
     return Scaffold(
       resizeToAvoidBottomInset: false, // Prevents map jumping when keyboard opens
       body: Stack(
@@ -122,8 +150,8 @@ class _MapScreenState extends State<MapScreen> {
                 Card(
                   elevation: 4,
                   child: TextField(
-                    decoration: const InputDecoration(
-                      hintText: 'Search address...',
+                    decoration: InputDecoration(
+                      hintText: context.t.searchAddress,
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(15),
@@ -175,7 +203,7 @@ class _MapScreenState extends State<MapScreen> {
                               ),
                             ),
                             subtitle: index == 0 
-                                ? const Text("Suggested match", style: TextStyle(fontSize: 11, color: Colors.blue))
+                                ? Text(context.t.suggestedMatch, style: TextStyle(fontSize: 11, color: Colors.blue))
                                 : null,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                             hoverColor: Colors.blue.shade50,
@@ -189,40 +217,11 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
           Positioned(
-            top: 40,
-            left: 20,
-            child: InkWell(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.95), // Slightly transparent
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Text(
-                  "Go Back",
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
             bottom: 30,
             left: 20,
             right: 20,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: double.infinity,
@@ -230,31 +229,85 @@ class _MapScreenState extends State<MapScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
+                    boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
                   ),
-                  child: Text(_currentAddress, 
+                  child: Text(
+                    _currentAddress,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.w500)),
-                ),
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    minimumSize: const Size.fromHeight(55),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  onPressed: () async {
-                    // Fetch full data one last time to ensure all fields (postcode, etc) are current
-                    final fullData = await LocationService.getUserLocationAddressFromGoogle(
-                      _pickedLocation.latitude, 
-                      _pickedLocation.longitude, 
-                      "en"
-                    );
+                ),
+
+                const SizedBox(height: 15),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 55,
+                      width: 140,
+                      child: ElevatedButton.icon(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          size: 24,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlue,
+                          foregroundColor: Colors.white, 
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          elevation: 2,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        label: Text(context.t.goBack, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
                     
-                    if (mounted) Navigator.pop(context, fullData);
-                  },
-                  child: const Text("Confirm & Continue", 
-                    style: TextStyle(color: Colors.white, fontSize: 16)),
+                    if (widget.isSightSeeing == false) ...[
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SizedBox(
+                          height: 55, 
+                          child: ElevatedButton.icon(
+                            icon: Icon(Icons.check, size: 24),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 2,
+                            ),
+                            onPressed: () async {
+                              final fullData = await LocationService.getUserLocationAddressFromGoogle(
+                                _pickedLocation.latitude, 
+                                _pickedLocation.longitude, 
+                                localeProvider.locale.languageCode,
+                              );
+                              if (mounted) Navigator.pop(context, fullData);
+                            },
+                            label: Text(context.t.confirmContinue, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ),
+                    ] else 
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SizedBox(
+                          height: 55, 
+                          child: ElevatedButton.icon(
+                            icon: Icon(Icons.refresh, size: 24),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 2,
+                            ),
+                            onPressed: () async {
+                              _refreshCamera();
+                            },
+                            label: Text(context.t.refreshLocation, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),

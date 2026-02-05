@@ -1,12 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:user_app/mainScreens/save_address_screen.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/widgets/address_design.dart';
+import 'package:user_app/assistant_methods/address_changer.dart';
+
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/simple_Appbar.dart';
 
-import 'package:user_app/assistant_methods/address_changer.dart';
 import 'package:user_app/global/global.dart';
 
 import "package:user_app/services/location_service.dart";
@@ -31,6 +35,18 @@ class _AddressScreenState extends State<AddressScreen> {
   Locale? _lastLocale;
 
   int? _lastAddressIndex;
+
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (mounted) {
+        _updateAddress();
+      }
+    });
+  }
   
   @override
   void didChangeDependencies() {
@@ -42,19 +58,16 @@ class _AddressScreenState extends State<AddressScreen> {
     // Listening for chaning the address
     final addressProvider = Provider.of<AddressChanger>(context);
 
-    // Updating the address every time we change the language
     if (_lastLocale != localeProvider.locale || 
       _lastAddressIndex != addressProvider.count) {
     
       _lastLocale = localeProvider.locale;
       _lastAddressIndex = addressProvider.count;
 
-      // Only update the address if the language or selection changed
       _updateAddress();
     }
   }
 
-  // The core function that handles the logic between GPS and Saved Addresses
   void _updateAddress() async {
     final addressProvider = Provider.of<AddressChanger>(context, listen: false);
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
@@ -86,6 +99,7 @@ class _AddressScreenState extends State<AddressScreen> {
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     super.dispose();
   }
 

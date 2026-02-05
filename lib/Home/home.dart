@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:user_app/cake/cakeItems.dart';
+
 import 'package:user_app/restaurent/restaurent1.dart';
 import 'package:user_app/restaurent/restaurent2.dart';
 import 'package:user_app/restaurent/restaurent3.dart';
 import 'package:user_app/restaurent/restaurent4.dart';
 import 'package:user_app/restaurent/restaurent5.dart';
-import 'package:user_app/Home/HomeLargeItems.dart';
-import 'package:user_app/Home/HomePageItems3.dart';
+
 import 'package:user_app/Home/HomePageMediumItems.dart';
+import 'package:user_app/Home/HomeLargeItems.dart';
+
+import 'package:user_app/Home/HomePageItems3.dart';
 import 'package:user_app/Home/HomepageItems4.dart';
 
 import "package:user_app/services/location_service.dart";
@@ -35,32 +39,40 @@ class _DiningPagePageState extends State<Home> {
   String _location = "";
 
   // State variable for changing the visibility of the whole address
-  //  false: address in 1 line
-  //  true: address in 2 or more lines
   bool _showFullAddress = false;
 
   Locale? _lastLocale;
   
   int? _lastAddressIndex;
 
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (mounted) {
+        _updateAddress();
+      }
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     // Listening for changing the language
     final localeProvider = Provider.of<LocaleProvider>(context);
 
     // Listening for chaning the address
     final addressProvider = Provider.of<AddressChanger>(context);
 
-    // Updating the address every time we change the language
+    // Updating the address
     if (_lastLocale != localeProvider.locale || 
       _lastAddressIndex != addressProvider.count) {
     
       _lastLocale = localeProvider.locale;
       _lastAddressIndex = addressProvider.count;
 
-      // Only update the address if the language or selection changed
       _updateAddress();
     }
   }
@@ -68,7 +80,6 @@ class _DiningPagePageState extends State<Home> {
   void _updateAddress() async {
     final addressProvider = Provider.of<AddressChanger>(context, listen: false);
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-
     // Check if the user has selected a saved address (index >= 0)
     if (addressProvider.count >= 0) {
       setState(() {
@@ -95,6 +106,7 @@ class _DiningPagePageState extends State<Home> {
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -150,7 +162,6 @@ class _DiningPagePageState extends State<Home> {
                         Icons.location_on, 
                         color: Colors.white, 
                         size: 24,
-                    
                       ),
                       onPressed: () {
                         Navigator.push(context,
@@ -169,10 +180,8 @@ class _DiningPagePageState extends State<Home> {
                           fontSize: 14, 
                           fontWeight: FontWeight.bold
                         ),
-
                         maxLines: _showFullAddress ? null : 1, 
                         overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
-
                       ),
                     ),
 
@@ -210,7 +219,6 @@ class _DiningPagePageState extends State<Home> {
             ),
           ),
 
-          // Horizontal TabBar
           TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
@@ -223,8 +231,7 @@ class _DiningPagePageState extends State<Home> {
             padding: EdgeInsets.zero, 
             tabs: homeTabs.map((tab) => Tab(text: tab.label)).toList(),
           ),
-          
-          // Category Grid
+
           Padding(
             padding: const EdgeInsets.only(
               left: 16.0, 
@@ -254,7 +261,6 @@ class _DiningPagePageState extends State<Home> {
                 builder: (context) {
                   final currentTabIndex = DefaultTabController.of(context).index;
                   final currentTabLabel = homeTabs[currentTabIndex].label;
-
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -277,7 +283,6 @@ class _DiningPagePageState extends State<Home> {
 
           const SizedBox(height: 30),
 
-          // Your Existing Widgets (unchanged)
           const SizedBox(height: 250, width: double.infinity, child: HomeLargeItems()),
           const Padding(
             padding: EdgeInsets.all(20.0),
@@ -313,7 +318,7 @@ class _DiningPagePageState extends State<Home> {
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text('FEATURES',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
         ],
       ),

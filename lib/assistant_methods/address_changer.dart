@@ -21,6 +21,4 @@ class AddressChanger extends ChangeNotifier {
     _totalSavedAddresses = count;
     notifyListeners();
   }
-
-  String get nextAddressLabel => "Address ${_totalSavedAddresses + 1}";
 }

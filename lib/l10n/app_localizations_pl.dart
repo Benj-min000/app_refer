@@ -12,6 +12,29 @@ class AppLocalizationsPl extends AppLocalizations {
   String get errorAddressNotFound => 'Address not Found';
 
   @override
+  String get unknownLocation => 'Nieznana lokalizacja';
+
+  @override
+  String get searchAddress => 'Wyszukaj adres...';
+
+  @override
+  String errorReverseGeo(Object error) {
+    return 'Błąd odwrotnego geokodowania: $error';
+  }
+
+  @override
+  String get goBack => 'Wróć';
+
+  @override
+  String get suggestedMatch => 'Sugerowane dopasowanie';
+
+  @override
+  String get confirmContinue => 'Potwierdź i kontynuuj';
+
+  @override
+  String get refreshLocation => 'Odśwież lokalizację';
+
+  @override
   String get hintSearch => 'Wyszukaj dania lub sklepy';
 
   @override
