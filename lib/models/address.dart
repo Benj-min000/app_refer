@@ -1,10 +1,7 @@
-// import "package:flutter/material.dart";
-
 class Address {
-  String? name;
-  String? phoneNumber;
+  String? label;
+  String? houseNumber;
   String? flatNumber;
-
   String? city;
   String? state;
   String? fullAddress;
@@ -12,19 +9,19 @@ class Address {
   String? lng;
 
   Address(
-      {this.name,
-      this.phoneNumber,
+      {this.label,
+      this.houseNumber,
       this.flatNumber,
       this.city,
       this.state,
       this.fullAddress,
-      this.lat,
+      this.lat, 
       this.lng});
 
   Address.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    phoneNumber = json['phoneNumber'];
+    label = json['label'];
     flatNumber = json['flatNumber'];
+    houseNumber = json['houseNumber'];
     city = json['city'];
     state = json['state'];
     fullAddress = json['fullAddress'];
@@ -38,8 +35,8 @@ class Address {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['name'] = name;
-    data['phoneNumber'] = phoneNumber;
+    data['label'] = label;
+    data['houseNumber'] = houseNumber;
     data['flatNumber'] = flatNumber;
     data['city'] = city;
     data['state'] = state;

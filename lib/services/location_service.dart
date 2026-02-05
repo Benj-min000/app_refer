@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-  static const String _googleMapsApiKey = "AIzaSyB8ddVBv7Ash6VkOqZ772T6iRM4YBh6uag";
+  static final String googleMapsApiKey = "AIzaSyB8ddVBv7Ash6VkOqZ772T6iRM4YBh6uag";
 
   static Future<Map<String, dynamic>> getUserLocationAddressFromOSM(
     double lat, 
@@ -44,9 +44,8 @@ class LocationService {
     double lat, 
     double lon, 
     String languageCode,
-  ) async {
-    
-    final url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lon&language=$languageCode&key=$_googleMapsApiKey';
+  ) async {    
+    final url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lon&language=$languageCode&key=$googleMapsApiKey';
 
     final response = await http.get(Uri.parse(url));
 
@@ -68,12 +67,15 @@ class LocationService {
         return {
           'fullAddress': result['formatted_address'],
           'houseNumber': findComponent('street_number'),
+          'subpremise': findComponent('subpremise'),
           'road': findComponent('route'),
           'city': findComponent('locality').isNotEmpty 
                   ? findComponent('locality') 
                   : findComponent('administrative_area_level_2'),
           'state': findComponent('administrative_area_level_1'),
-          'postcode': findComponent('postal_code'),
+          'postCode': findComponent('postal_code'),
+          'lat': lat,
+          'lng': lon,
         };
       } else {
         throw Exception('Google API Error: ${data['status']} - ${data['error_message'] ?? ''}');
@@ -109,18 +111,35 @@ class LocationService {
       
       Position position = await Geolocator.getCurrentPosition(locationSettings: locationSettings);
 
-      final osmData = await getUserLocationAddressFromGoogle(position.latitude, position.longitude, languageCode);
+      final mapData = await getUserLocationAddressFromGoogle(position.latitude, position.longitude, languageCode);
 
       return {
-        'fullAddress': osmData['fullAddress'],
-        'houseNumber': osmData['houseNumber'],
-        'road': osmData['road'],
-        'city': osmData['city'],
-        'state': osmData['state'],
+        'fullAddress': mapData['fullAddress'],
+        'houseNumber': mapData['houseNumber'],
+        'subpremise': mapData['subpremise'],
+        'road': mapData['road'],
+        'city': mapData['city'],
+        'state': mapData['state'],
+        'postCode': mapData['postCode'],
+        'lat': mapData['lat'],
+        'lng': mapData['lng'],
+      };
+
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  static Future<Map<String, double>?> getUserCurrentCoordinates() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high)
+      );
+
+      return {
         'lat': position.latitude,
         'lng': position.longitude,
       };
-
     } catch (e) {
       throw Exception(e.toString());
     }

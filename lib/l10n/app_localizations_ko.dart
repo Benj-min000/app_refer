@@ -60,7 +60,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categoryPichupDiscount => '더';
 
   @override
-  String get seeMoreFoodDelivery => '음식 배달 관련 더 많은 정보를 보려면';
+  String seeMore(Object tab) {
+    return '$tab에서 더 자세히 알아보세요.';
+  }
 
   @override
   String get changeLanguage => '언어 변경';

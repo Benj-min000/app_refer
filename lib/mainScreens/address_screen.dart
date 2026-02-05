@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:user_app/mainScreens/save_address_screen.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/simple_Appbar.dart';
 
-import '../assistant_methods/address_changer.dart';
-import '../global/global.dart';
+import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/global/global.dart';
+
+import "package:user_app/services/location_service.dart";
+import 'package:provider/provider.dart';
+import 'package:user_app/localization/locale_provider.dart';
+
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class AddressScreen extends StatefulWidget {
   final double? totolAmmount;
@@ -21,6 +26,69 @@ class AddressScreen extends StatefulWidget {
 }
 
 class _AddressScreenState extends State<AddressScreen> {
+  String _location = "";
+
+  Locale? _lastLocale;
+
+  int? _lastAddressIndex;
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Listening for changing the language
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
+    // Listening for chaning the address
+    final addressProvider = Provider.of<AddressChanger>(context);
+
+    // Updating the address every time we change the language
+    if (_lastLocale != localeProvider.locale || 
+      _lastAddressIndex != addressProvider.count) {
+    
+      _lastLocale = localeProvider.locale;
+      _lastAddressIndex = addressProvider.count;
+
+      // Only update the address if the language or selection changed
+      _updateAddress();
+    }
+  }
+
+  // The core function that handles the logic between GPS and Saved Addresses
+  void _updateAddress() async {
+    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+
+    if (addressProvider.count >= 0) {
+      if (mounted) {
+        setState(() {
+          _location = addressProvider.selectedAddress;
+        });
+      }
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _location = context.t.findingLocalization;
+      });
+    }
+
+    final languageCode = localeProvider.locale.languageCode;
+    final Map<String, dynamic> addressMap = await LocationService.fetchUserLocationAddress(languageCode);
+
+    if (mounted) {
+      setState(() {
+        _location = addressMap['fullAddress'] ?? context.t.errorAddressNotFound;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +97,11 @@ class _AddressScreenState extends State<AddressScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SaveAddressScreen()));
-          // save address
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => SaveAddressScreen()));
         },
-        label: const Text("Add New Address"),
+        label: const Text("Add New Address", style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.redAccent,
         icon: const Icon(
           Icons.add_location,
@@ -41,22 +109,26 @@ class _AddressScreenState extends State<AddressScreen> {
         ),
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                "Select Address",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              "Select Address", 
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+                color: Colors.black54,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    offset: const Offset(2, 2), 
+                    blurRadius: 4,        
+                  ),
+                ],
               ),
-            ),
+            )
           ),
           Consumer<AddressChanger>(builder: (context, address, c) {
             return Flexible(
@@ -67,34 +139,123 @@ class _AddressScreenState extends State<AddressScreen> {
                     .collection("userAddress")
                     .snapshots(),
                 builder: (context, snapshot) {
-                  return !snapshot.hasData
-                      ? Center(
-                          child: circularProgress(),
-                        )
-                      : snapshot.data!.docs.isEmpty
-                          ? Container()
-                          : ListView.builder(
-                              itemCount: snapshot.data!.docs.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return AddressDesign(
-                                  curretIndex: address.count,
-                                  value: index,
-                                  addressID: snapshot.data!.docs[index].id,
-                                  totolAmmount: widget.totolAmmount,
-                                  sellerUID: widget.sellerUID,
-                                  model: Address.fromJson(
-                                      snapshot.data!.docs[index].data()!
-                                          as Map<String, dynamic>),
-                                );
-                              },
-                            );
+                  if (!snapshot.hasData) {
+                    return Center(child: circularProgress());
+                  }
+                  int savedAddressesCount = snapshot.data!.docs.length;
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Provider.of<AddressChanger>(context, listen: false)
+                      .setTotalSavedAddresses(savedAddressesCount);
+                  });
+                  
+                  return ListView.builder(
+                    itemCount: savedAddressesCount + 2,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    itemBuilder: (context, index) {
+                      if (index == 0) return _buildCurrentLocationCard(address);
+                      if (index == savedAddressesCount + 1) {
+                        return const SizedBox(height: 80);
+                      }
+
+                      int dataIndex = index - 1;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: AddressDesign(
+                            curretIndex: address.count,
+                            value: dataIndex,
+                            addressID: snapshot.data!.docs[dataIndex].id,
+                            totolAmmount: widget.totolAmmount,
+                            sellerUID: widget.sellerUID,
+                            model: Address.fromJson(
+                                snapshot.data!.docs[dataIndex].data()!
+                                    as Map<String, dynamic>),
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             );
           })
         ],
       ),
+    );
+  }
+
+  Widget _buildCurrentLocationCard(AddressChanger address) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
+          child: Text(
+            "Ship to current location?",
+            style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ListTile(
+            onTap: () {
+              if (_location != context.t.findingLocalization && 
+                  _location != context.t.errorAddressNotFound) {
+                address.displayResult(-1, addressText: _location);
+                _updateAddress();
+              }
+            },
+            leading: const Icon(Icons.my_location, color: Colors.blue, size: 30),
+            title: const Text("Use Current Location", style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: address.count == -1 
+              ? Text(_location) 
+              : null,
+            trailing: Radio<int>(
+              value: -1,
+              groupValue: address.count,
+              activeColor: Colors.redAccent,
+              onChanged: (val) {
+                if (_location != context.t.findingLocalization && _location != context.t.errorAddressNotFound) {
+                  address.displayResult(val!, addressText: _location);
+                  _updateAddress();
+                }
+              },
+            ),
+          ),
+        ),
+        const Divider(thickness: 1, color: Colors.black12),
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, top: 10, bottom: 15),
+          child: Text(
+            "Saved Addresses",
+            style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
     );
   }
 }

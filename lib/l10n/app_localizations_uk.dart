@@ -60,7 +60,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get categoryPichupDiscount => 'Більше';
 
   @override
-  String get seeMoreFoodDelivery => 'Дивіться більше про доставку їжі';
+  String seeMore(Object tab) {
+    return 'Дивіться більше в $tab';
+  }
 
   @override
   String get changeLanguage => 'Змінити мову';

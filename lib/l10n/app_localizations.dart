@@ -206,11 +206,11 @@ abstract class AppLocalizations {
   /// **'More'**
   String get categoryPichupDiscount;
 
-  /// No description provided for @seeMoreFoodDelivery.
+  /// No description provided for @seeMore.
   ///
   /// In en, this message translates to:
-  /// **'See more more in Food Delivery'**
-  String get seeMoreFoodDelivery;
+  /// **'See more in {tab}'**
+  String seeMore(Object tab);
 
   /// Button or menu label to change language
   ///

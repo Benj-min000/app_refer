@@ -26,6 +26,7 @@ translator_key
 clean.bat
 run.bat
 build_apk.bat
+secrets.json
 
 # Flutter/Dart/Pub related
 **/doc/api/

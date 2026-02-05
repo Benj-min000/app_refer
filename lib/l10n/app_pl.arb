@@ -17,7 +17,7 @@
     "categoryKorean": "Koreańskie jedzenie",
     "categoryOneBowl": "Posiłki jednogarnkowe",
     "categoryPichupDiscount": "Więcej",
-    "seeMoreFoodDelivery": "Zobacz więcej w dostawie jedzenia",
+    "seeMore": "Zobacz więcej w {tab}",
     "changeLanguage": "Zmień język",
     "findingLocalization": "Trwa lokalizowanie...",
     "hintName": "Imię",

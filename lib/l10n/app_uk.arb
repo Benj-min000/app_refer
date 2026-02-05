@@ -17,7 +17,7 @@
     "categoryKorean": "Корейська кухня",
     "categoryOneBowl": "Страви з однієї миски",
     "categoryPichupDiscount": "Більше",
-    "seeMoreFoodDelivery": "Дивіться більше про доставку їжі",
+    "seeMore": "Дивіться більше в {tab}",
     "changeLanguage": "Змінити мову",
     "findingLocalization": "Визначення вашого місцезнаходження...",
     "hintName": "Ім'я",

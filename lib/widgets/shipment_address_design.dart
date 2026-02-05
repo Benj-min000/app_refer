@@ -34,7 +34,7 @@ class ShipmentAddressDesign extends StatelessWidget {
                       "Name",
                       style: TextStyle(color: Colors.black),
                     ),
-                    Text(model!.name.toString()),
+                    // Text(model!.name.toString()),
                   ],
                 ),
                 TableRow(
@@ -43,7 +43,7 @@ class ShipmentAddressDesign extends StatelessWidget {
                       "Phone Number",
                       style: TextStyle(color: Colors.black),
                     ),
-                    Text(model!.phoneNumber!),
+                    // Text(model!.phoneNumber!),
                   ],
                 ),
               ],

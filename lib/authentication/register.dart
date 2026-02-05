@@ -34,7 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
 
-  String sellerImageUrl = "";
+  String downloadUrl = "";
 
   Future<void> _getImage() async {
     imageXFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -82,7 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           fStorage.UploadTask uploadTask = reference.putFile(File(imageXFile!.path));
           fStorage.TaskSnapshot taskSnapshot = await uploadTask;
 
-          sellerImageUrl = await taskSnapshot.ref.getDownloadURL();
+          downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
           await saveDataToFireStore(currentUser);
 
@@ -114,8 +114,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "uid": currentUser.uid,
       "email": currentUser.email,
       "name": _nameController.text.trim(),
-      "photo": sellerImageUrl,
+      "photo": downloadUrl,
       "status": "Approved",
+      "phone": "",
       "userCart": ['garbageValue'],
     });
 
@@ -124,7 +125,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await sharedPreferences!.setString("uid", currentUser.uid);
     await sharedPreferences!.setString("email", currentUser.email.toString());
     await sharedPreferences!.setString("name", _nameController.text.trim());
-    await sharedPreferences!.setString("photo", sellerImageUrl);
+    await sharedPreferences!.setString("photo", downloadUrl);
+    await sharedPreferences!.setString("phone", "");
     await sharedPreferences!.setStringList("userCart", ['garbageValue']);
   }
 
@@ -168,25 +170,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   data: Icons.person,
                   controller: _nameController,
                   hintText: context.t.hintName,
-                  isObsecre: false,
+                  isObsecure: false,
                 ),
                 CustomTextField(
                   data: Icons.email,
                   controller: _emailController,
                   hintText: context.t.hintEmail,
-                  isObsecre: false,
+                  isObsecure: false,
                 ),
                 CustomTextField(
                   data: Icons.lock,
                   controller: _passwordController,
                   hintText: context.t.hintPassword,
-                  isObsecre: true,
+                  isObsecure: true,
                 ),
                 CustomTextField(
                   data: Icons.lock,
                   controller: _confirmePasswordController,
                   hintText: context.t.hintConfPassword,
-                  isObsecre: true,
+                  isObsecure: true,
                 ),
               ],
             ),

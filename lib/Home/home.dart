@@ -20,6 +20,9 @@ import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/Home/home_category_items.dart';
 import 'package:user_app/Home/home_tabs.dart';
 
+import 'package:user_app/mainScreens/address_screen.dart';
+import 'package:user_app/assistant_methods/address_changer.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -36,31 +39,50 @@ class _DiningPagePageState extends State<Home> {
   //  true: address in 2 or more lines
   bool _showFullAddress = false;
 
-  // didChangeDependencies() will be creating new listeners every time it runs
-  // so I've added this flag to prevent this
-  bool _listenerAdded = false;
+  Locale? _lastLocale;
+  
+  int? _lastAddressIndex;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (!_listenerAdded) {
-      final localeProvider = Provider.of<LocaleProvider>(context);
-      localeProvider.addListener(_updateAddress);
-      _listenerAdded = true;
-    }
+    // Listening for changing the language
+    final localeProvider = Provider.of<LocaleProvider>(context);
 
-    // Updating the address every thime we change the language
-    _updateAddress();
+    // Listening for chaning the address
+    final addressProvider = Provider.of<AddressChanger>(context);
+
+    // Updating the address every time we change the language
+    if (_lastLocale != localeProvider.locale || 
+      _lastAddressIndex != addressProvider.count) {
+    
+      _lastLocale = localeProvider.locale;
+      _lastAddressIndex = addressProvider.count;
+
+      // Only update the address if the language or selection changed
+      _updateAddress();
+    }
   }
 
   void _updateAddress() async {
+    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+
+    // Check if the user has selected a saved address (index >= 0)
+    if (addressProvider.count >= 0) {
+      setState(() {
+        _location = addressProvider.selectedAddress;
+      });
+      return; // Stop here, don't trigger the LocationService
+    }
+
+    // If index is -1, (Current Location) fetch GPS location
     setState(() {
       _location = context.t.findingLocalization;
     });
     
-    final languageCode =
-      Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
+    final languageCode = localeProvider.locale.languageCode;
 
     final Map<String, dynamic> addressMap = await LocationService.fetchUserLocationAddress(languageCode);
 
@@ -73,8 +95,6 @@ class _DiningPagePageState extends State<Home> {
 
   @override
   void dispose() {
-    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-    localeProvider.removeListener(_updateAddress);
     _searchController.dispose();
     super.dispose();
   }
@@ -125,9 +145,22 @@ class _DiningPagePageState extends State<Home> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(Icons.location_on, color: Colors.white, size: 24),
-                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(
+                        Icons.location_on, 
+                        color: Colors.white, 
+                        size: 24,
                     
+                      ),
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => AddressScreen()));
+                        // save address
+                      },
+                    ),
+
+                    const SizedBox(width: 8),
+
                     Expanded(
                       child: Text(
                         _location,
@@ -137,7 +170,6 @@ class _DiningPagePageState extends State<Home> {
                           fontWeight: FontWeight.bold
                         ),
 
-                        // Only one row of the address visible
                         maxLines: _showFullAddress ? null : 1, 
                         overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
 
@@ -181,14 +213,14 @@ class _DiningPagePageState extends State<Home> {
           // Horizontal TabBar
           TabBar(
             isScrollable: true,
-            tabAlignment: TabAlignment.start, // Forces tabs to align to the far left
-            labelPadding: const EdgeInsets.symmetric(horizontal: 16.0), // Consistent spacing between tabs
+            tabAlignment: TabAlignment.start,
+            labelPadding: const EdgeInsets.symmetric(horizontal: 16.0), 
             labelColor: Colors.redAccent,
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.redAccent,
-            indicatorSize: TabBarIndicatorSize.label, // Indicator matches text width, not tab width
+            indicatorSize: TabBarIndicatorSize.label, 
             physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.zero, // Removes any extra padding around the bar itself
+            padding: EdgeInsets.zero, 
             tabs: homeTabs.map((tab) => Tab(text: tab.label)).toList(),
           ),
           
@@ -218,19 +250,26 @@ class _DiningPagePageState extends State<Home> {
             onTap: () { },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    context.t.seeMoreFoodDelivery,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
-                ],
+              child: Builder(
+                builder: (context) {
+                  final currentTabIndex = DefaultTabController.of(context).index;
+                  final currentTabLabel = homeTabs[currentTabIndex].label;
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        context.t.seeMore(currentTabLabel),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
+                    ],
+                  );
+                },
               ),
             ),
           ),

@@ -4,12 +4,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:user_app/global/global.dart';
 import 'package:user_app/models/address.dart';
+import 'package:user_app/services/location_service.dart';
 import 'package:user_app/widgets/simple_Appbar.dart';
-import 'package:user_app/widgets/text_field.dart';
 
-import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
-import 'package:user_app/localization/locale_provider.dart';
+
+import 'package:user_app/widgets/custom_text_field.dart';
+
+import "package:user_app/mainScreens/map_screen.dart";
+import 'package:user_app/widgets/error_Dialog.dart';
+import 'package:user_app/assistant_methods/address_changer.dart';
 
 class SaveAddressScreen extends StatefulWidget {
   const SaveAddressScreen({super.key});
@@ -19,193 +23,249 @@ class SaveAddressScreen extends StatefulWidget {
 }
 
 class _SaveAddressScreenState extends State<SaveAddressScreen> {
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _phoneNumber = TextEditingController();
+  final TextEditingController _addressLabel = TextEditingController();
+  final TextEditingController _houseNumber = TextEditingController();
   final TextEditingController _flatNumber = TextEditingController();
+  final TextEditingController _postCode = TextEditingController();
+  final TextEditingController _street = TextEditingController();
   final TextEditingController _city = TextEditingController();
   final TextEditingController _state = TextEditingController();
   final TextEditingController _completeAddress = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+
   bool isLoading = false;
+
   double lat = 0.0;
   double lng = 0.0; 
 
-  /// Fetches user's current location and updates text fields
-  Future<void> getUserLocationAddress() async {
-    setState(() => isLoading = true);
-    
-    try {
-      // Get language code from Provider
-      final languageCode =
-          Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
+  @override
+  void initState() {
+    super.initState();
+    int totalAddressCount = Provider.of<AddressChanger>(context, listen: false).totalSavedAddresses;
+    _addressLabel.text = "Address ${totalAddressCount + 1}";
+  }
 
-      // Fetch full address and split into parts from LocationService
-      final Map<String, dynamic> addressParts =  await LocationService.fetchUserLocationAddress(languageCode);
+  bool _isAddressFetched = false;
 
-      if (!mounted) return;
+  void _assignAddressData(Map<String, dynamic> result) {
+    setState(() {
+      _city.text = result['city'] ?? '';
+      _state.text = result['state'] ?? '';
+      _postCode.text = result['postCode'] ?? '';
+      _street.text = result['road'] ?? '';
+      _houseNumber.text = result['houseNumber'] ?? '';
 
-      setState(() {
-        _locationController.text = addressParts['fullAddress'] ?? '';
-        _completeAddress.text = addressParts['fullAddress'] ?? '';
-        _flatNumber.text = addressParts['flatNumber'] ?? '';
-        _city.text = addressParts['city'] ?? '';
-        _state.text = addressParts['state'] ?? '';
+      String sub = result['subpremise'] ?? '';
+      _flatNumber.text = sub.isNotEmpty ? "Apt $sub" : "";
 
-        lat = addressParts['lat'] ?? 0.0;
-        lng = addressParts['lng'] ?? 0.0;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to get location: $e')),
+      _completeAddress.text = result['fullAddress'] ?? '';
+
+      // Latitude and Longitude from the map/GPS
+      lat = result['lat'] ?? 0.0;
+      lng = result['lng'] ?? 0.0;
+
+      _isAddressFetched = true;
+    });
+  }
+
+  void _handleMapResult() async {
+    Map<String, double>? coords = await LocationService.getUserCurrentCoordinates();
+
+    if (!mounted) return;
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MapScreen(
+          initialLat: coords?['lat'],
+          initialLng: coords?['lng'],
+        )
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      _assignAddressData(result);
+    }
+  }
+
+  Future<void> formValidation() async {
+    if (_state.text.trim().isEmpty ||
+      _completeAddress.text.trim().isEmpty ||
+      _city.text.trim().isEmpty) {
+        
+      showDialog(
+        context: context,
+        builder: (_) => ErrorDialog(message: "Please fill out all required fields (*)."),
       );
-    } finally {
-      if (mounted) setState(() => isLoading = false);
+
+      return;
+    }
+
+    if (formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
+
+      final model = Address(
+        label: _addressLabel.text.trim(),
+        state: _state.text.trim(),
+        fullAddress: _completeAddress.text.trim(),
+        houseNumber: _houseNumber.text.trim(),
+        flatNumber: _flatNumber.text.trim(),
+        city: _city.text.trim(),
+        lat: lat.toString(),
+        lng: lng.toString(),
+      ).toJson();
+
+      FirebaseFirestore.instance
+        .collection("users")
+        .doc(sharedPreferences!.getString("uid") ?? "")
+        .collection("userAddress")
+        .doc(DateTime.now().millisecondsSinceEpoch.toString())
+        .set(model)
+        .then((value) {
+          if(mounted) {
+            Fluttertoast.showToast(msg: "New Address has been saved.");
+            Navigator.pop(context);
+          }
+        })
+        .catchError((error) {
+          Fluttertoast.showToast(msg: "Error: $error");
+        })
+        .whenComplete(() {
+          if (mounted) setState(() => isLoading = false);
+        });
     }
   }
 
   @override
   void dispose() {
-    _name.dispose();
-    _phoneNumber.dispose();
+    _addressLabel.dispose();
+    _houseNumber.dispose();
     _flatNumber.dispose();
+    _postCode.dispose();
+    _street.dispose();
     _city.dispose();
     _state.dispose();
     _completeAddress.dispose();
-    _locationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // We keep the fields list here to ensure they stay reactive
+    final List<CustomTextField> addressFields = [
+      CustomTextField(hintText: "Address Label (Home/Work)", controller: _addressLabel, isObsecure: false),
+      CustomTextField(hintText: "City", controller: _city, isObsecure: false),
+      CustomTextField(hintText: "State", controller: _state, isObsecure: false),
+      CustomTextField(hintText: "Street", controller: _street, isObsecure: false),
+      CustomTextField(hintText: "House/Building Number", controller: _houseNumber, isObsecure: false),
+      CustomTextField(hintText: "Flat / Apartment Number (Optional)", controller: _flatNumber, isObsecure: false),
+      CustomTextField(hintText: "Postal Code", controller: _postCode, isObsecure: false),
+      CustomTextField(hintText: "Complete Address", controller: _completeAddress, isObsecure: false),
+    ];
+
     return Scaffold(
-      appBar: SimpleAppBar(
-        title: "I-Eat",
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          //save address info
-          if (formKey.currentState!.validate()) {
-            final model = Address(
-              name: _name.text.trim(),
-              state: _state.text.trim(),
-              fullAddress: _completeAddress.text.trim(),
-              phoneNumber: _phoneNumber.text.trim(),
-              flatNumber: _flatNumber.text.trim(),
-              city: _city.text.trim(),
-              lat: lat.toString(),
-              lng: lng.toString(),
-              // locationController: _locationController.text.trim(),
-            ).toJson();
-
-            FirebaseFirestore.instance
-                .collection("users")
-                .doc(sharedPreferences!.getString("uid"))
-                .collection("userAddress")
-                .doc(DateTime.now().millisecondsSinceEpoch.toString())
-                .set(model)
-                .then((value) {
-              Fluttertoast.showToast(msg: "New Address has been saved.");
-
-              formKey.currentState!.reset();
-            });
-          }
-        },
-        label: const Text("Save Now"),
-        icon: const Icon(Icons.save),
-      ),
+      appBar: SimpleAppBar(title: "I-Eat"),
+      floatingActionButton: _isAddressFetched 
+        ? FloatingActionButton.extended(
+            onPressed: isLoading ? null : () => formValidation(),
+            label: const Text("Save Now", style: TextStyle(color: Colors.white,  fontWeight: FontWeight.bold, fontSize: 15)),
+            icon: const Icon(Icons.save, color: Colors.white),
+            backgroundColor: Colors.cyan,
+          ) 
+        : null,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(
-              height: 6,
-            ),
-            const Align(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "Save New Address :",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.person_pin_circle,
-                color: Colors.black,
-                size: 35,
-              ),
-              title: SizedBox(
-                width: 250,
-                child: const TextField(
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                  // controller: _locationController,
-                  decoration: InputDecoration(
-                      hintText: "What's your address",
-                      hintStyle: TextStyle(color: Colors.black)),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                //get current location
-                getUserLocationAddress();
-              },
-              icon: const Icon(
-                Icons.location_on,
-                color: Colors.white,
-              ),
-              style: ButtonStyle(
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: const BorderSide(color: Colors.cyan)))),
-              label: const Text(
-                "Get my address",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            Form(
-              key: formKey,
+            if (isLoading) const LinearProgressIndicator(color: Colors.cyan),
+            
+            // Use a SizedBox to force the Column to take full width for horizontal centering
+            SizedBox(
+              width: double.infinity, 
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  MyTextField(
-                    hint: "Name",
-                    controller: _name,
+                  const SizedBox(height: 15),
+
+                  const Text(
+                    "Add New Address",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
-                  MyTextField(
-                    hint: "Phone Number",
-                    controller: _phoneNumber,
+                  
+                  const SizedBox(height: 15),
+
+                  ElevatedButton.icon(
+                    onPressed: _handleMapResult,
+                    icon: const Icon(Icons.location_on, color: Colors.redAccent, size: 22),
+                    label: const Text(
+                      "Find your location on Google Maps",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.cyan,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 3,
+                    ),
                   ),
-                  MyTextField(
-                    hint: "City",
-                    controller: _city,
-                  ),
-                  MyTextField(
-                    hint: "State",
-                    controller: _state,
-                  ),
-                  MyTextField(
-                    hint: "Address Line",
-                    controller: _flatNumber,
-                  ),
-                  MyTextField(
-                    hint: "Complete Address",
-                    controller: _completeAddress,
-                  ),
+
+                  const SizedBox(height: 10),
+
+                  if (_isAddressFetched) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40.0),
+                      child: Divider(thickness: 1),
+                    ),
+                    const Text("Verify & Refine Details", style: TextStyle(color: Colors.grey)),
+                    
+                    const SizedBox(height: 10),
+
+                    Form(
+                      key: formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          children: addressFields.map((field) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 4.0, bottom: 4.0),
+                                  child: Text(
+                                    field.hintText ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ),
+                                field,
+                              ],
+                            )
+                          )).toList(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 100),
+                  ] else ...[
+                    // Initial state view
+                    const SizedBox(height: 60),
+                    const Icon(Icons.map_outlined, size: 120, color: Colors.grey),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Map selection is required to continue", 
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  ],
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

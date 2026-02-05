@@ -51,7 +51,6 @@ class MyDrawer extends StatelessWidget {
           Container(
             padding: const EdgeInsets.only(top: 1.0),
             child: Column(
-              // ignore: prefer_const_literals_to_create_immutables
               children: [
                 const Divider(
                   height: 10,

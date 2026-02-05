@@ -101,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await sharedPreferences!.setString("uid", currentUser.uid);
       await sharedPreferences!.setString("email", data["email"]);
       await sharedPreferences!.setString("name", data["name"]);
+      await sharedPreferences!.setString("phone", data["phone"]);
       await sharedPreferences!.setString("photo", data["photo"]);
       await sharedPreferences!.setStringList(
         "userCart", List<String>.from(data["userCart"] ?? [])
@@ -157,14 +158,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           data: Icons.email,
                           controller: _emailController,
                           hintText: context.t.hintEmail,
-                          isObsecre: false,
+                          isObsecure: false,
                         ),
 
                         CustomTextField(
                           data: Icons.lock,
                           controller: _passwordController,
                           hintText: context.t.hintPassword,
-                          isObsecre: true,
+                          isObsecure: true,
                         ),
 
                         const SizedBox(height: 30),

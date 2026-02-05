@@ -58,10 +58,14 @@
   "categoryPichupDiscount": "More",
   "@categoryPichupDiscount": {"description": "Category label for More / Other items"},
 
-  "seeMoreFoodDelivery": "See more more in Food Delivery",
-  "@seeMoreFoodDelivery": {},
+  "seeMore": "See more in {tab}",
+  "@seeMore": {
+    "placeholders": {
+      "tab": {}
+    }
+  },
 
-
+  
 
   "changeLanguage": "Change Language",
   "@changeLanguage": {"description": "Button or menu label to change language"},
