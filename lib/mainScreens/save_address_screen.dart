@@ -55,7 +55,6 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
       _postCode.text = result['postCode'] ?? '';
       _street.text = result['road'] ?? '';
       _houseNumber.text = result['houseNumber'] ?? '';
-
       String sub = result['subpremise'] ?? '';
       _flatNumber.text = sub.isNotEmpty ? "Apt $sub" : "";
 
@@ -107,11 +106,14 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
 
       final model = Address(
         label: _addressLabel.text.trim(),
+        country: _completeAddress.text.trim().split(',').last,
         state: _state.text.trim(),
-        fullAddress: _completeAddress.text.trim(),
+        city: _city.text.trim(),
+        road: _street.text.trim(),
+        postalCode: _postCode.text.trim(),
         houseNumber: _houseNumber.text.trim(),
         flatNumber: _flatNumber.text.trim(),
-        city: _city.text.trim(),
+        fullAddress: _completeAddress.text.trim(),
         lat: lat.toString(),
         lng: lng.toString(),
       ).toJson();

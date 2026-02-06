@@ -15,9 +15,10 @@ import 'package:user_app/global/global.dart';
 
 import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
-import 'package:user_app/localization/locale_provider.dart';
+import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
+import "package:user_app/services/translator_service.dart";
 
 class AddressScreen extends StatefulWidget {
   final double? totolAmmount;
@@ -31,6 +32,7 @@ class AddressScreen extends StatefulWidget {
 
 class _AddressScreenState extends State<AddressScreen> {
   String _location = "";
+  Map<String, dynamic> _currentMapData = {};
 
   Locale? _lastLocale;
 
@@ -71,28 +73,32 @@ class _AddressScreenState extends State<AddressScreen> {
   void _updateAddress() async {
     final addressProvider = Provider.of<AddressChanger>(context, listen: false);
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-
-    if (addressProvider.count >= 0) {
-      if (mounted) {
-        setState(() {
-          _location = addressProvider.selectedAddress;
-        });
-      }
-      return;
-    }
-
-    if (mounted) {
-      setState(() {
-        _location = context.t.findingLocalization;
-      });
-    }
-
     final languageCode = localeProvider.locale.languageCode;
-    final Map<String, dynamic> addressMap = await LocationService.fetchUserLocationAddress(languageCode);
 
+    Map<String, dynamic> dataToProcess;
+    // Check if the user has selected a saved address (index >= 0)
+    if (addressProvider.count >= 0) {
+      dataToProcess = addressProvider.selectedAddress;
+    } 
+    else {
+      if (mounted) setState(() => _location = context.t.findingLocalization);
+    
+      try {
+        dataToProcess = await LocationService.fetchUserCurrentLocation();
+      } 
+      catch (e) {
+        if (mounted) setState(() => _location = context.t.errorAddressNotFound);
+        return;
+      }
+    }
+
+    _currentMapData = dataToProcess;
+
+    String finalAddress = await TranslationService.formatAndTranslateAddress(dataToProcess, languageCode);
+    
     if (mounted) {
       setState(() {
-        _location = addressMap['fullAddress'] ?? context.t.errorAddressNotFound;
+        _location = finalAddress;
       });
     }
   }
@@ -148,10 +154,10 @@ class _AddressScreenState extends State<AddressScreen> {
             return Flexible(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection("users")
-                    .doc(sharedPreferences!.getString("uid"))
-                    .collection("userAddress")
-                    .snapshots(),
+                  .collection("users")
+                  .doc(sharedPreferences!.getString("uid"))
+                  .collection("userAddress")
+                  .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(child: circularProgress());
@@ -195,8 +201,8 @@ class _AddressScreenState extends State<AddressScreen> {
                             totolAmmount: widget.totolAmmount,
                             sellerUID: widget.sellerUID,
                             model: Address.fromJson(
-                                snapshot.data!.docs[dataIndex].data()!
-                                    as Map<String, dynamic>),
+                              snapshot.data!.docs[dataIndex].data()!
+                                as Map<String, dynamic>),
                           ),
                         ),
                       );
@@ -235,29 +241,36 @@ class _AddressScreenState extends State<AddressScreen> {
               ),
             ],
           ),
-          child: ListTile(
-            onTap: () {
-              if (_location != context.t.findingLocalization && 
-                  _location != context.t.errorAddressNotFound) {
-                address.displayResult(-1, addressText: _location);
-                _updateAddress();
-              }
-            },
-            leading: const Icon(Icons.my_location, color: Colors.blue, size: 30),
-            title: const Text("Use Current Location", style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: address.count == -1 
-              ? Text(_location) 
-              : null,
-            trailing: Radio<int>(
-              value: -1,
-              groupValue: address.count,
-              activeColor: Colors.redAccent,
-              onChanged: (val) {
-                if (_location != context.t.findingLocalization && _location != context.t.errorAddressNotFound) {
-                  address.displayResult(val!, addressText: _location);
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              splashColor: Colors.transparent,
+              onTap: () {
+                if (_location != context.t.findingLocalization && 
+                    _location != context.t.errorAddressNotFound) {
+                  address.displayResult(-1, address: _currentMapData);
                   _updateAddress();
                 }
               },
+              leading: const Icon(Icons.my_location, color: Colors.blue, size: 30),
+              title: const Text("Use Current Location", style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: address.count == -1 
+                ? Text(_location) 
+                : null,
+              trailing: Radio<int>(
+                value: -1,
+                groupValue: address.count,
+                activeColor: Colors.redAccent,
+                onChanged: (val) {
+                  if (_location != context.t.findingLocalization && 
+                      _location != context.t.errorAddressNotFound) {
+                    address.displayResult(val!, address: _currentMapData);
+                    _updateAddress();
+                  }
+                },
+              ),
             ),
           ),
         ),

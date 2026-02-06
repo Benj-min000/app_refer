@@ -19,6 +19,20 @@ plugins {
 }
 
 android {
+    signingConfigs {
+
+        getByName("debug") {
+            //Default
+        }
+
+        create("release") {
+            storeFile = file("../release.jks")
+            storePassword = System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias = "release"
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+        }
+    }
+    
     namespace = "com.megaapp.user_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -47,9 +61,19 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+
+        getByName("debug") {
+            // Default debug config
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isDebuggable = true
+        }
+
+        getByName("release") {
+            // REAL release signing
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
+            isShrinkResources = true
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

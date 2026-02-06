@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 
 import 'package:user_app/services/location_service.dart';
 import 'package:provider/provider.dart';
-import 'package:user_app/localization/locale_provider.dart';
+import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
+import "package:user_app/services/translator_service.dart";
 
 class MapScreen extends StatefulWidget {
   final double? initialLat;
@@ -79,17 +80,18 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _reverseGeocode(LatLng location) async {
-    try {
-      final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-      final languageCode = localeProvider.locale.languageCode;
-      
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+    final langCode = localeProvider.locale.languageCode;
+    try {      
       final result = await LocationService.getUserLocationAddressFromGoogle(
         location.latitude, 
         location.longitude, 
-        languageCode,
       );
+
+      final addressTrans = await TranslationService.formatAndTranslateAddress(result, langCode);
+      
       setState(() {
-        _currentAddress = result['fullAddress'] ?? context.t.unknownLocation;
+        _currentAddress = addressTrans;
       });
     } catch (e) {
       if (!mounted) return;
@@ -119,8 +121,6 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-
     return Scaffold(
       resizeToAvoidBottomInset: false, // Prevents map jumping when keyboard opens
       body: Stack(
@@ -278,16 +278,21 @@ class _MapScreenState extends State<MapScreen> {
                             onPressed: () async {
                               final fullData = await LocationService.getUserLocationAddressFromGoogle(
                                 _pickedLocation.latitude, 
-                                _pickedLocation.longitude, 
-                                localeProvider.locale.languageCode,
+                                _pickedLocation.longitude,
                               );
                               if (mounted) Navigator.pop(context, fullData);
                             },
-                            label: Text(context.t.confirmContinue, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                context.t.confirmContinue, 
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ] else 
+                    ] else...[
                       const SizedBox(width: 16),
                       Expanded(
                         child: SizedBox(
@@ -303,10 +308,17 @@ class _MapScreenState extends State<MapScreen> {
                             onPressed: () async {
                               _refreshCamera();
                             },
-                            label: Text(context.t.refreshLocation, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                context.t.refreshLocation, 
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    ]
                   ],
                 ),
               ],

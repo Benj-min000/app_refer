@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
-// For Language
 import 'package:provider/provider.dart';
-import 'package:user_app/localization/locale_provider.dart';
+import 'package:user_app/assistant_methods/locale_provider.dart';
 import 'package:user_app/models/language_model.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:user_app/l10n/app_localizations.dart';

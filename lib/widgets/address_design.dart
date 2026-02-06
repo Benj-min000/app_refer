@@ -32,6 +32,18 @@ class AddressDesign extends StatefulWidget {
 }
 
 class _AddressDesignState extends State<AddressDesign> {
+
+  void _selectAddress(AddressChanger addressProvider) {
+    Map<String, dynamic> addressData = widget.model?.toJson() ?? {};
+
+    addressProvider.displayResult(
+      widget.value!,
+      address: addressData, 
+      lat: double.tryParse(widget.model?.lat ?? '0.0') ?? 0.0,
+      lng: double.tryParse(widget.model?.lng ?? '0.0') ?? 0.0,
+    );
+  }
+
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -49,12 +61,11 @@ class _AddressDesignState extends State<AddressDesign> {
               Navigator.pop(context);
               try {
                 await FirebaseFirestore.instance
-                    .collection("users")
-                    .doc(sharedPreferences!.getString("uid"))
-                    .collection("userAddress")
-                    .doc(widget.addressID)
-                    .delete();
-
+                  .collection("users")
+                  .doc(sharedPreferences!.getString("uid"))
+                  .collection("userAddress")
+                  .doc(widget.addressID)
+                  .delete();
                 Fluttertoast.showToast(msg: "Address deleted successfully");
               } catch (e) {
                 Fluttertoast.showToast(msg: "Error: $e");
@@ -69,15 +80,19 @@ class _AddressDesignState extends State<AddressDesign> {
 
   @override
   Widget build(BuildContext context) {
-    final addressProvider = Provider.of<AddressChanger>(context);
-    final bool isSelected = widget.value == addressProvider.count;
+    final addressProvider = context.read<AddressChanger>();
+    final selectedCount = context.select<AddressChanger, int>(
+      (p) => p.count,
+    );
 
-    return InkWell(
-      onTap: () {
-        addressProvider.displayResult(widget.value!,
-            addressText: widget.model!.fullAddress.toString());
-      },
+    final bool isSelected = widget.value == selectedCount;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
       borderRadius: BorderRadius.circular(16),
+      onTap: () => _selectAddress(addressProvider),
+      splashColor: Colors.transparent,
       child: Stack( // Wrap everything in a Stack
         children: [
           Padding(
@@ -131,12 +146,7 @@ class _AddressDesignState extends State<AddressDesign> {
                     value: widget.value!,
                     groupValue: addressProvider.count,
                     activeColor: Colors.redAccent,
-                    onChanged: (val) {
-                      if (val != null) {
-                        addressProvider.displayResult(val,
-                            addressText: widget.model?.fullAddress ?? "");
-                      }
-                    },
+                    onChanged: (_) => _selectAddress(addressProvider),
                   ),
                 ),
                 
@@ -192,6 +202,7 @@ class _AddressDesignState extends State<AddressDesign> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

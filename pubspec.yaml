@@ -40,6 +40,7 @@ dependencies:
   country_flags: ^4.1.2
   google_maps_flutter: ^2.14.0
   auto_translator: ^2.3.5
+  translator: ^1.0.4+1
 
 dev_dependencies:
   flutter_test:

@@ -38,12 +38,12 @@ List<String> separateItemIds() {
   return separateItemIdsList;
 }
 
-void addItemToCart(String? foodItemId, BuildContext context, int itemCounter) {
+Future<void> addItemToCart(String? foodItemId, BuildContext context, int itemCounter) async {
   List<String>? tempList = sharedPreferences!.getStringList("userCart");
   // foodItemId = 'garbadgevalue';
   tempList!.add("${foodItemId!}:$itemCounter"); //1210259022: 2
 
-  FirebaseFirestore.instance
+  await FirebaseFirestore.instance
       .collection("users")
       .doc(firebaseAuth.currentUser!.uid)
       .update({
@@ -97,12 +97,12 @@ List<int> separateItemQuantities() {
   return separateItemQuantityList;
 }
 
-void clearCartNow(context) { 
+Future<void> clearCartNow(context) async { 
   sharedPreferences!.setStringList("userCart", ['garbageValue']);
 
   List<String>? emptyList = sharedPreferences!.getStringList("userCart");
 
-  FirebaseFirestore.instance.collection("users")
+  await FirebaseFirestore.instance.collection("users")
       .doc(firebaseAuth.currentUser!.uid)
       .update({"userCart": emptyList}).then((value) {
     sharedPreferences!.setStringList("userCart", emptyList!);

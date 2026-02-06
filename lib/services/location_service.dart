@@ -7,9 +7,9 @@ class LocationService {
 
   static Future<Map<String, dynamic>> getUserLocationAddressFromGoogle(
     double lat, 
-    double lon, 
-    String languageCode,
-  ) async {    
+    double lon,
+  ) async {   
+    final languageCode = 'en'; 
     final url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lon&language=$languageCode&key=$googleMapsApiKey';
 
     final response = await http.get(Uri.parse(url));
@@ -50,7 +50,7 @@ class LocationService {
     }
   }
 
-  static Future<Map<String, dynamic>> fetchUserLocationAddress(String languageCode) async {
+  static Future<Map<String, dynamic>> fetchUserCurrentLocation() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -76,7 +76,7 @@ class LocationService {
       
       Position position = await Geolocator.getCurrentPosition(locationSettings: locationSettings);
 
-      final mapData = await getUserLocationAddressFromGoogle(position.latitude, position.longitude, languageCode);
+      final mapData = await getUserLocationAddressFromGoogle(position.latitude, position.longitude);
 
       return {
         'fullAddress': mapData['fullAddress'],

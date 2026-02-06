@@ -17,7 +17,7 @@ import 'package:user_app/Home/HomepageItems4.dart';
 
 import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
-import 'package:user_app/localization/locale_provider.dart';
+import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 
@@ -26,6 +26,7 @@ import 'package:user_app/Home/home_tabs.dart';
 
 import 'package:user_app/mainScreens/address_screen.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
+import "package:user_app/services/translator_service.dart";
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -80,26 +81,30 @@ class _DiningPagePageState extends State<Home> {
   void _updateAddress() async {
     final addressProvider = Provider.of<AddressChanger>(context, listen: false);
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-    // Check if the user has selected a saved address (index >= 0)
-    if (addressProvider.count >= 0) {
-      setState(() {
-        _location = addressProvider.selectedAddress;
-      });
-      return; // Stop here, don't trigger the LocationService
-    }
-
-    // If index is -1, (Current Location) fetch GPS location
-    setState(() {
-      _location = context.t.findingLocalization;
-    });
-    
     final languageCode = localeProvider.locale.languageCode;
 
-    final Map<String, dynamic> addressMap = await LocationService.fetchUserLocationAddress(languageCode);
+    Map<String, dynamic> dataToProcess;
+    // Check if the user has selected a saved address (index >= 0)
+    if (addressProvider.count >= 0) {
+      dataToProcess = addressProvider.selectedAddress;
+    } 
+    else {
+      if (mounted) setState(() => _location = context.t.findingLocalization);
+    
+      try {
+        dataToProcess = await LocationService.fetchUserCurrentLocation();
+      } 
+      catch (e) {
+        if (mounted) setState(() => _location = context.t.errorAddressNotFound);
+        return;
+      }
+    }
 
+    String finalAddress = await TranslationService.formatAndTranslateAddress(dataToProcess, languageCode);
+    
     if (mounted) {
       setState(() {
-        _location = addressMap['fullAddress'] ?? context.t.errorAddressNotFound;
+        _location = finalAddress;
       });
     }
   }
@@ -154,45 +159,58 @@ class _DiningPagePageState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.location_on, 
-                        color: Colors.white, 
-                        size: 24,
-                      ),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AddressScreen()));
-                        // save address
-                      },
-                    ),
-
-                    const SizedBox(width: 8),
-
-                    Expanded(
-                      child: Text(
-                        _location,
-                        style: const TextStyle(
+                Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AddressScreen()));
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_on, 
                           color: Colors.white, 
-                          fontSize: 14, 
-                          fontWeight: FontWeight.bold
+                          size: 32,
                         ),
-                        maxLines: _showFullAddress ? null : 1, 
-                        overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
-                      ),
-                    ),
+                        
+                        const SizedBox(width: 8,),
 
-                    GestureDetector(
-                      onTap: () => setState(() => _showFullAddress = !_showFullAddress),
-                      child: Icon(
-                        _showFullAddress ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
+                        Expanded(
+                          child: Tooltip(
+                            message: _location,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _showFullAddress = !_showFullAddress;
+                                });
+                              },
+                              child: Text(
+                                _location,
+                                style: const TextStyle(
+                                  color: Colors.white, 
+                                  fontSize: 14, 
+                                  fontWeight: FontWeight.bold
+                                ),
+                                maxLines: _showFullAddress ? null : 1, 
+                                overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => setState(() => _showFullAddress = !_showFullAddress),
+                          child: Icon(
+                            _showFullAddress ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 12),
