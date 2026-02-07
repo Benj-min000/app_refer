@@ -23,6 +23,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get grandLocation => '앱에 위치 정보 접근 권한을 부여해 주세요...';
+
+  @override
   String get goBack => '뒤로 가기';
 
   @override

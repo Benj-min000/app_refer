@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:user_app/models/sellers.dart';
 
-import '../widgets/sellers_design.dart';
+import 'package:user_app/widgets/sellers_design.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,13 +12,16 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final _searchTextController = TextEditingController();
+  
   Future<QuerySnapshot>? restaurentsDocumentsList;
   String sellerNameText = "";
+
   void initSearchingRestaurents(String textEntered) {
     restaurentsDocumentsList = FirebaseFirestore.instance
-        .collection("sellers")
-        .where("sellerName", isEqualTo: textEntered)
-        .get();
+      .collection("sellers")
+      .where("sellerName", isEqualTo: textEntered)
+      .get();
   }
 
   @override

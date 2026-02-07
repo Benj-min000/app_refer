@@ -24,7 +24,7 @@ class Search extends StatelessWidget {
                     enabled: false,
                     cursorHeight: 20,
                     decoration: const InputDecoration(
-                      // border: OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       prefixIcon: Icon(
                         Icons.search,
                         color: Colors.red,

@@ -4,8 +4,9 @@ output-localization-file: app_localizations.dart
 
 output-dir: lib/l10n
 
-# auto_translator specific configuration
 translator:
+  service: Google
+  key_file: secrets.json
   targets:
     - ko # Korean
     - pl 

@@ -138,9 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              return SliverStaggeredGrid.countBuilder(
-                crossAxisCount: 1,
-                staggeredTileBuilder: (context) => const StaggeredTile.fit(1),
+              return SliverMasonryGrid.count(
+                crossAxisCount: 1, // Number of columns
                 itemBuilder: (context, index) {
                   Sellers sModel = Sellers.fromJson(
                     snapshot.data!.docs[index].data() as Map<String, dynamic>,
@@ -150,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context: context,
                   );
                 },
-                itemCount: snapshot.data!.docs.length,
+                childCount: snapshot.data!.docs.length,
               );
             },
           ),

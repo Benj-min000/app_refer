@@ -4,6 +4,7 @@
     "unknownLocation": "Nieznana lokalizacja",
     "searchAddress": "Wyszukaj adres...",
     "errorReverseGeo": "Błąd odwrotnego geokodowania: {error}",
+    "grandLocation": "Proszę o udzielenie aplikacji zgody na lokalizację...",
     "goBack": "Wróć",
     "suggestedMatch": "Sugerowane dopasowanie",
     "confirmContinue": "Potwierdź i kontynuuj",

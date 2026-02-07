@@ -4,6 +4,7 @@
     "unknownLocation": "Unbekannter Ort",
     "searchAddress": "Adresse suchen...",
     "errorReverseGeo": "Fehler bei der umgekehrten Geokodierung: {error}",
+    "grandLocation": "Bitte erteilen Sie der App die Standortberechtigung...",
     "goBack": "Geh zurück",
     "suggestedMatch": "Vorschlag für eine passende Übereinstimmung",
     "confirmContinue": "Bestätigen & Fortfahren",

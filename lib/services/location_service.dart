@@ -3,12 +3,19 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-  static final String googleMapsApiKey = "AIzaSyB8ddVBv7Ash6VkOqZ772T6iRM4YBh6uag";
+
+  static String get googleMapsApiKey {
+    const key = String.fromEnvironment("MAPS_API_KEY");
+    if (key.isEmpty) {
+      throw Exception("MAPS_API_KEY is not defined. Ensure you passed it via --dart-define.");
+    }
+    return key;
+  }
 
   static Future<Map<String, dynamic>> getUserLocationAddressFromGoogle(
     double lat, 
     double lon,
-  ) async {   
+  ) async {
     final languageCode = 'en'; 
     final url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lon&language=$languageCode&key=$googleMapsApiKey';
 

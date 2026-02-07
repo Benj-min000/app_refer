@@ -1,15 +1,18 @@
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.compile.JavaCompile
-import java.util.Properties
-import java.io.FileInputStream
+import java.util.Base64
 
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
+val dartEnvironmentVariables = mutableMapOf<String, String>()
+if (project.hasProperty("dart-defines")) {
+    val dartDefines = project.property("dart-defines") as String
+    dartDefines.split(",").forEach { entry ->
+        val decoded = String(Base64.getDecoder().decode(entry), Charsets.UTF_8)
+        val pair = decoded.split("=")
+        if (pair.size == 2) {
+            dartEnvironmentVariables[pair[0]] = pair[1]
+        }
+    }
 }
-
-val mapsKey: String = localProperties.getProperty("MAPS_API_KEY") ?: ""
 
 plugins {
     id("com.android.application")
@@ -20,11 +23,9 @@ plugins {
 
 android {
     signingConfigs {
-
         getByName("debug") {
             //Default
         }
-
         create("release") {
             storeFile = file("../release.jks")
             storePassword = System.getenv("RELEASE_STORE_PASSWORD")
@@ -36,45 +37,40 @@ android {
     namespace = "com.megaapp.user_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
+    
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
-
+    
     defaultConfig {
         applicationId = "com.megaapp.user_app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
-        manifestPlaceholders += mapOf(
-            "MAPS_API_KEY" to mapsKey
-        )
+        
+        manifestPlaceholders["MAPS_API_KEY"] = dartEnvironmentVariables["MAPS_API_KEY"] ?: ""
     }
-
+    
     buildTypes {
-
         getByName("debug") {
             // Default debug config
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             isDebuggable = true
         }
-
         getByName("release") {
             // REAL release signing
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
-
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

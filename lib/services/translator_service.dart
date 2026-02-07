@@ -25,7 +25,7 @@ class TranslationService {
   static Future<String> formatAndTranslateAddress(Map<String, dynamic> addressMap, String targetLang) async {
     if (addressMap.isEmpty) return "";
 
-    debugPrint("DEBUG addressMap: $addressMap");
+    // debugPrint("DEBUG addressMap: $addressMap");
 
     String road = addressMap['road'] ?? addressMap['street'] ?? addressMap['route'] ?? "";
     if (road.isEmpty && addressMap['fullAddress'] != null) {
@@ -70,7 +70,7 @@ class TranslationService {
       debugPrint("Translation Error: $e");
       // Original data returned if there's any problems
       return addressMap['fullAddress'] ?? 
-        "${road.isNotEmpty ? '$road $houseNumber, ' : ''}$city, $country".trim();
+        "${road.isNotEmpty ? '$road $houseNumber, ' : ''}$city, $state, $country".trim();
     }
   }
 }

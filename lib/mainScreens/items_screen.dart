@@ -44,10 +44,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         child: circularProgress(),
                       ),
                     )
-                  : SliverStaggeredGrid.countBuilder(
+                  : SliverMasonryGrid.count(
                       crossAxisCount: 1,
-                      staggeredTileBuilder: (context) =>
-                          const StaggeredTile.fit(1),
                       itemBuilder: (context, index) {
                         Items model = Items.fromJson(
                           snapshot.data!.docs[index].data()!
@@ -58,7 +56,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                           context: context,
                         );
                       },
-                      itemCount: snapshot.data!.docs.length);
+                      childCount: snapshot.data!.docs.length);
             },
           ),
         ],

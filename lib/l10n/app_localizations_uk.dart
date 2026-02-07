@@ -23,6 +23,10 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get grandLocation =>
+      'Будь ласка, надайте застосунку дозвіл на визначення місцезнаходження...';
+
+  @override
   String get goBack => 'Назад';
 
   @override

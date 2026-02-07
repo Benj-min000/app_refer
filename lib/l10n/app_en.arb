@@ -17,6 +17,9 @@
     }
   },
 
+  "grandLocation": "Please grand the App the locdation permission...",
+  "@grandLocation": {},
+
   "goBack": "Go Back",
   "@goBack": {},
 

@@ -8,8 +8,8 @@ import 'package:user_app/widgets/menus_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/text_widget_header.dart';
 
-import '../models/sellers.dart';
-import '../splashScreen/splash_screen.dart';
+import 'package:user_app/models/sellers.dart';
+import 'package:user_app/splashScreen/splash_screen.dart';
 
 class MenusScreen extends StatefulWidget {
   final Sellers? model;
@@ -72,10 +72,8 @@ class _MenusScreenState extends State<MenusScreen> {
                         child: circularProgress(),
                       ),
                     )
-                  : SliverStaggeredGrid.countBuilder(
+                  : SliverMasonryGrid.count(
                       crossAxisCount: 1,
-                      staggeredTileBuilder: (context) =>
-                          const StaggeredTile.fit(1),
                       itemBuilder: (context, index) {
                         Menus model = Menus.fromJson(
                           snapshot.data!.docs[index].data()!
@@ -86,7 +84,7 @@ class _MenusScreenState extends State<MenusScreen> {
                           context: context,
                         );
                       },
-                      itemCount: snapshot.data!.docs.length);
+                      childCount: snapshot.data!.docs.length);
             },
           ),
         ],

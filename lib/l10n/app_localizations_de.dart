@@ -23,6 +23,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get grandLocation =>
+      'Bitte erteilen Sie der App die Standortberechtigung...';
+
+  @override
   String get goBack => 'Geh zurück';
 
   @override

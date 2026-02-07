@@ -28,6 +28,8 @@ import 'package:user_app/mainScreens/address_screen.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import "package:user_app/services/translator_service.dart";
 
+import 'package:user_app/mainScreens/search_screen_test.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -221,6 +223,15 @@ class _DiningPagePageState extends State<Home> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  // child: IconButton(
+                  //   onPressed: () {
+                  //     // Navigator.pushReplacement(
+                  //     //   context, 
+                  //     //   MaterialPageRoute(builder: (_) => const SearchScreenTest())
+                  //     // );
+                  //   }, 
+                  //   icon: Icon(Icons.search)
+                  // ),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(

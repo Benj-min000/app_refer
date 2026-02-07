@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'Error reverse geocoding: {error}'**
   String errorReverseGeo(Object error);
 
+  /// No description provided for @grandLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Please grand the App the locdation permission...'**
+  String get grandLocation;
+
   /// No description provided for @goBack.
   ///
   /// In en, this message translates to:
