@@ -5,7 +5,7 @@ import 'package:user_app/mainScreens/address_screen.dart';
 import 'package:user_app/mainScreens/history_screen.dart';
 import 'package:user_app/mainScreens/home_screen.dart';
 import 'package:user_app/mainScreens/my_orders_screen.dart';
-import 'package:user_app/mainScreens/search_screen.dart';
+import 'package:user_app/mainScreens/search_screen_prev.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});

@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
-import "package:user_app/services/translator_service.dart";
+
 
 class AddressScreen extends StatefulWidget {
   final double? totolAmmount;
@@ -31,8 +31,9 @@ class AddressScreen extends StatefulWidget {
 }
 
 class _AddressScreenState extends State<AddressScreen> {
-  String _location = "";
-  Map<String, dynamic> _currentMapData = {};
+  // Address found automatically
+  String _gpsLocation = "";
+  Map<String, dynamic> _gpsMapData = {};
 
   Locale? _lastLocale;
 
@@ -71,35 +72,25 @@ class _AddressScreenState extends State<AddressScreen> {
   }
 
   void _updateAddress() async {
-    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final languageCode = localeProvider.locale.languageCode;
 
-    Map<String, dynamic> dataToProcess;
-    // Check if the user has selected a saved address (index >= 0)
-    if (addressProvider.count >= 0) {
-      dataToProcess = addressProvider.selectedAddress;
-    } 
-    else {
-      if (mounted) setState(() => _location = context.t.findingLocalization);
-    
-      try {
-        dataToProcess = await LocationService.fetchUserCurrentLocation();
-      } 
-      catch (e) {
-        if (mounted) setState(() => _location = context.t.errorAddressNotFound);
-        return;
-      }
-    }
-
-    _currentMapData = dataToProcess;
-
-    String finalAddress = await TranslationService.formatAndTranslateAddress(dataToProcess, languageCode);
-    
     if (mounted) {
       setState(() {
-        _location = finalAddress;
+        _gpsLocation = context.t.findingLocalization; 
       });
+    }
+
+    try {
+      final gpsData = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
+      if (mounted) {
+        setState(() {
+          _gpsMapData = gpsData;
+          _gpsLocation = gpsData['fullAddress'] ?? context.t.findingLocalization;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _gpsLocation = context.t.errorAddressNotFound);
     }
   }
 
@@ -134,7 +125,7 @@ class _AddressScreenState extends State<AddressScreen> {
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
-              "Select Address", 
+              "Address Manager", 
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -174,36 +165,42 @@ class _AddressScreenState extends State<AddressScreen> {
                     shrinkWrap: true,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     itemBuilder: (context, index) {
-                      if (index == 0) return _buildCurrentLocationCard(address);
+                      if (index == 0) {
+                        return AddressDesign(
+                          value: -1, // Unique ID for GPS selection
+                          isCurrentLocationCard: true,
+                          model: Address(
+                            fullAddress: _gpsLocation, 
+                            lat: _gpsMapData['lat']?.toString() ?? '0.0',
+                            lng: _gpsMapData['lng']?.toString() ?? '0.0',
+                            road: _gpsMapData['road'] ?? '',
+                            houseNumber: _gpsMapData['houseNumber'] ?? '',
+                            postalCode: _gpsMapData['postalCode'] ?? '',
+                            city: _gpsMapData['city'] ?? '',
+                            state: _gpsMapData['state'] ?? '',
+                            country: _gpsMapData['country'] ?? '',
+                            label: "Current Location",
+                          ),
+                          addressID: "current_gps",
+                          totolAmmount: widget.totolAmmount,
+                          sellerUID: widget.sellerUID,
+                        );
+                      }
+
                       if (index == savedAddressesCount + 1) {
                         return const SizedBox(height: 80);
                       }
 
                       int dataIndex = index - 1;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.08),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: AddressDesign(
-                            curretIndex: address.count,
-                            value: dataIndex,
-                            addressID: snapshot.data!.docs[dataIndex].id,
-                            totolAmmount: widget.totolAmmount,
-                            sellerUID: widget.sellerUID,
-                            model: Address.fromJson(
-                              snapshot.data!.docs[dataIndex].data()!
-                                as Map<String, dynamic>),
-                          ),
+                      final docSnapshot = snapshot.data!.docs[dataIndex];
+                      
+                      return AddressDesign(
+                        value: dataIndex,
+                        addressID: docSnapshot.id,
+                        totolAmmount: widget.totolAmmount,
+                        sellerUID: widget.sellerUID,
+                        model: Address.fromJson(
+                          docSnapshot.data()! as Map<String, dynamic>
                         ),
                       );
                     },
@@ -214,75 +211,6 @@ class _AddressScreenState extends State<AddressScreen> {
           })
         ],
       ),
-    );
-  }
-
-  Widget _buildCurrentLocationCard(AddressChanger address) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
-          child: Text(
-            "Ship to current location?",
-            style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            clipBehavior: Clip.antiAlias,
-            child: ListTile(
-              splashColor: Colors.transparent,
-              onTap: () {
-                if (_location != context.t.findingLocalization && 
-                    _location != context.t.errorAddressNotFound) {
-                  address.displayResult(-1, address: _currentMapData);
-                  _updateAddress();
-                }
-              },
-              leading: const Icon(Icons.my_location, color: Colors.blue, size: 30),
-              title: const Text("Use Current Location", style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: address.count == -1 
-                ? Text(_location) 
-                : null,
-              trailing: Radio<int>(
-                value: -1,
-                groupValue: address.count,
-                activeColor: Colors.redAccent,
-                onChanged: (val) {
-                  if (_location != context.t.findingLocalization && 
-                      _location != context.t.errorAddressNotFound) {
-                    address.displayResult(val!, address: _currentMapData);
-                    _updateAddress();
-                  }
-                },
-              ),
-            ),
-          ),
-        ),
-        const Divider(thickness: 1, color: Colors.black12),
-        const Padding(
-          padding: EdgeInsets.only(left: 8.0, top: 10, bottom: 15),
-          child: Text(
-            "Saved Addresses",
-            style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
     );
   }
 }

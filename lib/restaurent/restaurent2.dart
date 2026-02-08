@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:user_app/restaurent/restaurent1Model.dart';
 
-import '../mainScreens/search_screen.dart';
+import '../mainScreens/search_screen_prev.dart';
 
 class Restaurent2 extends StatefulWidget {
   const Restaurent2({super.key});

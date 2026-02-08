@@ -28,7 +28,7 @@ import 'package:user_app/mainScreens/address_screen.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import "package:user_app/services/translator_service.dart";
 
-import 'package:user_app/mainScreens/search_screen_test.dart';
+import 'package:user_app/mainScreens/search_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -89,17 +89,17 @@ class _DiningPagePageState extends State<Home> {
     // Check if the user has selected a saved address (index >= 0)
     if (addressProvider.count >= 0) {
       dataToProcess = addressProvider.selectedAddress;
-    } 
-    else {
+    } else {
       if (mounted) setState(() => _location = context.t.findingLocalization);
     
       try {
-        dataToProcess = await LocationService.fetchUserCurrentLocation();
-      } 
-      catch (e) {
+        dataToProcess = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
+        if (mounted) setState(() => _location = dataToProcess['fullAddress'] ?? "");
+      } catch (e) {
         if (mounted) setState(() => _location = context.t.errorAddressNotFound);
-        return;
+        
       }
+      return;
     }
 
     String finalAddress = await TranslationService.formatAndTranslateAddress(dataToProcess, languageCode);

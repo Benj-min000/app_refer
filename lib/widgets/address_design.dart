@@ -9,23 +9,25 @@ import 'package:user_app/global/global.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import "package:user_app/mainScreens/map_screen.dart";
+// import 'package:user_app/extensions/context_translate_ext.dart';
 
 class AddressDesign extends StatefulWidget {
   final Address? model;
-  final int? curretIndex;
   final int? value;
   final String? addressID;
   final double? totolAmmount;
   final String? sellerUID;
+  final bool isCurrentLocationCard;
 
   const AddressDesign(
       {super.key,
         this.model,
-        this.curretIndex,
         this.value,
         this.addressID,
         this.totolAmmount,
-        this.sellerUID});
+        this.sellerUID,
+        this.isCurrentLocationCard = false,
+      });
 
   @override
   State<AddressDesign> createState() => _AddressDesignState();
@@ -34,16 +36,24 @@ class AddressDesign extends StatefulWidget {
 class _AddressDesignState extends State<AddressDesign> {
 
   void _selectAddress(AddressChanger addressProvider) {
-    Map<String, dynamic> addressData = widget.model?.toJson() ?? {};
-
-    addressProvider.displayResult(
-      widget.value!,
-      address: addressData, 
-      lat: double.tryParse(widget.model?.lat ?? '0.0') ?? 0.0,
-      lng: double.tryParse(widget.model?.lng ?? '0.0') ?? 0.0,
-    );
+    if (widget.isCurrentLocationCard) {
+      // The current GPS location
+      addressProvider.displayResult(widget.value!, address: widget.model?.toJson() ?? {});
+    } else {
+      // The saved addresses
+      Map<String, dynamic> addressData = widget.model?.toJson() ?? {};
+      addressProvider.displayResult(
+        widget.value!,
+        address: addressData,
+        lat: double.tryParse(widget.model?.lat ?? '0.0') ?? 0.0,
+        lng: double.tryParse(widget.model?.lng ?? '0.0') ?? 0.0,
+      );
+    }
   }
-
+  
+  // ----------------
+  // ADD TRANSLATION
+  // ----------------
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -80,130 +90,120 @@ class _AddressDesignState extends State<AddressDesign> {
 
   @override
   Widget build(BuildContext context) {
-    final addressProvider = context.read<AddressChanger>();
-    final selectedCount = context.select<AddressChanger, int>(
-      (p) => p.count,
-    );
+    final addressProvider = context.watch<AddressChanger>();
+    final isSelected = widget.value == addressProvider.count;
 
-    final bool isSelected = widget.value == selectedCount;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: () => _selectAddress(addressProvider),
-      splashColor: Colors.transparent,
-      child: Stack( // Wrap everything in a Stack
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    Icons.location_on_rounded,
-                    color: Colors.redAccent,
-                    size: 32,
-                  ),
-                  title: Row(
-                    children: [
-                      Text(
-                        widget.model!.label.toString(),
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-
-                      const SizedBox(width: 16),
-
-                      GestureDetector(
-                        onTap: () => _showDeleteDialog(context),
-                        child: const Icon(
-                          Icons.delete_rounded, 
-                          color: Colors.redAccent, 
-                          size: 22
-                        ),
-                      ),
-                    ],
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.model!.flatNumber!.isNotEmpty 
-                          ? "Building: ${widget.model!.houseNumber}, Flat: ${widget.model!.flatNumber}" 
-                          : "Building: ${widget.model!.houseNumber}",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      Text("${widget.model!.city}, ${widget.model!.state}"),
-                      Text(
-                        widget.model!.fullAddress.toString(),
-                        style: TextStyle(color: Colors.black.withValues(alpha: 0.6)),
-                      ),
-                    ],
-                  ),
-                  trailing: Radio<int>(
-                    value: widget.value!,
-                    groupValue: addressProvider.count,
-                    activeColor: Colors.redAccent,
-                    onChanged: (_) => _selectAddress(addressProvider),
-                  ),
-                ),
-                
-                if (isSelected) ...[ 
-                  const Divider(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () async {
-                          if (!mounted) return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MapScreen(
-                                  initialLat: double.parse(widget.model?.lat ?? '0.0'),
-                                  initialLng: double.parse(widget.model?.lng ?? '0.0'),
-                                  isSightSeeing: true,
-                                )
-                              ),
-                            );
-                        },
-                        icon: const Icon(Icons.map_outlined, size: 18),
-                        label: const Text("See in Maps"),
-                        style: TextButton.styleFrom(foregroundColor: Colors.blue),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PlacedOrderScreen(
-                                addressID: widget.addressID,
-                                totolAmmount: widget.totolAmmount,
-                                sellerUID: widget.sellerUID,
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        child: const Text("Proceed to Order"),
-                      ),
-                    ],
-                  ),
-                ],
-              ],
-            ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: isSelected ? Border.all(color: Colors.redAccent, width: 2) : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            ListTile(
+              onTap: () => _selectAddress(addressProvider),
+              leading: Icon(
+                widget.isCurrentLocationCard ? Icons.my_location : Icons.location_on_rounded,
+                color: widget.isCurrentLocationCard ? Colors.blue : Colors.redAccent,
+                size: 30,
+              ),
+              title: Text(
+                widget.isCurrentLocationCard ? "Use Current Location" : (widget.model?.label ?? "Address"),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle:(widget.isCurrentLocationCard && !isSelected) 
+                ? null 
+                : _buildSubtitle(),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!widget.isCurrentLocationCard)
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red, size: 24),
+                      onPressed: () => _showDeleteDialog(context),
+                    ),
+                  Radio<int>(
+                    value: widget.value!,
+                    groupValue: addressProvider.count,
+                    activeColor: Colors.redAccent,
+                    onChanged: (val) => _selectAddress(addressProvider),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected) _buildActionButtons(),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildSubtitle() {
+    if (widget.isCurrentLocationCard) {
+      return Text(widget.model?.fullAddress ?? '');
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Building: ${widget.model?.houseNumber ?? ''}"),
+        Text(widget.model?.fullAddress ?? "", 
+          style: const TextStyle(fontSize: 14, color: Colors.black87)),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        const Divider(height: 1, indent: 16, endIndent: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => MapScreen(
+                    initialLat: double.tryParse(widget.model?.lat ?? '0.0') ?? 0.0,
+                    initialLng: double.tryParse(widget.model?.lng ?? '0.0') ?? 0.0,
+                    isSightSeeing: true,
+                  )));
+                },
+                icon: const Icon(Icons.map_outlined, size: 18),
+                label: const Text("See in Maps"),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PlacedOrderScreen(
+                    addressID: widget.addressID,
+                    totolAmmount: widget.totolAmmount,
+                    sellerUID: widget.sellerUID,
+                  )));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: const Text("Proceed to Order"),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/mainScreens/search_screen.dart';
+import 'package:user_app/mainScreens/search_screen_prev.dart';
 
 class Search extends StatelessWidget {
   const Search({super.key});
