@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/global/global.dart';
-import 'package:user_app/mainScreens/home_screen.dart';
+import 'package:user_app/screens/home_screen.dart';
 
 class PlacedOrderScreen extends StatefulWidget {
   final String? addressID;

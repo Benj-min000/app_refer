@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:user_app/cake/cakeItems.dart';
 
-import 'package:user_app/restaurent/restaurent1.dart';
-import 'package:user_app/restaurent/restaurent2.dart';
-import 'package:user_app/restaurent/restaurent3.dart';
-import 'package:user_app/restaurent/restaurent4.dart';
-import 'package:user_app/restaurent/restaurent5.dart';
+import 'package:user_app/restaurants/restaurant_widget.dart';
+import 'package:user_app/models/restaurant_model.dart';
 
 import 'package:user_app/Home/HomePageMediumItems.dart';
 import 'package:user_app/Home/HomeLargeItems.dart';
@@ -24,11 +21,11 @@ import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/Home/home_category_items.dart';
 import 'package:user_app/Home/home_tabs.dart';
 
-import 'package:user_app/mainScreens/address_screen.dart';
+import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import "package:user_app/services/translator_service.dart";
 
-import 'package:user_app/mainScreens/search_screen.dart';
+import 'package:user_app/screens/search_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -86,18 +83,21 @@ class _DiningPagePageState extends State<Home> {
     final languageCode = localeProvider.locale.languageCode;
 
     Map<String, dynamic> dataToProcess;
-    // Check if the user has selected a saved address (index >= 0)
+
     if (addressProvider.count >= 0) {
       dataToProcess = addressProvider.selectedAddress;
     } else {
       if (mounted) setState(() => _location = context.t.findingLocalization);
     
       try {
-        dataToProcess = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
-        if (mounted) setState(() => _location = dataToProcess['fullAddress'] ?? "");
+        final dataToProcess = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
+        if (mounted) {
+          setState(() {
+            _location = dataToProcess['fullAddress'];
+          });
+        }
       } catch (e) {
         if (mounted) setState(() => _location = context.t.errorAddressNotFound);
-        
       }
       return;
     }
@@ -145,6 +145,7 @@ class _DiningPagePageState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final restaurantList = getRestaurantsList();
     final homeCategories = getHomeCategories(context);
     final homeTabs = getHomeTabs(context);
 
@@ -223,19 +224,18 @@ class _DiningPagePageState extends State<Home> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  // child: IconButton(
-                  //   onPressed: () {
-                  //     // Navigator.pushReplacement(
-                  //     //   context, 
-                  //     //   MaterialPageRoute(builder: (_) => const SearchScreenTest())
-                  //     // );
-                  //   }, 
-                  //   icon: Icon(Icons.search)
-                  // ),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      icon: const Icon(Icons.search),
+                      icon: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (_) => const SearchScreen())
+                          );
+                        },  
+                        icon: Icon(Icons.search)
+                      ),
                       hintText: context.t.hintSearch,
                       hintStyle: TextStyle(
                         fontSize: 13,
@@ -338,12 +338,13 @@ class _DiningPagePageState extends State<Home> {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
           
-          const SizedBox(height: 300, width: double.infinity, child: Restaurent1()),
-          const SizedBox(height: 300, width: double.infinity, child: Restaurent2()),
-          const SizedBox(height: 300, width: double.infinity, child: Restaurent3()),
-          const SizedBox(height: 300, width: double.infinity, child: Restaurent4()),
-          const SizedBox(height: 300, width: double.infinity, child: Restaurent5()),
-
+          ...List.generate(restaurantList.length, (index) => 
+            SizedBox(
+              height: 300, 
+              width: double.infinity, 
+              child: Restaurant(restaurantIndex: index),
+            ),
+          ),
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text('FEATURES',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/mainScreens/item_detail_screen.dart';
+import 'package:user_app/screens/item_detail_screen.dart';
 import 'package:user_app/models/items.dart';
 
 class ItemsDesignWidget extends StatefulWidget {

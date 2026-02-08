@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:user_app/mainScreens/save_address_screen.dart';
+import 'package:user_app/screens/save_address_screen.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
-
 
 class AddressScreen extends StatefulWidget {
   final double? totolAmmount;
@@ -86,7 +85,7 @@ class _AddressScreenState extends State<AddressScreen> {
       if (mounted) {
         setState(() {
           _gpsMapData = gpsData;
-          _gpsLocation = gpsData['fullAddress'] ?? context.t.findingLocalization;
+          _gpsLocation = gpsData['fullAddress'];
         });
       }
     } catch (e) {

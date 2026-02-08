@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
 import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
-import 'package:user_app/mainScreens/home_screen.dart';
+import 'package:user_app/screens/home_screen.dart';
 
 import 'package:user_app/global/global.dart';
 

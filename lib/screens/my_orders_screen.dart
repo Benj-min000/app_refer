@@ -5,7 +5,7 @@ import 'package:user_app/global/global.dart';
 import 'package:user_app/widgets/order_card.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/simple_Appbar.dart';
-import 'package:user_app/mainScreens/payment_screen.dart'; // Import Payment Screen
+import 'package:user_app/screens/payment_screen.dart'; // Import Payment Screen
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});

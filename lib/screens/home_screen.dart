@@ -8,7 +8,7 @@ import 'package:user_app/models/sellers.dart';
 import 'package:user_app/widgets/sellers_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/mainScreens/language_selection_screen.dart';
+import 'package:user_app/screens/language_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

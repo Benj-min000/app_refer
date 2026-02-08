@@ -132,7 +132,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Algolia Search Test'),
+        title: const Text('Search For you favorite food!'),
       ),
       body: Column(
         children: [

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:user_app/models/items.dart';
 
-import '../mainScreens/order_details_screen.dart';
+import '../screens/order_details_screen.dart';
 
 class OrderCard extends StatelessWidget {
   final int? itemCount;

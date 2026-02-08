@@ -6,7 +6,7 @@ class TranslationService {
     final translator = GoogleTranslator();
 
     // Define which fields actually need translation (skip lat, lng, postCode)
-    List<String> keysToTranslate = ['fullAddress', 'city', 'state', 'country'];
+    List<String> keysToTranslate = ['city', 'state', 'country'];
 
     // Create a copy of the map to modify
     Map<String, dynamic> translatedMap = Map.from(mapData);

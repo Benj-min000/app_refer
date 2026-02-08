@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
-import 'package:user_app/mainScreens/placed_order_screen.dart';
+import 'package:user_app/screens/placed_order_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/models/address.dart';
 
 import 'package:user_app/global/global.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
-import "package:user_app/mainScreens/map_screen.dart";
+import "package:user_app/screens/map_screen.dart";
+import 'package:user_app/services/translator_service.dart';
+import 'package:user_app/assistant_methods/locale_provider.dart';
 // import 'package:user_app/extensions/context_translate_ext.dart';
 
 class AddressDesign extends StatefulWidget {
@@ -34,6 +36,8 @@ class AddressDesign extends StatefulWidget {
 }
 
 class _AddressDesignState extends State<AddressDesign> {
+
+  late Future<String> _translationFuture;
 
   void _selectAddress(AddressChanger addressProvider) {
     if (widget.isCurrentLocationCard) {
@@ -87,11 +91,25 @@ class _AddressDesignState extends State<AddressDesign> {
       ),
     );
   }
+  @override
+  void initState() {
+    super.initState();
+    
+    // Initializing the address translation
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+    final languageCode = localeProvider.locale.languageCode;
+    
+    _translationFuture = TranslationService.formatAndTranslateAddress(
+      widget.model!.toJson(), 
+      languageCode
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final addressProvider = context.watch<AddressChanger>();
     final isSelected = widget.value == addressProvider.count;
+    
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -153,13 +171,29 @@ class _AddressDesignState extends State<AddressDesign> {
     if (widget.isCurrentLocationCard) {
       return Text(widget.model?.fullAddress ?? '');
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Building: ${widget.model?.houseNumber ?? ''}"),
-        Text(widget.model?.fullAddress ?? "", 
-          style: const TextStyle(fontSize: 14, color: Colors.black87)),
-      ],
+
+    return FutureBuilder<String>(
+      future: _translationFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text("Translating...");
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error loading address");
+        }
+
+        final translatedAddress = snapshot.data ?? '';
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Building: ${widget.model?.houseNumber ?? ''}"),
+            Text(translatedAddress, 
+              style: const TextStyle(fontSize: 14, color: Colors.black87)),
+          ],
+        );
+      },
     );
   }
 

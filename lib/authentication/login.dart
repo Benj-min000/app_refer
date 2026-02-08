@@ -6,7 +6,7 @@ import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
-import 'package:user_app/mainScreens/home_screen.dart';
+import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';

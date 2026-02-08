@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
-import 'package:user_app/mainScreens/cart_screen.dart';
+import 'package:user_app/screens/cart_screen.dart';
 
 class MyAppbar extends StatefulWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;

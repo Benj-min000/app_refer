@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
-import 'package:user_app/mainScreens/address_screen.dart';
+import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/widgets/cart_item_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';

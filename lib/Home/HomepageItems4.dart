@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../mainScreens/search_screen_prev.dart';
+import '../screens/search_screen_prev.dart';
 
 class HomePageItems4 extends StatelessWidget {
   const HomePageItems4({super.key});

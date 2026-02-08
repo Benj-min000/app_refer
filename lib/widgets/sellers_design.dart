@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/mainScreens/menus_screen.dart';
+import 'package:user_app/screens/menus_screen.dart';
 import 'package:user_app/models/sellers.dart';
 
 class SellersDesignWidget extends StatefulWidget {
