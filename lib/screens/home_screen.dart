@@ -28,132 +28,131 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueAccent, Colors.lightBlueAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.topRight,
+    return Listener(
+      onPointerDown: (_) {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.topRight,
+              ),
             ),
           ),
-        ),
-        title: const Text(
-          "I-Eat",
-          style: TextStyle(fontFamily: "Signatra", fontSize: 40),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.language, 
-              color: Colors.white, 
-              shadows: [
-                Shadow(
-                  color: Colors.pink.withValues(alpha: 0.3),
-                  offset: const Offset(1.0, 1.0),
-                  
-                  blurRadius: 6.0,
-                ),
-              ],
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => LanguageSelectionScreen()),
-              );
-            },
+          title: const Text(
+            "I-Eat",
+            style: TextStyle(fontFamily: "Signatra", fontSize: 40),
           ),
-        ],
-      ),
-      drawer: MyDrawer(),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                const Home(),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    width: MediaQuery.of(context).size.width,
-                    child: CarouselSlider(
-                      items: items.map((imagePath) {
-                        return Center(
-                          child: SizedBox(
-                            width: 360,
-                            height: 260,
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: const EdgeInsets.all(4.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
-                                  imagePath,
-                                  fit: BoxFit.cover,
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.language, 
+                color: Colors.white, 
+                shadows: [
+                  Shadow(
+                    color: Colors.pink.withValues(alpha: 0.3),
+                    offset: const Offset(1.0, 1.0),
+                    blurRadius: 6.0,
+                  ),
+                ],
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => LanguageSelectionScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+        drawer: MyDrawer(),
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const Home(),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: MediaQuery.of(context).size.width,
+                      child: CarouselSlider(
+                        items: items.map((imagePath) {
+                          return Center(
+                            child: SizedBox(
+                              width: 360,
+                              height: 240,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: const EdgeInsets.all(4.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    imagePath,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                      options: CarouselOptions(
-                        height: 300, // reduce carousel height
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        enlargeFactor: 0.2,
-                        autoPlayInterval: const Duration(seconds: 3),
-                        autoPlayAnimationDuration: const Duration(milliseconds: 600),
-                        viewportFraction: 0.8,
+                          );
+                        }).toList(),
+                        options: CarouselOptions(
+                          height: 300,
+                          autoPlay: true,
+                          enlargeCenterPage: true,
+                          enlargeFactor: 0.2,
+                          autoPlayInterval: const Duration(seconds: 3),
+                          autoPlayAnimationDuration: const Duration(milliseconds: 600),
+                          viewportFraction: 0.8,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    // localizations.helloWorld, // Now safely used
-                    'Localization',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection("sellers").snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return SliverToBoxAdapter(
-                  child: Center(child: circularProgress()),
-                );
-              }
+            StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection("sellers").snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return SliverToBoxAdapter(
+                    child: Center(child: circularProgress()),
+                  );
+                }
 
-              return SliverMasonryGrid.count(
-                crossAxisCount: 1, // Number of columns
-                itemBuilder: (context, index) {
-                  Sellers sModel = Sellers.fromJson(
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>,
-                  );
-                  return SellersDesignWidget(
-                    model: sModel,
-                    context: context,
-                  );
-                },
-                childCount: snapshot.data!.docs.length,
-              );
-            },
-          ),
-        ],
+                return SliverMasonryGrid.count(
+                  crossAxisCount: 1, // Number of columns
+                  itemBuilder: (context, index) {
+                    Sellers sModel = Sellers.fromJson(
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>,
+                    );
+                    return SellersDesignWidget(
+                      model: sModel,
+                      context: context,
+                    );
+                  },
+                  childCount: snapshot.data!.docs.length,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

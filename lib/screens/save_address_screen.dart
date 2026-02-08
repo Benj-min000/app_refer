@@ -55,6 +55,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
       _postCode.text = result['postCode'] ?? '';
       _street.text = result['road'] ?? '';
       _houseNumber.text = result['houseNumber'] ?? '';
+
       String sub = result['subpremise'] ?? '';
       _flatNumber.text = sub.isNotEmpty ? "Apt $sub" : "";
 
@@ -118,7 +119,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
         lng: lng.toString(),
       ).toJson();
 
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
         .collection("users")
         .doc(sharedPreferences!.getString("uid") ?? "")
         .collection("userAddress")

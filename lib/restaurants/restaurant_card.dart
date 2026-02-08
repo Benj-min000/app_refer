@@ -27,7 +27,7 @@ class _RestaurantState extends State<Restaurant> {
         return InkWell(
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const SearchScreen()),
+            MaterialPageRoute(builder: (_) => SearchScreen(initialText: item.name)),
           ),
           child: Stack(
             children: [
@@ -52,7 +52,7 @@ class _RestaurantState extends State<Restaurant> {
                             image: DecorationImage(
                               fit: BoxFit.cover,
                               colorFilter: ColorFilter.mode(
-                                Colors.black.withValues(alpha: 0.3),
+                                Colors.black.withValues(alpha: 0.43),
                                 BlendMode.darken,
                               ),
                               image: AssetImage(item.imageUrl),
@@ -188,7 +188,7 @@ class _RestaurantState extends State<Restaurant> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),

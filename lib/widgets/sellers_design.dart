@@ -18,9 +18,9 @@ class _SellersDesignWidgetState extends State<SellersDesignWidget> {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MenusScreen(model: widget.model)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => MenusScreen(model: widget.model)));
       },
       splashColor: Colors.amber,
       child: Padding(
@@ -35,7 +35,7 @@ class _SellersDesignWidgetState extends State<SellersDesignWidget> {
               color: Colors.grey[300],
             ),
             Image.network(
-              widget.model!.sellerAvtar!,
+              widget.model!.sellerAvatar!,
               height: 220,
               fit: BoxFit.cover,
             ),

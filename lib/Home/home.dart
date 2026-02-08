@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:user_app/cake/cakeItems.dart';
 
-import 'package:user_app/restaurants/restaurant_widget.dart';
+import 'package:user_app/restaurants/restaurant_card.dart';
 import 'package:user_app/models/restaurant_model.dart';
 
 import 'package:user_app/Home/HomePageMediumItems.dart';
@@ -36,6 +36,9 @@ class Home extends StatefulWidget {
 
 class _DiningPagePageState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
+
+  int _selectedTabIndex = 0;
+
   String _location = "";
 
   // State variable for changing the visibility of the whole address
@@ -218,31 +221,55 @@ class _DiningPagePageState extends State<Home> {
 
                 const SizedBox(height: 12),
 
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      icon: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(builder: (_) => const SearchScreen())
-                          );
-                        },  
-                        icon: Icon(Icons.search)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: context.t.hintSearch,
+                            hintStyle: TextStyle(fontSize: 13),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (value) async {
+                            await Navigator.of(context).push(
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) => SearchScreen(initialText: value),
+                                transitionDuration: const Duration(milliseconds: 400),
+                                reverseTransitionDuration: const Duration(milliseconds: 300),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  var curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutQuart, // Smooth expansion
+                                  );
+
+                                  return ScaleTransition(
+                                    scale: curvedAnimation,
+                                    alignment: Alignment.topCenter, // The expands from the top
+                                    child: FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                            
+                            _searchController.clear();
+                            if (mounted) return;
+                            FocusScope.of(context).unfocus();
+                          },
+                        ),
                       ),
-                      hintText: context.t.hintSearch,
-                      hintStyle: TextStyle(
-                        fontSize: 13,
-                      ),
-                      border: InputBorder.none,
                     ),
-                  ),
+                  ]
                 ),
               ],
             ),
@@ -253,12 +280,16 @@ class _DiningPagePageState extends State<Home> {
             tabAlignment: TabAlignment.start,
             labelPadding: const EdgeInsets.symmetric(horizontal: 16.0), 
             labelColor: Colors.redAccent,
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.redAccent,
             indicatorSize: TabBarIndicatorSize.label, 
             physics: const ClampingScrollPhysics(),
             padding: EdgeInsets.zero, 
-            tabs: homeTabs.map((tab) => Tab(text: tab.label)).toList(),
+            tabs: homeTabs.map((tabs) => Tab(text: tabs.label)).toList(),
+            onTap: (index) {
+              setState(() => _selectedTabIndex = index);
+            },
           ),
 
           Padding(
@@ -288,13 +319,11 @@ class _DiningPagePageState extends State<Home> {
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Builder(
                 builder: (context) {
-                  final currentTabIndex = DefaultTabController.of(context).index;
-                  final currentTabLabel = homeTabs[currentTabIndex].label;
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        context.t.seeMore(currentTabLabel),
+                        context.t.seeMore(homeTabs[_selectedTabIndex].label),
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -331,7 +360,8 @@ class _DiningPagePageState extends State<Home> {
             child: Text('IN THE SPOTLIGHT',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
-          const SizedBox(height: 220, width: double.infinity, child: CakeItems1()),
+          const SizedBox(height: 220, width: double.infinity, child: CakeItems()),
+
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text('OUR RESTAURENTS',

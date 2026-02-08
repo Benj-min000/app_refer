@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../screens/search_screen_prev.dart';
+import 'package:user_app/screens/search_screen.dart';
 
 class HomePageItems3 extends StatelessWidget {
   const HomePageItems3({super.key});
@@ -23,7 +22,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -52,7 +51,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -81,7 +80,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -110,7 +109,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -145,7 +144,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -174,7 +173,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -202,7 +201,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -231,7 +230,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -266,7 +265,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -295,7 +294,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -323,7 +322,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -352,7 +351,7 @@ class HomePageItems3 extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SearchScreen()));
+                                  builder: (context) => SearchScreen(initialText: 'rewrite')));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),

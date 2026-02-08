@@ -1,5 +1,6 @@
 import 'package:algoliasearch/algoliasearch_lite.dart';
 import 'package:flutter/material.dart';
+import 'package:user_app/search/search_tabs.dart';
 
 // Product model
 class Product {
@@ -49,14 +50,17 @@ class Product {
 }
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final String initialText;
+  const SearchScreen({super.key, required this.initialText});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _searchController = TextEditingController();
+  late TextEditingController _searchController;
+
+  int _selectedTabIndex = 0;
   
   // Algolia client
   late final SearchClient _client;
@@ -67,9 +71,20 @@ class _SearchScreenState extends State<SearchScreen> {
   int _totalHits = 0;
   int _processingTime = 0;
 
+  final List<String> _selectedCategories = [];
+  RangeValues _currentPriceRange = const RangeValues(0, 500);
+  final List<String> _availableCategories = ['Tops', 'Pants', 'Shoes', 'Accessories'];
+
   @override
   void initState() {
     super.initState();
+
+    _searchController = TextEditingController(text: widget.initialText);
+    
+    // Move cursor to the end so they can keep typing
+    _searchController.selection = TextSelection.fromPosition(
+      TextPosition(offset: _searchController.text.length),
+    );
     
     // Initialize Algolia client
     _client = SearchClient(
@@ -78,7 +93,22 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     
     // Perform initial search
-    _performSearch('');
+    _performSearch(widget.initialText);
+  }
+
+  String _buildFilterString() {
+    List<String> filters = [];
+
+    if (_selectedCategories.isNotEmpty) {
+      final catFilter = _selectedCategories.map((c) => 'product_type:"$c"').join(' OR ');
+      filters.add('($catFilter)');
+    }
+
+    filters.add('price:${_currentPriceRange.start.round()} TO ${_currentPriceRange.end.round()}');
+    
+    String finalFilter = filters.join(' AND ');
+    print("Generated Filter String: $finalFilter");
+    return filters.join(' AND ');
   }
 
   Future<void> _performSearch(String query) async {
@@ -88,20 +118,15 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      print('Searching for: "$query"');
-      
-      // Create search query
       final searchQuery = SearchForHits(
         indexName: 'algolia_apparel_sample_dataset',
         query: query,
         hitsPerPage: 20,
+        filters: _buildFilterString(),
       );
 
       final response = await _client.searchIndex(request: searchQuery);
 
-      print('[x] Got ${response.nbHits} hits in ${response.processingTimeMS}ms');
-
-      // Parse results
       final products = response.hits
           .map((hit) => Product.fromJson(hit))
           .toList();
@@ -113,7 +138,6 @@ class _SearchScreenState extends State<SearchScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error: $e');
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -130,61 +154,149 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search For you favorite food!'),
-      ),
-      body: Column(
-        children: [
-          // Search box
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search products...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+    final searchTabs = getSearchTabs(context);
+
+    return DefaultTabController(
+      length: searchTabs.length,
+      child: Listener(
+        onPointerDown: (_) {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.topRight,
                 ),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _performSearch('');
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.shopping_cart,
+                  size: 24, 
+                  color: Colors.white, 
+                  shadows: [
+                    Shadow(
+                      color: Colors.pink.withValues(alpha: 0.3),
+                      offset: const Offset(1.0, 1.0),
+                      
+                      blurRadius: 6.0,
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                },
+              ),
+            ],
+            title: const Text(
+              "I-Eat",
+              style: TextStyle(fontFamily: "Signatra", fontSize: 40),
+            ),
+            centerTitle: true,
+            automaticallyImplyLeading: true,
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Search box
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 4, top: 16, right: 16, left: 16),
+                      child: TextField(
+                        autofocus: true,
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search products...',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    _performSearch('');
+                                  },
+                                )
+                              : null,
+                        ),
+                        onChanged: (value) {
+                          // Debounce search - wait 500ms after user stops typing
+                          Future.delayed(const Duration(milliseconds: 500), () {
+                            if (_searchController.text == value) {
+                              _performSearch(value);
+                            }
+                          });
                         },
-                      )
-                    : null,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 8),
+                    child: IconButton(
+                      onPressed: () => _showFilterBottomSheet(), 
+                      icon: const Icon(
+                        Icons.tune, 
+                        color: Colors.black,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                // Debounce search - wait 500ms after user stops typing
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  if (_searchController.text == value) {
-                    _performSearch(value);
-                  }
-                });
-              },
-            ),
-          ),
-
-          // Stats
-          if (!_isLoading && _error == null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                '$_totalHits results (${_processingTime}ms)',
-                style: Theme.of(context).textTheme.bodySmall,
+              TabBar(
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                labelColor: Colors.redAccent,
+                labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                unselectedLabelColor: Colors.black54,
+                indicatorColor: Colors.redAccent,
+                indicatorSize: TabBarIndicatorSize.label, 
+                physics: const ClampingScrollPhysics(),
+                padding: EdgeInsets.zero, 
+                tabs: searchTabs.map((tabs) => Tab(text: tabs.label)).toList(),
+                onTap: (index) {
+                  setState(() => _selectedTabIndex = index);
+                },
               ),
-            ),
 
-          const SizedBox(height: 8),
+              const SizedBox(height: 16,),
 
-          // Content
-          Expanded(
-            child: _buildContent(),
+              // Stats
+              if (!_isLoading && _error == null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 24),
+                  child: Text(
+                    '$_totalHits results (${_processingTime}ms)',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      wordSpacing: 4,
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 8),
+
+              // Content
+              Expanded(
+                child: _buildContent(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -362,6 +474,74 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ],
           ),
+        );
+      },
+    );
+  }
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Filters", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  const Text("Categories", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Wrap(
+                    spacing: 8,
+                    children: _availableCategories.map((cat) {
+                      final isSelected = _selectedCategories.contains(cat);
+                      return FilterChip(
+                        label: Text(cat),
+                        selected: isSelected,
+                        onSelected: (val) {
+                          setModalState(() {
+                            val ? _selectedCategories.add(cat) : _selectedCategories.remove(cat);
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  Text("Price Range: \$${_currentPriceRange.start.round()} - \$${_currentPriceRange.end.round()}",
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  RangeSlider(
+                    values: _currentPriceRange,
+                    min: 0,
+                    max: 500,
+                    divisions: 10,
+                    onChanged: (values) {
+                      setModalState(() => _currentPriceRange = values);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _performSearch(_searchController.text);
+                      },
+                      child: const Text("Apply Filters", style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            );
+          },
         );
       },
     );
