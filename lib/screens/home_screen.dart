@@ -9,6 +9,7 @@ import 'package:user_app/widgets/sellers_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/screens/language_selection_screen.dart';
+import 'package:user_app/screens/notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,13 +55,14 @@ class _HomeScreenState extends State<HomeScreen> {
           automaticallyImplyLeading: true,
           actions: [
             IconButton(
+              padding: EdgeInsets.zero,
               icon: Icon(
-                Icons.language, 
-                color: Colors.white, 
+                Icons.language,
+                color: Colors.white,
                 shadows: [
                   Shadow(
-                    color: Colors.pink.withValues(alpha: 0.3),
-                    offset: const Offset(1.0, 1.0),
+                    color: Colors.black.withValues(alpha: 0.3),
+                    offset: const Offset(2.0, 2.0),
                     blurRadius: 6.0,
                   ),
                 ],
@@ -73,6 +75,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+
+            IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (_) => NotificationScreen(),)
+                );
+              },
+              icon: Badge(
+                label: const Text(
+                  "3", // Number of notifications
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+                backgroundColor: Colors.red,
+                isLabelVisible: true, // If '0' this needs to be changed to false
+                child: Icon(
+                  Icons.notifications, 
+                  color: Colors.white,
+                  size: 28,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      offset: const Offset(2.0, 2.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
+                ),
+                
+              ),
+            )
           ],
         ),
         drawer: MyDrawer(),

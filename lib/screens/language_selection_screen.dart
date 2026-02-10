@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
-import 'package:user_app/models/language_model.dart';
+import 'package:user_app/models/language.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:user_app/l10n/app_localizations.dart';
 
@@ -46,9 +46,9 @@ class LanguageSelectionScreen extends StatelessWidget {
         )
       ),
       body: ListView.builder(
-        itemCount: LanguageModel.languageList.length,
+        itemCount: Language.languageList.length,
         itemBuilder: (context, index) {
-          final lang = LanguageModel.languageList[index];
+          final lang = Language.languageList[index];
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Spacing between list items

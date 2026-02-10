@@ -102,8 +102,22 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleAppBar(
-        title: "I-Eat",
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueAccent, Colors.lightBlueAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.topRight,
+            ),
+          ),
+        ),
+        title: const Text(
+          "I-Eat",
+          style: TextStyle(fontFamily: "Signatra", fontSize: 40),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -111,10 +125,11 @@ class _AddressScreenState extends State<AddressScreen> {
             context,
             MaterialPageRoute(builder: (_) => SaveAddressScreen()));
         },
-        label: const Text("Add New Address", style: TextStyle(color: Colors.black),),
-        backgroundColor: Colors.redAccent,
+        label: const Text("Add New Address", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        backgroundColor: Colors.blue,
         icon: const Icon(
           Icons.add_location,
+          size: 26,
           color: Colors.white,
         ),
       ),
@@ -129,14 +144,8 @@ class _AddressScreenState extends State<AddressScreen> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
+                height: 1,
                 color: Colors.black54,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    offset: const Offset(2, 2), 
-                    blurRadius: 4,        
-                  ),
-                ],
               ),
             )
           ),

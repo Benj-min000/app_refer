@@ -1,4 +1,9 @@
+// ------------------------------
+// NOT USED JUST LEAVING IT HERE
+// ------------------------------
+
 import 'package:flutter/material.dart';
+import 'package:user_app/screens/home_screen.dart';
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -28,11 +33,11 @@ class _HomePageState extends State<HomePageView> {
           },
           controller: _pageController,
           children: const [
-            // MyDashboard(),
-            // DeliveryPage(),
-            // Home(),
-            // DiningHome(),
-            // signUp(),
+            Center(child: Text("Dashboard")), // Placeholder
+            Center(child: Text("Delivery")),  // Placeholder
+            HomeScreen(),                     // Your second code snippet
+            Center(child: Text("Dining")),    // Placeholder
+            Center(child: Text("Settings")),  // Placeholder
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -43,8 +48,8 @@ class _HomePageState extends State<HomePageView> {
           elevation: 0,
           onTap: (value) {
             _pageController.animateToPage(value,
-                duration: const Duration(milliseconds: 2000),
-                curve: Curves.elasticOut);
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut);
           },
           currentIndex: index,
           items: const [

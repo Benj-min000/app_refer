@@ -44,6 +44,7 @@ dependencies:
   permission_handler: ^12.0.1
   algoliasearch: ^1.44.0
   infinite_scroll_pagination: ^5.1.1
+  phone_form_field: ^10.0.17
 
 dev_dependencies:
   flutter_test:

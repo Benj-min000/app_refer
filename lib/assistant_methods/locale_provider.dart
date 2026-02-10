@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import "package:user_app/models/language_model.dart";
+import "package:user_app/models/language.dart";
 
 class LocaleProvider with ChangeNotifier {
   Locale _locale = Locale('en');
@@ -10,7 +10,7 @@ class LocaleProvider with ChangeNotifier {
 
   Future<void> setLocale(Locale locale) async {
 
-    final isSupported = LanguageModel.languageList.any(
+    final isSupported = Language.languageList.any(
       (lang) => lang.code == locale.languageCode
     );
 
@@ -30,7 +30,7 @@ class LocaleProvider with ChangeNotifier {
     if (languageCode == null) {
       final String deviceCode = PlatformDispatcher.instance.locale.languageCode;
 
-      final isSupported = LanguageModel.languageList.any(
+      final isSupported = Language.languageList.any(
         (lang) => lang.code == deviceCode
       );
 

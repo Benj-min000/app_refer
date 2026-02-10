@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:user_app/cake/cakeItems.dart';
 
 import 'package:user_app/restaurants/restaurant_card.dart';
-import 'package:user_app/models/restaurant_model.dart';
+import 'package:user_app/models/restaurant.dart';
 
 import 'package:user_app/Home/HomePageMediumItems.dart';
 import 'package:user_app/Home/HomeLargeItems.dart';
 
-import 'package:user_app/Home/HomePageItems3.dart';
-import 'package:user_app/Home/HomepageItems4.dart';
+import 'package:user_app/Home/HomePageItems.dart';
 
 import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
@@ -24,6 +23,7 @@ import 'package:user_app/Home/home_tabs.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import "package:user_app/services/translator_service.dart";
+import 'package:user_app/models/home_page_items.dart';
 
 import 'package:user_app/screens/search_screen.dart';
 
@@ -148,7 +148,6 @@ class _DiningPagePageState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final restaurantList = getRestaurantsList();
     final homeCategories = getHomeCategories(context);
     final homeTabs = getHomeTabs(context);
 
@@ -353,8 +352,14 @@ class _DiningPagePageState extends State<Home> {
             child: Text('WHATS ON YOUR MIND?',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
-          const SizedBox(height: 100, width: double.infinity, child: HomePageItems3()),
-          const SizedBox(height: 100, width: double.infinity, child: HomePageItems4()),
+          ...List.generate(homePageItemsLenght(), (index) =>
+            SizedBox(
+              height: 100,
+              width: double.infinity, 
+              child: HomePageItems(itemsIndex: index)
+            ),
+          ),
+
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text('IN THE SPOTLIGHT',
@@ -368,11 +373,11 @@ class _DiningPagePageState extends State<Home> {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
           ),
           
-          ...List.generate(restaurantList.length, (index) => 
+          ...List.generate(restaurantsListLength(), (index) => 
             SizedBox(
               height: 300, 
               width: double.infinity, 
-              child: Restaurant(restaurantIndex: index),
+              child: RestaurantCard(restaurantIndex: index),
             ),
           ),
           const Padding(

@@ -59,6 +59,7 @@ class _AddressDesignState extends State<AddressDesign> {
   // ADD TRANSLATION
   // ----------------
   void _showDeleteDialog(BuildContext context) {
+    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -80,6 +81,9 @@ class _AddressDesignState extends State<AddressDesign> {
                   .collection("userAddress")
                   .doc(widget.addressID)
                   .delete();
+                
+                addressProvider.displayResult(-1, address: {});
+
                 Fluttertoast.showToast(msg: "Address deleted successfully");
               } catch (e) {
                 Fluttertoast.showToast(msg: "Error: $e");
@@ -91,6 +95,7 @@ class _AddressDesignState extends State<AddressDesign> {
       ),
     );
   }
+
   @override
   void initState() {
     super.initState();
@@ -110,7 +115,6 @@ class _AddressDesignState extends State<AddressDesign> {
     final addressProvider = context.watch<AddressChanger>();
     final isSelected = widget.value == addressProvider.count;
     
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(

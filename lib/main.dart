@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 // Language change
 import 'package:user_app/l10n/app_localizations.dart';
-import 'package:user_app/models/language_model.dart';
+import 'package:user_app/models/language.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,13 +64,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.blue,
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.lightBlue,
       ),
 
       locale: localeProvider.locale,
 
       // Autmatically fetching the languages list from language_model.dart
-      supportedLocales: LanguageModel.languageList.map((lang) {
+      supportedLocales: Language.languageList.map((lang) {
         return Locale(lang.code, lang.countryCode);
       }).toList(),
 

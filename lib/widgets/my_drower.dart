@@ -3,15 +3,36 @@ import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/screens/history_screen.dart';
-import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/screens/my_orders_screen.dart';
 import 'package:user_app/screens/search_screen_prev.dart';
+import 'package:user_app/screens/profile_settings_screen.dart';
+
+class DrawerItem {
+  final String title;
+  final IconData icon;
+  final Widget screen;
+
+  const DrawerItem({
+    required this.title,
+    required this.icon,
+    required this.screen,
+  });
+}
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final List<DrawerItem> drawerItems = [
+      DrawerItem(title: "Profile Settings", icon: Icons.manage_accounts, screen: const ProfileSettingsScreen()),
+      DrawerItem(title: "My Orders", icon: Icons.reorder, screen: MyOrdersScreen()),
+      DrawerItem(title: "History", icon: Icons.access_time, screen: const HistoryScreen()),
+      DrawerItem(title: "Search", icon: Icons.search, screen: SearchScreen()),
+      DrawerItem(title: "Address Manager", icon: Icons.location_on_outlined, screen: AddressScreen()),
+    ];
+
     return Drawer(
       child: ListView(
         children: [
@@ -29,7 +50,7 @@ class MyDrawer extends StatelessWidget {
                       width: 160,
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                            sharedPreferences!.getString("photo")!),
+                          sharedPreferences!.getString("photo")!),
                       ),
                     ),
                   ),
@@ -45,149 +66,46 @@ class MyDrawer extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            padding: const EdgeInsets.only(top: 1.0),
-            child: Column(
-              children: [
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.home,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "Home",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.reorder,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "My Orders",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyOrdersScreen()));
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.access_time,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "History",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HistoryScreen()));
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.search,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "Search",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchScreen()));
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.add_location,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "Add new Address",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>  AddressScreen()));
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.exit_to_app,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "Sign Out",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                    firebaseAuth.signOut().then((value) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AuthScreen()));
-                    });
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-              ],
+          const SizedBox(height: 10),
+          
+          ...drawerItems.map((item) => Column(
+            children: [
+              const Divider(height: 1, thickness: 1, color: Colors.grey),
+              ListTile(
+                leading: Icon(item.icon, color: Colors.black),
+                title: Text(item.title, style: const TextStyle(color: Colors.black)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => item.screen));
+                },
+              ),
+            ],
+          )),
+            
+          const Divider(height: 10, color: Colors.grey, thickness: 2),
+          ListTile(
+            leading: const Icon(
+              Icons.exit_to_app,
+              color: Colors.black,
             ),
-          )
+            title: const Text(
+              "Sign Out",
+              style: TextStyle(color: Colors.black),
+            ),
+            onTap: () {
+              firebaseAuth.signOut().then((value) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AuthScreen()));
+              });
+            },
+          ),
+          const Divider(
+            height: 10,
+            color: Colors.grey,
+            thickness: 2,
+          ),
         ],
       ),
     );

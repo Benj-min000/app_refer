@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/models/restaurant_model.dart';
+import 'package:user_app/models/restaurant.dart';
 import 'package:user_app/screens/search_screen.dart';
 
-class Restaurant extends StatefulWidget {
+class RestaurantCard extends StatefulWidget {
   final int restaurantIndex;
 
-  const Restaurant({required this.restaurantIndex, super.key});
+  const RestaurantCard({required this.restaurantIndex, super.key});
 
   @override
-  State<Restaurant> createState() => _RestaurantState();
+  State<RestaurantCard> createState() => _RestaurantState();
 }
 
-class _RestaurantState extends State<Restaurant> {
+class _RestaurantState extends State<RestaurantCard> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final list = getRestaurantsList();
-    final rowIdx = widget.restaurantIndex;
-    final restaurants = list[rowIdx];
+    final restaurants = getRestaurantsList(widget.restaurantIndex);
 
     return PageView.builder(
       itemCount: restaurants.length,

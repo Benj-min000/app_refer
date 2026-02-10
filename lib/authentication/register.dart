@@ -7,14 +7,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
 import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:user_app/screens/home_screen.dart';
 
 import 'package:user_app/global/global.dart';
-
 import 'package:user_app/extensions/context_translate_ext.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -33,14 +31,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
-
   String downloadUrl = "";
 
   Future<void> _getImage() async {
-    imageXFile = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      imageXFile;
-    });
+    XFile? selectedImage = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (selectedImage != null) {
+      setState(() {
+        imageXFile = selectedImage;
+      });
+    }
   }
 
   Future<void> formValidation() async {
@@ -110,7 +110,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> saveDataToFireStore(User currentUser) async {
-    await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).set({
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+    await userRef.set({
       "uid": currentUser.uid,
       "email": currentUser.email,
       "name": _nameController.text.trim(),
@@ -120,8 +121,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "userCart": ['garbageValue'],
     });
 
+    // Initializing notifications
+    await userRef.collection('userNotifications').add({
+      "title": "Welcome!",
+      "body": "Thanks for joining our app, ${_nameController.text.trim()}!",
+      "timestamp": DateTime.now(),
+      "isRead": false,
+    });
+
     // Save data locally
-    sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences!.setString("uid", currentUser.uid);
     await sharedPreferences!.setString("email", currentUser.email.toString());
     await sharedPreferences!.setString("name", _nameController.text.trim());
