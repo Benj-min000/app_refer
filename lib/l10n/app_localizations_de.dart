@@ -92,10 +92,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get changeLanguage => 'Sprache ändern';
+  String get findingLocalization => 'Standort wird ermittelt...';
 
   @override
-  String get findingLocalization => 'Standort wird ermittelt...';
+  String get changeLanguage => 'Sprache ändern';
 
   @override
   String get hintName => 'Name';

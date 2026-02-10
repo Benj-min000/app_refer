@@ -103,9 +103,13 @@ class _LoginScreenState extends State<LoginScreen> {
       await sharedPreferences!.setString("name", data["name"]);
       await sharedPreferences!.setString("phone", data["phone"]);
       await sharedPreferences!.setString("photo", data["photo"]);
-      await sharedPreferences!.setStringList(
-        "userCart", List<String>.from(data["userCart"] ?? [])
-      );
+
+      //----------------------------------------------------
+      // Will be not used because of the userCart collection
+      //----------------------------------------------------
+      // await sharedPreferences!.setStringList(
+      //   "userCart", List<String>.from(data["userCart"] ?? [])
+      // );
 
       if (!mounted) return;
       Navigator.pushReplacement(

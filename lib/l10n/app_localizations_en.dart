@@ -92,10 +92,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get changeLanguage => 'Change Language';
+  String get findingLocalization => 'Finding your localization...';
 
   @override
-  String get findingLocalization => 'Finding your localization...';
+  String get changeLanguage => 'Language';
 
   @override
   String get hintName => 'Name';

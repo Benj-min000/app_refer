@@ -4,8 +4,8 @@ import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/widgets/order_card.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/widgets/simple_Appbar.dart';
-import 'package:user_app/screens/payment_screen.dart'; // Import Payment Screen
+import 'package:user_app/screens/payment_screen.dart';
+import 'package:user_app/widgets/unified_app_bar.dart'; // Import Payment Screen
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
@@ -19,7 +19,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: SimpleAppBar(
+        appBar: UnifiedAppBar(
           title: "My Orders",
         ),
         body: Column(

@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/services/location_service.dart';
-import 'package:user_app/widgets/simple_Appbar.dart';
 
 import 'package:provider/provider.dart';
 
@@ -14,6 +13,7 @@ import 'package:user_app/widgets/custom_text_field.dart';
 import "package:user_app/screens/map_screen.dart";
 import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
 
 class SaveAddressScreen extends StatefulWidget {
   const SaveAddressScreen({super.key});
@@ -155,7 +155,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // We keep the fields list here to ensure they stay reactive
+    
     final List<CustomTextField> addressFields = [
       CustomTextField(hintText: "Address Label (Home/Work)", controller: _addressLabel, isObsecure: false),
       CustomTextField(hintText: "City", controller: _city, isObsecure: false),
@@ -168,7 +168,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
     ];
 
     return Scaffold(
-      appBar: SimpleAppBar(title: "I-Eat"),
+      appBar: UnifiedAppBar(title: "I-Eat"),
       floatingActionButton: _isAddressFetched 
         ? FloatingActionButton.extended(
             onPressed: isLoading ? null : () => formValidation(),
@@ -223,9 +223,15 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 40.0),
                       child: Divider(thickness: 1),
                     ),
-                    const Text("Verify & Refine Details", style: TextStyle(color: Colors.grey)),
+                    Text(
+                      "Verify & Refine Details", 
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
 
                     Form(
                       key: formKey,
@@ -233,24 +239,8 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Column(
                           children: addressFields.map((field) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4.0, bottom: 4.0),
-                                  child: Text(
-                                    field.hintText ?? "",
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                                field,
-                              ],
-                            )
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: field,
                           )).toList(),
                         ),
                       ),

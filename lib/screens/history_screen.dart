@@ -4,7 +4,7 @@ import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/widgets/order_card.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/widgets/simple_Appbar.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -18,7 +18,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: SimpleAppBar(
+        appBar: UnifiedAppBar(
           title: "History",
         ),
         body: StreamBuilder<QuerySnapshot>(

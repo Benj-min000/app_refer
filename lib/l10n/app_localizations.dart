@@ -260,17 +260,17 @@ abstract class AppLocalizations {
   /// **'See more in {tab}'**
   String seeMore(Object tab);
 
-  /// Button or menu label to change language
-  ///
-  /// In en, this message translates to:
-  /// **'Change Language'**
-  String get changeLanguage;
-
   /// Text shown while app detects location
   ///
   /// In en, this message translates to:
   /// **'Finding your localization...'**
   String get findingLocalization;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get changeLanguage;
 
   /// Placeholder for name input field
   ///

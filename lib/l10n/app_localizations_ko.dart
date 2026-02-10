@@ -91,10 +91,10 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get changeLanguage => '언어 변경';
+  String get findingLocalization => '위치를 찾는 중...';
 
   @override
-  String get findingLocalization => '위치를 찾는 중...';
+  String get changeLanguage => '언어 변경';
 
   @override
   String get hintName => '이름';

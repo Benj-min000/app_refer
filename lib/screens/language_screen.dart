@@ -4,6 +4,7 @@ import 'package:user_app/assistant_methods/locale_provider.dart';
 import 'package:user_app/models/language.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:user_app/l10n/app_localizations.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
 
 class LanguageSelectionScreen extends StatelessWidget {
   const LanguageSelectionScreen({super.key});
@@ -17,48 +18,34 @@ class LanguageSelectionScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar( 
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.cyanAccent, Colors.lightBlueAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.topRight,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        title: Text(
-          t.changeLanguage, 
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
+      appBar: UnifiedAppBar(
+        title: t.changeLanguage, 
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new, 
             color: Colors.white,
-            shadows: [
-              Shadow(
-                color: Colors.black.withValues(alpha: 0.5),
-                offset: const Offset(2, 2), // Position: x=2, y=2
-                blurRadius: 4,              // Softness of the shadow
-              ),
-            ],
+            size: 28,
           ),
-        )
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: ListView.builder(
+        padding: EdgeInsets.only(top: 24),
         itemCount: Language.languageList.length,
         itemBuilder: (context, index) {
           final lang = Language.languageList[index];
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Spacing between list items
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), 
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white, // Background color of the tile
-                borderRadius: BorderRadius.circular(16), // Border radius 16
+                color: Colors.white, 
+                borderRadius: BorderRadius.circular(16), 
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1), // Subtle shadow
+                    color: Colors.black.withValues(alpha: 0.3), 
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),

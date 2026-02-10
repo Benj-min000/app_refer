@@ -1,8 +1,8 @@
 import 'package:algoliasearch/algoliasearch_lite.dart';
 import 'package:flutter/material.dart';
 import 'package:user_app/search/search_tabs.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
 
-// Product model
 class Product {
   final String title;
   final String productType;
@@ -167,21 +167,23 @@ class _SearchScreenState extends State<SearchScreen> {
         },
         child: Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            flexibleSpace: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blueAccent, Colors.lightBlueAccent],
-                  begin: Alignment.topLeft,
-                  end: Alignment.topRight,
-                ),
+          appBar: UnifiedAppBar(
+            title: "Search!",
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new, // A modern, slim back arrow
+                color: Colors.white,
+                size: 28,
               ),
+              onPressed: () {
+                Navigator.pop(context); // This takes the user back to the previous screen
+              },
             ),
             actions: [
               IconButton(
                 icon: Icon(
-                  Icons.shopping_cart,
-                  size: 24, 
+                  Icons.shopping_bag,
+                  size: 28, 
                   color: Colors.white, 
                   shadows: [
                     Shadow(
@@ -196,12 +198,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
               ),
             ],
-            title: const Text(
-              "I-Eat",
-              style: TextStyle(fontFamily: "Signatra", fontSize: 40),
-            ),
-            centerTitle: true,
-            automaticallyImplyLeading: true,
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

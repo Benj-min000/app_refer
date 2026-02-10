@@ -15,28 +15,13 @@ class CustomTextField extends StatelessWidget {
       this.hintText,
       this.isObsecure = true,
       this.enabled = true,
-      this.fontSize = 14.0,
+      this.fontSize = 16.0,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.5), 
-            spreadRadius: 1, 
-            blurRadius: 4,   
-            offset: const Offset(0, 2), 
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(6.0),
-      margin: const EdgeInsets.all(6),
+      margin: const EdgeInsets.all(0),
       child: TextFormField(
         style: TextStyle(
           fontSize: fontSize, 
@@ -48,19 +33,32 @@ class CustomTextField extends StatelessWidget {
         obscureText: isObsecure,
         cursorColor: Theme.of(context).primaryColor,
         decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.all(12),
+          contentPadding: EdgeInsets.all(20),
           prefixIcon: data != null ? Icon(
             data,
             color: Colors.grey,
           ) : null,
           focusColor: Theme.of(context).primaryColor,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            fontSize: fontSize - 1,
+          labelText: hintText,
+          labelStyle: TextStyle(
+            fontSize: fontSize,
             fontWeight: FontWeight.bold,
             color: Colors.grey[600],
-          )
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade600),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
         ),
       ),
     );

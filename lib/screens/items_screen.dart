@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/models/menus.dart';
-import 'package:user_app/widgets/app_bar.dart';
+import 'package:user_app/widgets/app_bar_seller.dart';
 import 'package:user_app/widgets/items_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/text_widget_header.dart';

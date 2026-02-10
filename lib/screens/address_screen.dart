@@ -9,7 +9,6 @@ import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/widgets/simple_Appbar.dart';
 
 import 'package:user_app/global/global.dart';
 
@@ -18,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
 
 class AddressScreen extends StatefulWidget {
   final double? totolAmmount;
@@ -102,22 +102,18 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueAccent, Colors.lightBlueAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.topRight,
-            ),
+      appBar: UnifiedAppBar(
+        title: "Address Manager",
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new, 
+            color: Colors.white,
+            size: 28,
           ),
+          onPressed: () {
+            Navigator.pop(context); 
+          },
         ),
-        title: const Text(
-          "I-Eat",
-          style: TextStyle(fontFamily: "Signatra", fontSize: 40),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -136,19 +132,8 @@ class _AddressScreenState extends State<AddressScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              "Address Manager", 
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-                height: 1,
-                color: Colors.black54,
-              ),
-            )
-          ),
+          const SizedBox(height: 24),
+
           Consumer<AddressChanger>(builder: (context, address, c) {
             return Flexible(
               child: StreamBuilder<QuerySnapshot>(

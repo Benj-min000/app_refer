@@ -92,10 +92,10 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get changeLanguage => 'Змінити мову';
+  String get findingLocalization => 'Визначення вашого місцезнаходження...';
 
   @override
-  String get findingLocalization => 'Визначення вашого місцезнаходження...';
+  String get changeLanguage => 'Змінити мову';
 
   @override
   String get hintName => 'Ім\'я';

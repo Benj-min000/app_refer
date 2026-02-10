@@ -135,7 +135,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await sharedPreferences!.setString("name", _nameController.text.trim());
     await sharedPreferences!.setString("photo", downloadUrl);
     await sharedPreferences!.setString("phone", "");
-    await sharedPreferences!.setStringList("userCart", ['garbageValue']);
+
+    // A new collection called 'userCart will be used
+    // This is redundant
+    // await sharedPreferences!.setStringList("userCart", ['garbageValue']);
   }
 
   @override

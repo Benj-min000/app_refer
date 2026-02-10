@@ -8,7 +8,7 @@ class SearchTab {
 }
 
 List<SearchTab> getSearchTabs(BuildContext context) {
-  // final t = context.t;
+  final t = context.t;
   return [
     SearchTab(label: 'All'), 
     SearchTab(label: 'Restaurants'), 

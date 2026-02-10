@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:number_inc_dec/number_inc_dec.dart";
 import "package:user_app/models/items.dart";
-import "package:user_app/widgets/app_bar.dart";
+import "package:user_app/widgets/app_bar_seller.dart";
 
 import "../assistant_methods/assistant_methods.dart";
 

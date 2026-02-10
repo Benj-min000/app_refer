@@ -8,6 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
+import 'package:phone_form_field/phone_form_field.dart';
+import "package:user_app/screens/language_screen.dart";
+import 'package:user_app/widgets/unified_app_bar.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -18,7 +21,7 @@ class ProfileSettingsScreen extends StatefulWidget {
 
 class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   late TextEditingController _nameController;
-  late TextEditingController _phoneController;
+  late PhoneController _phoneController;
 
   bool isLoading = true;
 
@@ -40,9 +43,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     _nameController = TextEditingController(
       text: sharedPreferences?.getString("name") ?? ""
     );
-    _phoneController = TextEditingController(
-      text: sharedPreferences?.getString("phone") ?? ""
+
+    String savedPhone = sharedPreferences!.getString("phone") ?? "";
+    _phoneController = PhoneController(
+      initialValue: savedPhone.isNotEmpty 
+          ? PhoneNumber.parse(savedPhone) 
+          : PhoneNumber.parse('+1'), // Default fallback
     );
+
     currentPhotoUrl = sharedPreferences!.getString("photo");
 
     setState(() {
@@ -55,7 +63,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     String oldPhone = sharedPreferences!.getString("phone") ?? "";
 
     bool isNameChanged = _nameController.text.trim() != oldName;
-    bool isPhoneChanged = _phoneController.text.trim() != oldPhone;
+    bool isPhoneChanged = _phoneController.value.toString() != oldPhone;
     bool isImageChanged = imageXFile != null;
 
     if (!isNameChanged && !isPhoneChanged && !isImageChanged) {
@@ -93,8 +101,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       }
       
       if (isPhoneChanged) {
-        updateData["phone"] = _phoneController.text.trim();
-        await sharedPreferences!.setString("phone", _phoneController.text.trim());
+        updateData["phone"] =_phoneController.value.toString();
+        await sharedPreferences!.setString("phone", _phoneController.value.toString());
       }
 
       await FirebaseFirestore.instance.collection("users").doc(userUid).update(updateData);
@@ -139,24 +147,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blueAccent, Colors.lightBlueAccent],
-                begin: Alignment.topLeft,
-                end: Alignment.topRight,
-              ),
+        backgroundColor: Colors.white,
+        appBar: UnifiedAppBar(
+          title: "Profile Settings",
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+              size: 28,
             ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          title: const Text(
-            "I-Eat",
-            style: TextStyle(fontFamily: "Signatra", fontSize: 40),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: true,
         ),
-
         body: isLoading 
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -220,15 +224,63 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
                 const SizedBox(height: 15),
 
-                CustomTextField(
-                  controller: _phoneController,
-                  hintText: "Phone Number",
-                  data: Icons.phone,
-                  isObsecure: false,
-                  enabled: true,
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    scaffoldBackgroundColor: Colors.white,
+                    appBarTheme: const AppBarTheme(
+                      backgroundColor: Colors.blueAccent,
+                      iconTheme: IconThemeData(color: Colors.white, size: 28),
+                    ),
+                  ),
+                  child: PhoneFormField(
+                    controller: _phoneController,
+                    countrySelectorNavigator: const CountrySelectorNavigator.page(),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(20),
+                      focusColor: Theme.of(context).primaryColor,
+                      labelText: 'Phone Number',
+                      labelStyle: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade600),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: PhoneValidator.compose([
+                      PhoneValidator.required(context),
+                      PhoneValidator.validMobile(context),
+                    ]),
+                  ),
                 ),
 
-                const Divider(height: 40),
+                const Divider(height: 40, thickness: 2),
+
+                ListTile(
+                  leading: const Icon(Icons.language, color: Colors.blueAccent),
+                  title: const Text("Language"),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () { 
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const LanguageSelectionScreen()
+                      ),
+                    );
+                  },
+                ),
 
                 ListTile(
                   leading: const Icon(Icons.add_location_alt, color: Colors.blueAccent),
@@ -286,5 +338,3 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 }
-
-// ----------

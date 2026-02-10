@@ -91,13 +91,11 @@
     }
   },
 
-  
-
-  "changeLanguage": "Change Language",
-  "@changeLanguage": {"description": "Button or menu label to change language"},
-
   "findingLocalization": "Finding your localization...",
   "@findingLocalization": {"description": "Text shown while app detects location"},
+
+  "changeLanguage": "Language",
+  "@changeLanguage": {"description": ""},
 
   "hintName": "Name",
   "@hintName": {"description": "Placeholder for name input field"},

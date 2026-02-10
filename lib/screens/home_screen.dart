@@ -5,11 +5,12 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/Home/home.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/sellers.dart';
+import 'package:user_app/screens/my_orders_screen.dart';
 import 'package:user_app/widgets/sellers_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/screens/language_selection_screen.dart';
 import 'package:user_app/screens/notification_screen.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,28 +38,24 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blueAccent, Colors.lightBlueAccent],
-                begin: Alignment.topLeft,
-                end: Alignment.topRight,
-              ),
-            ),
+        appBar: UnifiedAppBar(
+          leading: Builder(
+            builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.menu_open, color: Colors.white, size: 28), // Change to any icon you like
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            },
           ),
-          title: const Text(
-            "I-Eat",
-            style: TextStyle(fontFamily: "Signatra", fontSize: 40),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: true,
           actions: [
             IconButton(
               padding: EdgeInsets.zero,
               icon: Icon(
-                Icons.language,
+                Icons.shopping_bag,
                 color: Colors.white,
+                size: 28,
                 shadows: [
                   Shadow(
                     color: Colors.black.withValues(alpha: 0.3),
@@ -71,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => LanguageSelectionScreen()),
+                      builder: (_) => MyOrdersScreen()),
                 );
               },
             ),
