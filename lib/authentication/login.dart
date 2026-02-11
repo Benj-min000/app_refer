@@ -8,7 +8,6 @@ import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
-
 import 'package:user_app/extensions/context_translate_ext.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -104,13 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
       await sharedPreferences!.setString("phone", data["phone"]);
       await sharedPreferences!.setString("photo", data["photo"]);
 
-      //----------------------------------------------------
-      // Will be not used because of the userCart collection
-      //----------------------------------------------------
-      // await sharedPreferences!.setStringList(
-      //   "userCart", List<String>.from(data["userCart"] ?? [])
-      // );
-
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -180,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           isObsecure: true,
                         ),
 
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 10),
 
                         ElevatedButton(
                           onPressed: () async {

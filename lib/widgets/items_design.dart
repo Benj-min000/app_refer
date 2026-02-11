@@ -20,7 +20,7 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ItemDetailsScreen(
+                builder: (_) => ItemDetailsScreen(
                       model: widget.model,
                     )));
       },

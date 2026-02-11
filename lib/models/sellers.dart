@@ -12,17 +12,18 @@ class Sellers {
   });
 
   Sellers.fromJson(Map<String, dynamic> json) {
-    sellerUID = json["sellerUID"];
-    sellerName = json["sellerName"];
-    sellerAvatar = json["sellerAvatar"];
-    sellerEmail = json["sellerEmail"];
+    sellerUID = json["sid"];    
+    sellerName = json["name"];       
+    sellerAvatar = json["avatar"]; 
+    sellerEmail = json["email"];      
   }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["sellerUID"] = sellerUID;
-    data["sellerName"] = sellerName;
-    data["sellerAvatar"] = sellerAvatar;
-    data["sellerEmail"] = sellerEmail;
+    data["sid"] = sellerUID;
+    data["name"] = sellerName;
+    data["avatar"] = sellerAvatar;
+    data["email"] = sellerEmail;
     return data;
   }
 }

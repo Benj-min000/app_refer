@@ -19,7 +19,7 @@ class Items {
       this.shortInfo,
       this.publishedDate,
       this.thumbnailUrl,
-      // this.sellerName,
+      //this.sellerName,
       this.longDescription,
       this.status,
       this.price});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../screens/search_screen_prev.dart';
+import '../screens/search_screen.dart';
 
 class HomeMediumItems extends StatelessWidget {
   const HomeMediumItems({super.key});
@@ -19,7 +19,7 @@ class HomeMediumItems extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SearchScreen()));
+                        builder: (_) => SearchScreen(initialText: "Offers")));
               },
               child: Container(
                 margin: const EdgeInsets.all(10),
@@ -56,7 +56,7 @@ class HomeMediumItems extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SearchScreen()));
+                        builder: (_) => SearchScreen(initialText: "Offers")));
               },
               child: Container(
                 margin: const EdgeInsets.all(10),
@@ -92,7 +92,7 @@ class HomeMediumItems extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SearchScreen()));
+                        builder: (_) => SearchScreen(initialText: "Offers")));
               },
               child: Container(
                 margin: const EdgeInsets.all(10),

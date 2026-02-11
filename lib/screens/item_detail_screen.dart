@@ -75,11 +75,11 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               onTap: () {
                 int itemCounter = int.parse(counterTextEditingController.text);
 
-                List<String> seprateItemIdsList = separateItemIds();
+                // List<String> seprateItemIdsList = separateItemIds();
 
-                seprateItemIdsList.contains(widget.model!.itemId)
-                    ? Fluttertoast.showToast(msg: "Item is already in cart")
-                    : addItemToCart(widget.model!.itemId, context, itemCounter);
+                // seprateItemIdsList.contains(widget.model!.itemId)
+                //     ? Fluttertoast.showToast(msg: "Item is already in cart")
+                //     : addItemToCart(widget.model!.itemId, context, itemCounter);
               },
               child: Container(
                 decoration: const BoxDecoration(

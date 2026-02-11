@@ -98,7 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Navigator.pop(context); 
           showDialog(
             context: context, 
-            builder: (_) => ErrorDialog(message: context.t.storageError(error))
+            builder: (_) => ErrorDialog(message: context.t.storageError(error)),
           );
         }
     } else {
@@ -115,14 +115,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "uid": currentUser.uid,
       "email": currentUser.email,
       "name": _nameController.text.trim(),
-      "photo": downloadUrl,
+      "photo": downloadUrl.trim(),
       "status": "Approved",
       "phone": "",
-      "userCart": ['garbageValue'],
     });
 
     // Initializing notifications
-    await userRef.collection('userNotifications').add({
+    await userRef.collection('notifications').add({
       "title": "Welcome!",
       "body": "Thanks for joining our app, ${_nameController.text.trim()}!",
       "timestamp": DateTime.now(),
@@ -133,12 +132,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await sharedPreferences!.setString("uid", currentUser.uid);
     await sharedPreferences!.setString("email", currentUser.email.toString());
     await sharedPreferences!.setString("name", _nameController.text.trim());
-    await sharedPreferences!.setString("photo", downloadUrl);
+    await sharedPreferences!.setString("photo", downloadUrl.trim());
     await sharedPreferences!.setString("phone", "");
-
-    // A new collection called 'userCart will be used
-    // This is redundant
-    // await sharedPreferences!.setStringList("userCart", ['garbageValue']);
   }
 
   @override
@@ -214,7 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
 
           ElevatedButton(
             onPressed: () async => {

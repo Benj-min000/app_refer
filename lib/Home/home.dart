@@ -170,8 +170,9 @@ class _DiningPagePageState extends State<Home> {
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddressScreen()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => AddressScreen()));
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,

@@ -171,12 +171,12 @@ class _SearchScreenState extends State<SearchScreen> {
             title: "Search!",
             leading: IconButton(
               icon: const Icon(
-                Icons.arrow_back_ios_new, // A modern, slim back arrow
+                Icons.arrow_back_ios_new, 
                 color: Colors.white,
                 size: 28,
               ),
               onPressed: () {
-                Navigator.pop(context); // This takes the user back to the previous screen
+                Navigator.pop(context); 
               },
             ),
             actions: [

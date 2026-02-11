@@ -59,15 +59,13 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
     });
   }
 
-  Future writeOrderDetailsForUser(
-      Map<String, dynamic> data,
-      ) async {
+  Future writeOrderDetailsForUser(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
-        .collection("users")
-        .doc(sharedPreferences!.getString("uid"))
-        .collection("orders")
-        .doc(orderId)
-        .set(data);
+      .collection("users")
+      .doc(sharedPreferences!.getString("uid"))
+      .collection("orders")
+      .doc(orderId)
+      .set(data);
   }
 
   Future writeOrderDetailsForSeller(

@@ -122,7 +122,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
       await FirebaseFirestore.instance
         .collection("users")
         .doc(sharedPreferences!.getString("uid") ?? "")
-        .collection("userAddress")
+        .collection("addresses")
         .doc(DateTime.now().millisecondsSinceEpoch.toString())
         .set(model)
         .then((value) {

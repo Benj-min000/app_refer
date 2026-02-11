@@ -5,12 +5,13 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/Home/home.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/sellers.dart';
-import 'package:user_app/screens/my_orders_screen.dart';
+import 'package:user_app/screens/cart_screen.dart';
 import 'package:user_app/widgets/sellers_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/screens/notification_screen.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -68,41 +69,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => MyOrdersScreen()),
+                      builder: (_) => CartScreen()),
                 );
               },
             ),
 
-            IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (_) => NotificationScreen(),)
-                );
-              },
-              icon: Badge(
-                label: const Text(
-                  "3", // Number of notifications
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-                backgroundColor: Colors.red,
-                isLabelVisible: true, // If '0' this needs to be changed to false
-                child: Icon(
-                  Icons.notifications, 
-                  color: Colors.white,
-                  size: 28,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      offset: const Offset(2.0, 2.0),
-                      blurRadius: 6.0,
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                .collection("users")
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection("notifications")
+                .where("isRead", isEqualTo: false)
+                .snapshots(),
+              builder: (context, snapshot) {
+                int unreadCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
+
+                return IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (_) => const NotificationScreen())
+                    );
+                  },
+                  icon: Badge(
+                    isLabelVisible: unreadCount > 0,
+                    label: Text(
+                      unreadCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
-                  ],
-                ),
-                
-              ),
-            )
+                    backgroundColor: Colors.red,
+                    child: Icon(
+                      Icons.notifications, 
+                      color: Colors.white,
+                      size: 28,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          offset: const Offset(2.0, 2.0),
+                          blurRadius: 6.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            ),
           ],
         ),
         drawer: MyDrawer(),

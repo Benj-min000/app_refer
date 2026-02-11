@@ -93,7 +93,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     future: FirebaseFirestore.instance
                         .collection("users")
                         .doc(sharedPreferences!.getString("uid"))
-                        .collection("userAddress")
+                        .collection("addresses")
                         .doc(dataMap["addressId"])
                         .get(),
                     builder: (context, snapshot) {

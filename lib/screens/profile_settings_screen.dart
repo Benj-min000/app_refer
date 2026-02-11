@@ -222,47 +222,48 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   enabled: true,
                 ),
 
-                const SizedBox(height: 15),
-
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    scaffoldBackgroundColor: Colors.white,
-                    appBarTheme: const AppBarTheme(
-                      backgroundColor: Colors.blueAccent,
-                      iconTheme: IconThemeData(color: Colors.white, size: 28),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(
+                      scaffoldBackgroundColor: Colors.white,
+                      appBarTheme: const AppBarTheme(
+                        backgroundColor: Colors.blueAccent,
+                        iconTheme: IconThemeData(color: Colors.white, size: 28),
+                      ),
                     ),
-                  ),
-                  child: PhoneFormField(
-                    controller: _phoneController,
-                    countrySelectorNavigator: const CountrySelectorNavigator.page(),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(20),
-                      focusColor: Theme.of(context).primaryColor,
-                      labelText: 'Phone Number',
-                      labelStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
+                    child: PhoneFormField(
+                      controller: _phoneController,
+                      countrySelectorNavigator: const CountrySelectorNavigator.page(),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(20),
+                        focusColor: Theme.of(context).primaryColor,
+                        labelText: 'Phone Number',
+                        labelStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade600),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
+                      validator: PhoneValidator.compose([
+                        PhoneValidator.required(context),
+                        PhoneValidator.validMobile(context),
+                      ]),
                     ),
-                    validator: PhoneValidator.compose([
-                      PhoneValidator.required(context),
-                      PhoneValidator.validMobile(context),
-                    ]),
                   ),
                 ),
 

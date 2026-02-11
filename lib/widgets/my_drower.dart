@@ -4,7 +4,7 @@ import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/screens/history_screen.dart';
 import 'package:user_app/screens/my_orders_screen.dart';
-import 'package:user_app/screens/search_screen_prev.dart';
+import 'package:user_app/screens/search_screen.dart';
 import 'package:user_app/screens/profile_settings_screen.dart';
 
 class DrawerItem {
@@ -29,7 +29,7 @@ class MyDrawer extends StatelessWidget {
       DrawerItem(title: "Profile Settings", icon: Icons.manage_accounts, screen: const ProfileSettingsScreen()),
       DrawerItem(title: "My Orders", icon: Icons.reorder, screen: MyOrdersScreen()),
       DrawerItem(title: "History", icon: Icons.access_time, screen: const HistoryScreen()),
-      DrawerItem(title: "Search", icon: Icons.search, screen: SearchScreen()),
+      DrawerItem(title: "Search", icon: Icons.search, screen: SearchScreen(initialText: "")),
       DrawerItem(title: "Address Manager", icon: Icons.location_on_outlined, screen: AddressScreen()),
     ];
 
