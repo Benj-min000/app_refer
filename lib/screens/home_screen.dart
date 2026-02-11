@@ -75,12 +75,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                .collection("users")
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection("notifications")
-                .where("isRead", isEqualTo: false)
-                .snapshots(),
+              stream: FirebaseAuth.instance.currentUser?.uid != null
+                ? FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .collection("notifications")
+                    .where("isRead", isEqualTo: false)
+                    .snapshots()
+                : const Stream.empty(),
               builder: (context, snapshot) {
                 int unreadCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
 
@@ -177,13 +179,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Center(child: circularProgress()),
                   );
                 }
-
                 return SliverMasonryGrid.count(
                   crossAxisCount: 1, // Number of columns
                   itemBuilder: (context, index) {
-                    Sellers sModel = Sellers.fromJson(
-                      snapshot.data!.docs[index].data() as Map<String, dynamic>,
-                    );
+                    var doc = snapshot.data!.docs[index];
+
+                    Sellers sModel = Sellers.fromJson(doc.data() as Map<String, dynamic>);
+                    sModel.sellerID = doc.id;
+                  
                     return SellersDesignWidget(
                       model: sModel,
                       context: context,

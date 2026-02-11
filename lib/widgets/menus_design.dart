@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/screens/items_screen.dart';
 import 'package:user_app/models/menus.dart';
-import 'package:user_app/models/sellers.dart';
 
 class MenusDesignWidget extends StatefulWidget {
   final Menus? model;
@@ -19,9 +18,11 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ItemsScreen(model: widget.model)));
+          context,
+          MaterialPageRoute(
+            builder: (_) => ItemsScreen(model: widget.model)
+          )
+        );
       },
       splashColor: Colors.pinkAccent,
       child: Padding(
@@ -36,7 +37,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
               color: Colors.grey[300],
             ),
             Image.network(
-              widget.model!.thumbnailUrl!,
+              widget.model!.thumbnailUrl ?? "No Image",
               height: 220,
               fit: BoxFit.cover,
             ),
@@ -44,12 +45,12 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
               height: 10,
             ),
             Text(
-              widget.model!.menuTitle!,
+              widget.model!.title ?? "No Title",
               style: const TextStyle(
                   color: Colors.pinkAccent, fontSize: 20, fontFamily: "Train"),
             ),
             Text(
-              widget.model!.menuInfo!,
+              widget.model!.info ?? "No Info",
               style: const TextStyle(
                   color: Colors.grey, fontSize: 20, fontFamily: "Train"),
             ),

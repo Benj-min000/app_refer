@@ -4,12 +4,12 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/menus.dart';
 import 'package:user_app/widgets/menus_design.dart';
-// import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/text_widget_header.dart';
 
 import 'package:user_app/models/sellers.dart';
-import 'package:user_app/splashScreen/splash_screen.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MenusScreen extends StatefulWidget {
   final Sellers? model;
@@ -23,68 +23,54 @@ class _MenusScreenState extends State<MenusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.red, Colors.redAccent],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 0.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
+      appBar: UnifiedAppBar(
         leading: IconButton(
-            onPressed: () {
-              clearCartNow(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MySplashScreen()));
-            },
-            icon: const Icon(Icons.arrow_back)),
-        title: const Text(
-          "I-Eat",
-          style: TextStyle(fontSize: 45, fontFamily: "Signatra"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios_new, 
+            size: 28,
+            color: Colors.white,
+          )
         ),
-        centerTitle: true,
-        automaticallyImplyLeading: true,
       ),
       body: CustomScrollView(
         slivers: [
           SliverPersistentHeader(
             pinned: true,
             delegate:
-                TextWidgetHeader(title: "${widget.model!.sellerName} Menus"),
+              TextWidgetHeader(title: "${widget.model!.name} Menus"),
           ),
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-                .collection("sellers")
-                .doc(widget.model!.sellerUID)
-                .collection("menus")
-                .orderBy("publishedDate", descending: true)
-                .snapshots(),
+              .collection("sellers")
+              .doc(widget.model!.sellerID)
+              .collection("menus")
+              .orderBy("publishedDate", descending: true)
+              .snapshots(),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                  ? SliverToBoxAdapter(
-                      child: Center(
-                        child: circularProgress(),
-                      ),
-                    )
-                  : SliverMasonryGrid.count(
-                      crossAxisCount: 1,
-                      itemBuilder: (context, index) {
-                        Menus model = Menus.fromJson(
-                          snapshot.data!.docs[index].data()!
-                              as Map<String, dynamic>,
-                        );
-                        return MenusDesignWidget(
-                          model: model,
-                          context: context,
-                        );
-                      },
-                      childCount: snapshot.data!.docs.length);
+                ? SliverToBoxAdapter(
+                  child: Center(
+                    child: circularProgress(),
+                  ),
+                )
+                : SliverMasonryGrid.count(
+                  crossAxisCount: 1,
+                  itemBuilder: (context, index) {
+                    var doc = snapshot.data!.docs[index];
+
+                    Menus mModel = Menus.fromJson(doc.data()! as Map<String, dynamic>);
+                    mModel.menuID = doc.id;               
+                    mModel.sellerID = widget.model!.sellerID;
+
+                    return MenusDesignWidget(
+                      model: mModel,
+                      context: context,
+                    );
+                  },
+                  childCount: snapshot.data!.docs.length);
             },
           ),
         ],

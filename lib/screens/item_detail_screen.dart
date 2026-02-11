@@ -3,8 +3,7 @@ import "package:fluttertoast/fluttertoast.dart";
 import "package:number_inc_dec/number_inc_dec.dart";
 import "package:user_app/models/items.dart";
 import "package:user_app/widgets/app_bar_seller.dart";
-
-import "../assistant_methods/assistant_methods.dart";
+import "package:user_app/assistant_methods/assistant_methods.dart";
 
 class ItemDetailsScreen extends StatefulWidget {
   final Items? model;
@@ -20,7 +19,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppbar(sellerUID: widget.model!.sellerUID),
+      appBar: MyAppbar(sellerUID: widget.model!.sellerID),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -49,7 +48,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              widget.model!.longDescription.toString(),
+              widget.model!.description.toString(),
               textAlign: TextAlign.justify,
               style: const TextStyle(
                 fontWeight: FontWeight.normal,

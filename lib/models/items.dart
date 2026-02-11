@@ -1,58 +1,52 @@
 class Items {
-  String? menuId;
-  String? sellerUID;
-  String? itemId;
+  String? menuID;
+  String? sellerID;
+  String? itemID;
   String? title;
-  String? shortInfo;
+  String? info;
   String? publishedDate;
   String? thumbnailUrl;
-  String? sellerName;
-  String? longDescription;
+  String? description;
   String? status;
-  int? price;
+  double? price;
 
   Items(
-      {this.menuId,
-      this.sellerUID,
-      this.itemId,
+      {this.menuID,
+      this.sellerID,
+      this.itemID,
       this.title,
-      this.shortInfo,
+      this.info,
       this.publishedDate,
       this.thumbnailUrl,
-      //this.sellerName,
-      this.longDescription,
+      this.description,
       this.status,
       this.price});
 
   Items.fromJson(Map<String, dynamic> json) {
-    menuId = json['menuId'];
-    sellerUID = json['sellerUID'];
+    menuID = json['menuID']; 
+    sellerID = json['sellerID'];
+    itemID = json['itemID'];
     title = json['title'];
-    itemId = json['itemId'];
-    shortInfo = json['shortInfo'];
-    // publishedDate = json['publishedDate'];
+    info = json['info'];
+    publishedDate = json['publishedDate']?.toString();
     thumbnailUrl = json['thumbnailUrl'];
-
-    // sellerName = json['sellerName'];
-    longDescription = json['longDescription'];
+    description = json['description'];
     status = json['status'];
     price = json['price'];
   }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['menuId'] = menuId;
-    data['sellerUID'] = sellerUID;
+    data['menuID'] = menuID;
+    data['sellerID'] = sellerID;
+    data['itemID'] = itemID;
     data['title'] = title;
-    data['itemId'] = itemId;
-
-    data['shortInfo'] = shortInfo;
+    data['info'] = info;
     data['publishedDate'] = publishedDate;
     data['thumbnailUrl'] = thumbnailUrl;
-    // data['sellerName']=sellerName;
-    data['longDescription'] = longDescription;
+    data['description'] = description; 
     data['status'] = status;
     data['price'] = price;
-
     return data;
   }
 }

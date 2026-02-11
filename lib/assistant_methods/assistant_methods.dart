@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 List<String> separateOrderItemIds(orderId) {
   List<String> separateItemIdsList = [], defaultItemList = [];
@@ -58,19 +59,40 @@ List<String> separateOrderItemQuantities(orderId) {
   return separateItemQuantityList;
 }
 
-Future<void> clearCartNow(context) async {
-  final String uid = firebaseAuth.currentUser!.uid;
-  var snapshot = await FirebaseFirestore.instance
-      .collection("users")
-      .doc(uid)
-      .collection("carts")
-      .get();
-  WriteBatch batch = FirebaseFirestore.instance.batch();
-  for (var doc in snapshot.docs) {
-    batch.delete(doc.reference);
+Future<void> clearCartNow(BuildContext context) async {
+  final User? currentUser = firebaseAuth.currentUser;
+  
+  if (currentUser == null) {
+    Fluttertoast.showToast(msg: "User not logged in.");
+    return;
   }
-  await batch.commit().then((value) {
-    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
-    Fluttertoast.showToast(msg: "Cart Cleared.");
-  });
+
+  final String uid = currentUser.uid;
+
+  try {
+    var snapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("carts")
+        .get();
+    if (snapshot.docs.isEmpty) {
+      Fluttertoast.showToast(msg: "Cart is already empty.");
+      return;
+    }
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    
+    for (var doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit();
+
+    if (context.mounted) {
+      Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+      Fluttertoast.showToast(msg: "Cart Cleared.");
+    }
+  } catch (e) {
+    Fluttertoast.showToast(msg: "Error clearing cart: $e");
+  }
 }

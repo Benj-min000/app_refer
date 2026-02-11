@@ -1,18 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:user_app/global/global.dart';
 
 class CartItemCounter extends ChangeNotifier {
-  int cartListItemCounter =
-      sharedPreferences!.getStringList("userCart")!.length - 1;
+  int cartListItemCounter = 0;
 
   int get count => cartListItemCounter;
 
   Future<void> displayCartListItemsNumber() async {
-    cartListItemCounter =
-        sharedPreferences!.getStringList("userCart")!.length - 1;
+    final String? uid = firebaseAuth.currentUser?.uid;
 
-    await Future.delayed(const Duration(microseconds: 100), () {
-      notifyListeners();
-    });
+    if (uid != null) {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("carts")
+          .get();
+
+      cartListItemCounter = snapshot.docs.length;
+    } else {
+      cartListItemCounter = 0;
+    }
+
+    notifyListeners();
   }
 }

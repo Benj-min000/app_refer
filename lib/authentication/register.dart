@@ -112,7 +112,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> saveDataToFireStore(User currentUser) async {
     DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
     await userRef.set({
-      "uid": currentUser.uid,
       "email": currentUser.email,
       "name": _nameController.text.trim(),
       "photo": downloadUrl.trim(),
@@ -128,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "isRead": false,
     });
 
-    // Save data locally
+    // Save data localy
     await sharedPreferences!.setString("uid", currentUser.uid);
     await sharedPreferences!.setString("email", currentUser.email.toString());
     await sharedPreferences!.setString("name", _nameController.text.trim());

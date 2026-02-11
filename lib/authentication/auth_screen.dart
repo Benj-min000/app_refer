@@ -1,9 +1,6 @@
-// import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:user_app/authentication/login.dart';
 import 'package:user_app/authentication/register.dart';
-
 import 'package:user_app/extensions/context_translate_ext.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -76,11 +73,11 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [Colors.pinkAccent, Colors.red],
+              colors: [Colors.pinkAccent.withValues(alpha: 0.8), Colors.red],
             ),
           ),
           child: const TabBarView(children: [

@@ -3,10 +3,10 @@ import 'package:user_app/screens/menus_screen.dart';
 import 'package:user_app/models/sellers.dart';
 
 class SellersDesignWidget extends StatefulWidget {
-  Sellers? model;
-  BuildContext? context;
+  final Sellers? model;
+  final BuildContext? context;
 
-  SellersDesignWidget({super.key, this.model, this.context});
+  const SellersDesignWidget({super.key, this.model, this.context});
 
   @override
   State<SellersDesignWidget> createState() => _SellersDesignWidgetState();
@@ -20,7 +20,9 @@ class _SellersDesignWidgetState extends State<SellersDesignWidget> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => MenusScreen(model: widget.model)));
+            builder: (_) => MenusScreen(model: widget.model)
+          )
+        );
       },
       splashColor: Colors.amber,
       child: Padding(
@@ -35,7 +37,7 @@ class _SellersDesignWidgetState extends State<SellersDesignWidget> {
               color: Colors.grey[300],
             ),
             Image.network(
-              widget.model!.sellerAvatar!,
+              widget.model!.avatar!,
               height: 220,
               fit: BoxFit.cover,
             ),
@@ -43,12 +45,12 @@ class _SellersDesignWidgetState extends State<SellersDesignWidget> {
               height: 10,
             ),
             Text(
-              widget.model!.sellerName!,
+              widget.model!.name!,
               style: const TextStyle(
                   color: Colors.pinkAccent, fontSize: 20, fontFamily: "Train"),
             ),
             Text(
-              widget.model!.sellerEmail!,
+              widget.model!.email!,
               style: const TextStyle(
                   color: Colors.grey, fontSize: 20, fontFamily: "Train"),
             ),

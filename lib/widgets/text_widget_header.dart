@@ -40,7 +40,7 @@ class TextWidgetHeader extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 50;
+  double get maxExtent => 80;
 
   @override
   double get minExtent => 80;
