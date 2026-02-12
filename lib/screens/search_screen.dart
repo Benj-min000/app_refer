@@ -58,6 +58,10 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  static const String _algoliaAppId = String.fromEnvironment("ALGOLIA_APP_ID");
+  static const String _algoliaApiKey = String.fromEnvironment("ALGOLIA_API_KEY");
+  static const String _algoliaIndexName = String.fromEnvironment("ALGOLIA_INDEX_NAME");
+
   late TextEditingController _searchController;
 
   int _selectedTabIndex = 0;
@@ -75,6 +79,27 @@ class _SearchScreenState extends State<SearchScreen> {
   RangeValues _currentPriceRange = const RangeValues(0, 500);
   final List<String> _availableCategories = ['Tops', 'Pants', 'Shoes', 'Accessories'];
 
+  String get appId {
+    if (_algoliaAppId.isEmpty) {
+      throw Exception("ALGOLIA_APP_ID is not defined. Ensure you passed it via --dart-define.");
+    }
+    return _algoliaAppId;
+  }
+
+  String get apiKey {
+    if (_algoliaApiKey.isEmpty) {
+      throw Exception("ALGOLIA_API_KEY is not defined. Ensure you passed it via --dart-define.");
+    }
+    return _algoliaApiKey;
+  }
+
+  String get indexName {
+    if (_algoliaIndexName.isEmpty) {
+      throw Exception("ALGOLIA_INDEX_NAME is not defined. Ensure you passed it via --dart-define.");
+    }
+    return _algoliaIndexName;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -86,10 +111,9 @@ class _SearchScreenState extends State<SearchScreen> {
       TextPosition(offset: _searchController.text.length),
     );
     
-    // Initialize Algolia client
     _client = SearchClient(
-      appId: 'DCUBTIDH8J',
-      apiKey: 'a9d70af22ed10f59f9fbff713de5b4da',
+      appId: appId,
+      apiKey: apiKey,
     );
     
     // Perform initial search
@@ -119,7 +143,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     try {
       final searchQuery = SearchForHits(
-        indexName: 'algolia_apparel_sample_dataset',
+        indexName: indexName,
         query: query,
         hitsPerPage: 20,
         filters: _buildFilterString(),

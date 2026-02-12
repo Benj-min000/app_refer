@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 return SliverMasonryGrid.count(
-                  crossAxisCount: 1, // Number of columns
+                  crossAxisCount: 1, 
                   itemBuilder: (context, index) {
                     var doc = snapshot.data!.docs[index];
 

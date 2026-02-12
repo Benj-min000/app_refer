@@ -32,7 +32,7 @@ class Items {
     thumbnailUrl = json['thumbnailUrl'];
     description = json['description'];
     status = json['status'];
-    price = json['price'];
+    price = json['price'] != null ? double.parse(json['price'].toString()) : 0.0;
   }
 
   Map<String, dynamic> toJson() {

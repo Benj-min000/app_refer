@@ -6,57 +6,59 @@ import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-List<String> separateOrderItemIds(orderId) {
-  List<String> separateItemIdsList = [], defaultItemList = [];
-  defaultItemList = List<String>.from(orderId);
-
-  for (int i = 0; i < defaultItemList.length; i++) {
-    String item = defaultItemList[i].toString();
-    var pos = item.lastIndexOf(":");
-    String getItemId = (pos != -1) ? item.substring(0, pos) : item;
-    separateItemIdsList.add(getItemId);
+List<String> separateOrderItemIds(orderIdList) {
+  if (orderIdList == null) {
+    return <String>[];
   }
-  return separateItemIdsList;
+
+  return List<String>.from(orderIdList).map((item) {
+    var pos = item.lastIndexOf(":");
+    return (pos != -1) ? item.substring(0, pos) : item;
+  }).toList();
 }
 
-Future<void> addItemToCart(String? foodItemId, BuildContext context, int itemCounter) async {
+Future<void> addItemToCart(String? itemID, String? menuID, String? sellerID, BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;
+  final cartRef = FirebaseFirestore.instance.collection("users").doc(uid).collection("carts");
+ 
+  var existingCart = await cartRef.get();
 
-  await FirebaseFirestore.instance
-      .collection("users")
-      .doc(uid)
-      .collection("carts")
-      .doc(foodItemId)
-      .set({
-    "productId": foodItemId,
-    "quantity": itemCounter,
-    "addedAt": DateTime.now(),
-  }).then((value) {
+  if (existingCart.docs.isNotEmpty) {
+    String sellerInCart = existingCart.docs.first.get("sellerID");
+    if (sellerInCart != sellerID) {
+      Fluttertoast.showToast(msg: "You can only order from one seller at a time.");
+      return; 
+    }
+  }
 
-    Fluttertoast.showToast(msg: "Item Added Successfully. ");
+  await cartRef.doc(itemID).set({
+      "itemID": itemID,
+      "menuID": menuID,
+      "sellerID": sellerID, 
+      "quantity": itemCounter,
+      "publishedDate": DateTime.now(),
+    }).then((value) {
 
-    Provider.of<CartItemCounter>(context, listen: false)
+      List<String> tempCartList = sharedPreferences!.getStringList("userCart") ?? [];
+      tempCartList.add("$itemID:$itemCounter"); 
+      sharedPreferences!.setStringList("userCart", tempCartList);
+
+      Fluttertoast.showToast(msg: "Item Added Successfully.");
+
+      Provider.of<CartItemCounter>(context, listen: false)
         .displayCartListItemsNumber();
   });
 }
 
-List<String> separateOrderItemQuantities(orderId) {
-  List<String> separateItemQuantityList = [];
-  List<String> defaultItemList = [];
-
-  defaultItemList = List<String>.from(orderId);
-
-  for (int i = 1; i < defaultItemList.length; i++) {
-    String item = defaultItemList[i].toString();
-
-    List<String> listItemCharacters = item.split(":").toList();
-
-    var quanNumber = int.parse(listItemCharacters[1].toString());
-
-    separateItemQuantityList.add(quanNumber.toString());
+List<String> separateOrderItemQuantities(orderIdList) {
+  List<String> quantities = [];
+  for (var item in List<String>.from(orderIdList)) {
+    List<String> parts = item.split(":");
+    if (parts.length > 1) {
+      quantities.add(parts[1]);
+    }
   }
-
-  return separateItemQuantityList;
+  return quantities;
 }
 
 Future<void> clearCartNow(BuildContext context) async {
@@ -87,6 +89,7 @@ Future<void> clearCartNow(BuildContext context) async {
     }
 
     await batch.commit();
+    sharedPreferences!.setStringList("userCart", []);
 
     if (context.mounted) {
       Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();

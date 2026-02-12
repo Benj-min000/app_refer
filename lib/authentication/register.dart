@@ -121,6 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // Initializing notifications
     await userRef.collection('notifications').add({
+      "userID": currentUser.uid,
       "title": "Welcome!",
       "body": "Thanks for joining our app, ${_nameController.text.trim()}!",
       "timestamp": DateTime.now(),

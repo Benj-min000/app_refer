@@ -1,17 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/widgets/cart_item_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-
 import 'package:user_app/assistant_methods/total_ammount.dart';
 import 'package:user_app/widgets/text_widget_header.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
+import 'package:user_app/global/global.dart';
 
 class CartScreen extends StatefulWidget {
   final String? sellerUID;
@@ -21,7 +21,16 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List<int>? separateItemQuantityList;
+  List<int> separateItemQuantities() {
+    List<String>? userCart = sharedPreferences!.getStringList("userCart");
+    if (userCart == null) return [];
+    
+    // We skip index 0 if it's a dummy value, otherwise map all
+    return userCart.map((item) {
+      var parts = item.split(":");
+      return parts.length > 1 ? int.parse(parts[1]) : 1;
+    }).toList();
+  }
 
   num totolAmmount = 0;
 
@@ -34,6 +43,9 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> cartIDs = separateOrderItemIds(sharedPreferences!.getStringList("userCart"));
+    List<int> quantities = separateItemQuantities();
+    print(cartIDs);
     return Scaffold(
       appBar: UnifiedAppBar(
         title: "Shopping Cart",
@@ -118,89 +130,100 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ],
       ),
-      // body: CustomScrollView(
-      //   slivers: [
-      //     SliverPersistentHeader(
-      //       pinned: true,
-      //       delegate: TextWidgetHeader(title: "My Cart List"),
-      //     ),
-      //     SliverToBoxAdapter(
-      //       child: Consumer2<TotalAmmount, CartItemCounter>(
-      //         builder: (context, amountProvidr, cartProvider, c) {
-      //           return Padding(
-      //             padding: const EdgeInsets.all(8),
-      //             child: Center(
-      //               child: cartProvider.count == 0
-      //                 ? Container()
-      //                 : Text(
-      //                   "Total Price: ${amountProvidr.tAmmount.toString()}",
-      //                   style: const TextStyle(
-      //                     color: Colors.black,
-      //                     fontSize: 18,
-      //                     fontWeight: FontWeight.w500
-      //                   ),
-      //                 ),
-      //             ),
-      //           );
-      //         },
-      //       ),
-      //     ),
-          
-      //     StreamBuilder<QuerySnapshot>(
-      //       stream: FirebaseFirestore.instance
-      //         .collection("items")
-      //         .where("itemId")
-      //         .orderBy("publishedDate", descending: true)
-      //         .snapshots(),
-      //       builder: (context, snapshot) {
-      //         return !snapshot.hasData
-      //           ? SliverToBoxAdapter(
-      //               child: Center(
-      //                 child: circularProgress(),
-      //               ),
-      //             )
-      //           : snapshot.data!.docs.isEmpty
-      //               ? Container()
-      //               : SliverList(
-      //                   delegate: SliverChildBuilderDelegate(
-      //                       (context, index) {
-      //                   Items model = Items.fromJson(
-      //                     snapshot.data!.docs[index].data()!
-      //                         as Map<String, dynamic>,
-      //                   );
-      //                   if (index == 0) {
-      //                     totolAmmount = 0;
-      //                     totolAmmount = totolAmmount +
-      //                         (model.price! *
-      //                             separateItemQuantityList![index]);
-      //                   } else {
-      //                     totolAmmount = totolAmmount +
-      //                         (model.price! *
-      //                             separateItemQuantityList![index]);
-      //                   }
+      body: CustomScrollView(
+        slivers: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: TextWidgetHeader(title: "My Cart List"),
+          ),
+          SliverToBoxAdapter(
+            child: Consumer2<TotalAmmount, CartItemCounter>(
+              builder: (context, amountProvidr, cartProvider, c) {
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Center(
+                    child: cartProvider.count == 0
+                      ? Container()
+                      : Text(
+                        "Total Price: ${amountProvidr.tAmmount.toString()}",
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500
+                        ),
+                      ),
+                  ),
+                );
+              },
+            ),
+          ),
+          cartIDs.isEmpty 
+            ? const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: Center(
+                    child: Text(
+                      "Your cart is empty!", 
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  ),
+                ),
+              )
+            : StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+              .collectionGroup("items")
+              .where("itemID", whereIn: cartIDs)
+              .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                print("LOG: Firestore Error: ${snapshot.error}");
+                return SliverToBoxAdapter(child: Center(child: Text("Error: ${snapshot.error}")));
+              }
+              
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                print("Still loading!!!");
+              }
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    print("works??");
+                    if (snapshot.data == null || index >= snapshot.data!.docs.length) {
+                      return const SizedBox();
+                    }
 
-      //                   if (snapshot.data!.docs.length - 1 == index) {
-      //                     WidgetsBinding.instance
-      //                         .addPostFrameCallback((timeStamp) {
-      //                       Provider.of<TotalAmmount>(context,
-      //                               listen: false)
-      //                           .displayTotolAmmount(
-      //                               totolAmmount.toDouble());
-      //                     });
-      //                   }
+                    Items model = Items.fromJson(
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>,
+                    );
 
-      //                   return CartItemDesign(
-      //                     model: model,
-      //                     context: context,
-      //                     quanNumber: separateItemQuantityList![index],
-      //                   );
-      //                 },
-      //                 childCount: snapshot.hasData
-      //                     ? snapshot.data!.docs.length
-      //                     : 0));
-      //       }),
-      //   ],
-      // ),
+                    if (index == 0) {
+                      totolAmmount = 0;
+                    }
+
+                    int itemQuantity = (index < quantities.length) ? quantities[index] : 1;
+                    totolAmmount += ((model.price ?? 0) * itemQuantity);
+
+                    if (index == snapshot.data!.docs.length - 1) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          Provider.of<TotalAmmount>(context, listen: false)
+                              .displayTotolAmmount(totolAmmount.toDouble());
+                        }
+                      });
+                    }
+
+                    return CartItemDesign(
+                      model: model,
+                      context: context,
+                      quanNumber: itemQuantity,
+                    );
+                  },
+                  childCount: snapshot.data?.docs.length ?? 0,
+                ),
+              );
+            }
+          )
+        ],
+      ),
     );
   }
 }
