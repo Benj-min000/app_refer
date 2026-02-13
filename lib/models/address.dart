@@ -1,4 +1,5 @@
 class Address {
+  String? addressID;
   String? label;
   String? road;
   String? houseNumber;
@@ -12,6 +13,7 @@ class Address {
   String? lng;
 
   Address({
+    this.addressID,
     this.label,
     this.road,
     this.houseNumber,
@@ -26,6 +28,7 @@ class Address {
   });
 
   Address copyWith({
+    String? addressID,
     String? label,
     String? road,
     String? houseNumber,
@@ -39,6 +42,7 @@ class Address {
     String? lng,
   }) {
     return Address(
+      addressID: addressID ?? this.addressID,
       label: label ?? this.label,
       road: road ?? this.road,
       houseNumber: houseNumber ?? this.houseNumber,
@@ -54,6 +58,7 @@ class Address {
   }
 
   Address.fromJson(Map<String, dynamic> json) {
+    addressID = json['addressID'];
     label = json['label'];
     road = json['road'] ?? json['street'] ?? json['route'];
     flatNumber = json['flatNumber'];
@@ -69,6 +74,7 @@ class Address {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
+    data['addressID'] = addressID;
     data['label'] = label;
     data['road'] = road;
     data['houseNumber'] = houseNumber;

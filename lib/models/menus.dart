@@ -1,6 +1,6 @@
 class Menus {
   String? menuID;
-  String? sellerID;
+  String? storeID;
   String? title;
   String? info;
   String? publishedDate;
@@ -9,7 +9,7 @@ class Menus {
 
   Menus(
       {this.menuID,
-      this.sellerID,
+      this.storeID,
       this.info,
       this.title,
       this.publishedDate,
@@ -18,7 +18,7 @@ class Menus {
 
   Menus.fromJson(Map<String, dynamic> json) {
     menuID = json["menuID"];
-    sellerID = json["sellerID"];
+    storeID = json["storeID"];
     title = json["title"];
     info = json["info"];
     thumbnailUrl = json["thumbnailUrl"];
@@ -30,7 +30,7 @@ class Menus {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["menuID"] = menuID;
-    data["sellerID"] = sellerID;
+    data["storeID"] = storeID;
     data["title"] = title;
     data["info"] = info;
     data["publishedDate"] = publishedDate;

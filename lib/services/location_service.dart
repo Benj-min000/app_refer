@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-
   static String get googleMapsApiKey {
     const key = String.fromEnvironment("MAPS_API_KEY");
     if (key.isEmpty) {
@@ -18,7 +17,6 @@ class LocationService {
     {String langCode = 'en'}
   ) async { 
     final url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lon&language=$langCode&key=$googleMapsApiKey';
-
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -36,16 +34,24 @@ class LocationService {
           return match != null ? match['long_name'] : '';
         }
 
+        String city = findComponent('locality');
+        if (city.isEmpty) {
+          city = findComponent('sublocality');
+        }
+        if (city.isEmpty) {
+          city = findComponent('administrative_area_level_2');
+        }
+
         return {
           'fullAddress': result['formatted_address'],
           'houseNumber': findComponent('street_number'),
+          'flatNumber': findComponent('subpremise'),
           'subpremise': findComponent('subpremise'),
           'road': findComponent('route'),
-          'city': findComponent('locality').isNotEmpty 
-                  ? findComponent('locality') 
-                  : findComponent('administrative_area_level_2'),
+          'city': city,
           'state': findComponent('administrative_area_level_1'),
-          'postCode': findComponent('postal_code'),
+          'country': findComponent('country'),
+          'postalCode': findComponent('postal_code'),
           'lat': lat,
           'lng': lon,
         };
@@ -83,16 +89,22 @@ class LocationService {
       
       Position position = await Geolocator.getCurrentPosition(locationSettings: locationSettings);
 
-      final mapData = await getUserLocationAddressFromGoogle(position.latitude, position.longitude, langCode: langCode);
+      final mapData = await getUserLocationAddressFromGoogle(
+        position.latitude, 
+        position.longitude, 
+        langCode: langCode
+      );
 
       return {
         'fullAddress': mapData['fullAddress'],
         'houseNumber': mapData['houseNumber'],
+        'flatNumber': mapData['flatNumber'],
         'subpremise': mapData['subpremise'],
         'road': mapData['road'],
         'city': mapData['city'],
         'state': mapData['state'],
-        'postCode': mapData['postCode'],
+        'country': mapData['country'],
+        'postalCode': mapData['postalCode'],
         'lat': mapData['lat'],
         'lng': mapData['lng'],
       };

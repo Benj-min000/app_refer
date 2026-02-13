@@ -6,6 +6,7 @@ import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/models/items.dart';
+import 'package:user_app/screens/place_order_screen.dart';
 import 'package:user_app/widgets/cart_item_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/assistant_methods/total_ammount.dart';
@@ -48,8 +49,8 @@ class _CartScreenState extends State<CartScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddressScreen(
-          totolAmmount: totalAmount.toDouble(),
+        builder: (_) => PlaceOrderScreen(
+          totalAmount: totalAmount.toDouble(),
         ),
       ),
     );
@@ -192,17 +193,17 @@ class _CartScreenState extends State<CartScreen> {
 
           final String itemID = cartData['itemID'] ?? '';
           final String menuID = cartData['menuID'] ?? '';
-          final String sellerID = cartData['sellerID'] ?? '';
+          final String storeID = cartData['storeID'] ?? '';
           final int quantity = cartData['quantity'] ?? 1;
 
-          if (itemID.isEmpty || menuID.isEmpty || sellerID.isEmpty) {
+          if (itemID.isEmpty || menuID.isEmpty || storeID.isEmpty) {
             return const SizedBox.shrink();
           }
 
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
-                .collection("sellers")
-                .doc(sellerID)
+                .collection("stores")
+                .doc(storeID)
                 .collection("menus")
                 .doc(menuID)
                 .collection("items")
@@ -228,7 +229,7 @@ class _CartScreenState extends State<CartScreen> {
 
               model.itemID = itemID;
               model.menuID = menuID;
-              model.sellerID = sellerID;
+              model.storeID = storeID;
       
               if (index == 0) {
                 totalAmount = 0;

@@ -291,7 +291,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const AddressScreen()
+                        builder: (_) => AddressScreen()
                       ),
                     );
                   },

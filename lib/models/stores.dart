@@ -1,18 +1,18 @@
-class Sellers {
-  String? sellerID;
+class Stores {
+  String? storeID;
   String? name;
   String? email;
   String? avatar;
 
-  Sellers({
-    required this.sellerID,
+  Stores({
+    required this.storeID,
     required this.name,
     required this.avatar,
     required this.email,
   });
 
-  Sellers.fromJson(Map<String, dynamic> json) {
-    sellerID = json["sellerID"];    
+  Stores.fromJson(Map<String, dynamic> json) {
+    storeID = json["storeID"];    
     name = json["name"];       
     avatar = json["avatar"]; 
     email = json["email"];      
@@ -20,7 +20,7 @@ class Sellers {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["sellerID"] = sellerID;
+    data["storeID"] = storeID;
     data["name"] = name;
     data["avatar"] = avatar;
     data["email"] = email;

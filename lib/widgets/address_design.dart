@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
-import 'package:user_app/screens/placed_order_screen.dart';
+import 'package:user_app/screens/place_order_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/models/address.dart';
 
@@ -17,8 +17,6 @@ class AddressDesign extends StatefulWidget {
   final Address? model;
   final int? value;
   final String? addressID;
-  final double? totolAmmount;
-  final String? sellerUID;
   final bool isCurrentLocationCard;
 
   const AddressDesign(
@@ -26,8 +24,6 @@ class AddressDesign extends StatefulWidget {
         this.model,
         this.value,
         this.addressID,
-        this.totolAmmount,
-        this.sellerUID,
         this.isCurrentLocationCard = false,
       });
 
@@ -220,22 +216,6 @@ class _AddressDesignState extends State<AddressDesign> {
                 },
                 icon: const Icon(Icons.map_outlined, size: 18),
                 label: const Text("See in Maps"),
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => PlacedOrderScreen(
-                    addressID: widget.addressID,
-                    totolAmmount: widget.totolAmmount,
-                  )));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                child: const Text("Proceed to Order"),
               ),
             ],
           ),

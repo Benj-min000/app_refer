@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/screens/menus_screen.dart';
-import 'package:user_app/models/sellers.dart';
+import 'package:user_app/models/stores.dart';
 
-class SellersDesignWidget extends StatefulWidget {
-  final Sellers? model;
+class StoreDesignWidget extends StatefulWidget {
+  final Stores? model;
   final BuildContext? context;
 
-  const SellersDesignWidget({super.key, this.model, this.context});
+  const StoreDesignWidget({super.key, this.model, this.context});
 
   @override
-  State<SellersDesignWidget> createState() => _SellersDesignWidgetState();
+  State<StoreDesignWidget> createState() => _StoreDesignWidgetState();
 }
 
-class _SellersDesignWidgetState extends State<SellersDesignWidget> {
+class _StoreDesignWidgetState extends State<StoreDesignWidget> {
   @override
   Widget build(BuildContext context) {
     return InkWell(

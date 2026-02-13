@@ -31,7 +31,6 @@ class MyDrawer extends StatelessWidget {
       DrawerItem(title: "My Orders", icon: Icons.reorder, screen: MyOrdersScreen()),
       DrawerItem(title: "History", icon: Icons.access_time, screen: const HistoryScreen()),
       DrawerItem(title: "Search", icon: Icons.search, screen: SearchScreen(initialText: "")),
-      DrawerItem(title: "Address Manager", icon: Icons.location_on_outlined, screen: AddressScreen()),
     ];
 
     return Drawer(

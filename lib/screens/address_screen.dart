@@ -20,17 +20,13 @@ import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
 class AddressScreen extends StatefulWidget {
-  final double? totolAmmount;
-  final String? sellerUID;
-
-  const AddressScreen({super.key, this.totolAmmount, this.sellerUID});
+  const AddressScreen({super.key});
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
 }
 
 class _AddressScreenState extends State<AddressScreen> {
-  // Address found automatically
   String _gpsLocation = "";
   Map<String, dynamic> _gpsMapData = {};
 
@@ -168,15 +164,13 @@ class _AddressScreenState extends State<AddressScreen> {
                             lng: _gpsMapData['lng']?.toString() ?? '0.0',
                             road: _gpsMapData['road'] ?? '',
                             houseNumber: _gpsMapData['houseNumber'] ?? '',
+                            flatNumber: _gpsMapData['flatNumber'] ?? _gpsMapData['subpremise'],
                             postalCode: _gpsMapData['postalCode'] ?? '',
                             city: _gpsMapData['city'] ?? '',
                             state: _gpsMapData['state'] ?? '',
                             country: _gpsMapData['country'] ?? '',
                             label: "Current Location",
                           ),
-                          addressID: "current_gps",
-                          totolAmmount: widget.totolAmmount,
-                          sellerUID: widget.sellerUID,
                         );
                       }
 
@@ -190,8 +184,6 @@ class _AddressScreenState extends State<AddressScreen> {
                       return AddressDesign(
                         value: dataIndex,
                         addressID: docSnapshot.id,
-                        totolAmmount: widget.totolAmmount,
-                        sellerUID: widget.sellerUID,
                         model: Address.fromJson(
                           docSnapshot.data()! as Map<String, dynamic>
                         ),

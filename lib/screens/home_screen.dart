@@ -3,14 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/Home/home.dart';
-import 'package:user_app/models/sellers.dart';
+import 'package:user_app/models/stores.dart';
 import 'package:user_app/screens/cart_screen.dart';
-import 'package:user_app/widgets/sellers_design.dart';
+import 'package:user_app/widgets/stores_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/screens/notification_screen.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:user_app/widgets/unified_bottom_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -117,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+
         drawer: MyDrawer(),
         body: CustomScrollView(
           slivers: [
@@ -170,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             StreamBuilder<QuerySnapshot>(
               stream:
-                  FirebaseFirestore.instance.collection("sellers").snapshots(),
+                  FirebaseFirestore.instance.collection("stores").snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return SliverToBoxAdapter(
@@ -182,10 +184,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) {
                     var doc = snapshot.data!.docs[index];
 
-                    Sellers sModel = Sellers.fromJson(doc.data() as Map<String, dynamic>);
-                    sModel.sellerID = doc.id;
+                    Stores sModel = Stores.fromJson(doc.data() as Map<String, dynamic>);
+                    sModel.storeID = doc.id;
                   
-                    return SellersDesignWidget(
+                    return StoreDesignWidget(
                       model: sModel,
                       context: context,
                     );

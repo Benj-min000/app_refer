@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:number_inc_dec/number_inc_dec.dart";
 import "package:user_app/models/items.dart";
-import "package:user_app/widgets/app_bar_seller.dart";
 import "package:user_app/assistant_methods/assistant_methods.dart";
 import 'package:user_app/screens/cart_screen.dart';
 import "package:user_app/widgets/unified_app_bar.dart";
@@ -55,7 +54,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             addItemToCart(
               widget.model!.itemID, 
               widget.model!.menuID,
-              widget.model!.sellerID,
+              widget.model!.storeID,
               context, 
               itemCounter
             );

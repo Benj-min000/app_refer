@@ -27,16 +27,16 @@ List<String> separateOrderItemIds(orderIdList) {
   }).toList();
 }
 
-Future<void> addItemToCart(String? itemID, String? menuID, String? sellerID, BuildContext context, int itemCounter) async {
+Future<void> addItemToCart(String? itemID, String? menuID, String? storeID, BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;
   final cartRef = FirebaseFirestore.instance.collection("users").doc(uid).collection("carts");
  
   var existingCart = await cartRef.get();
 
   if (existingCart.docs.isNotEmpty) {
-    String sellerInCart = existingCart.docs.first.get("sellerID");
-    if (sellerInCart != sellerID) {
-      Fluttertoast.showToast(msg: "You can only order from one seller at a time.");
+    String storeInCart = existingCart.docs.first.get("storeID");
+    if (storeInCart != storeID) {
+      Fluttertoast.showToast(msg: "You can only order from one store at a time.");
       return; 
     }
   }
@@ -44,7 +44,7 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? sellerID, Bui
   await cartRef.doc(itemID).set({
       "itemID": itemID,
       "menuID": menuID,
-      "sellerID": sellerID, 
+      "storeID": storeID, 
       "quantity": itemCounter,
       "publishedDate": DateTime.now(),
     }).then((value) {
