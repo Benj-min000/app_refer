@@ -61,6 +61,8 @@ class FirestoreDumpTool {
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/data.json');
 
+      // The code uses the emulator folders to access it and upload the new data. 
+      // You need to go to Android studio emulator Device File Explorer and upload the .json file in the path below
       if (!await file.exists()) {
         final altFile = File('/data/data/com.megaapp.user_app/app_flutter/data.json');
         if (await altFile.exists()) {
