@@ -227,7 +227,6 @@ class _AddressDesignState extends State<AddressDesign> {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => PlacedOrderScreen(
                     addressID: widget.addressID,
                     totolAmmount: widget.totolAmmount,
-                    sellerUID: widget.sellerUID,
                   )));
                 },
                 style: ElevatedButton.styleFrom(

@@ -14,214 +14,282 @@ import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/global/global.dart';
 
 class CartScreen extends StatefulWidget {
-  final String? sellerUID;
-  const CartScreen({super.key, this.sellerUID});
+  const CartScreen({super.key});
+  
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List<int> separateItemQuantities() {
-    List<String>? userCart = sharedPreferences!.getStringList("userCart");
-    if (userCart == null) return [];
-    
-    // We skip index 0 if it's a dummy value, otherwise map all
-    return userCart.map((item) {
-      var parts = item.split(":");
-      return parts.length > 1 ? int.parse(parts[1]) : 1;
-    }).toList();
-  }
-
-  num totolAmmount = 0;
+  num totalAmount = 0;
 
   @override
   void initState() {
     super.initState();
-    totolAmmount = 0;
+    totalAmount = 0;
     Provider.of<TotalAmmount>(context, listen: false).displayTotolAmmount(0);
+  }
+
+  Future<void> _clearCart() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => circularProgress(),
+    );
+    
+    await clearCartNow(context);
+
+    if (!mounted) return;
+    Navigator.pop(context);
+    Fluttertoast.showToast(msg: "Cart has been cleared");
+  }
+
+  void _proceedToCheckout() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddressScreen(
+          totolAmmount: totalAmount.toDouble(),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> cartIDs = separateOrderItemIds(sharedPreferences!.getStringList("userCart"));
-    List<int> quantities = separateItemQuantities();
-    print(cartIDs);
+    final String? userId = sharedPreferences!.getString("uid");
+
     return Scaffold(
       appBar: UnifiedAppBar(
         title: "Shopping Cart",
         leading: IconButton(
           icon: const Icon(
-            Icons.arrow_back_ios_new, 
+            Icons.arrow_back_ios_new,
             color: Colors.white,
             size: 28,
           ),
-          onPressed: () {
-            Navigator.pop(context); 
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        actions: [],
+        actions: const [],
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: FloatingActionButton.extended(
-              heroTag: 'btn1',
-              onPressed: () async {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (_) => circularProgress(),
-                );
-                await clearCartNow(context);
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .doc(userId)
+            .collection("carts")
+            .snapshots(),
+        builder: (context, cartSnapshot) {
+          if (cartSnapshot.hasError) {
+            return Center(
+              child: Text("Error loading cart: ${cartSnapshot.error}"),
+            );
+          }
 
-                if (!mounted) return;
-                Navigator.pop(context);
-                Fluttertoast.showToast(msg: "Cart has been cleared");
-              },
-              label: const Text(
-                "Clear Cart",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-              backgroundColor: Theme.of(context).primaryColor,
-              icon: const Icon(
-                Icons.clear_all, 
-                color: Colors.white, 
-                size: 28
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: FloatingActionButton.extended(
-              heroTag: 'btn2',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AddressScreen(
-                      totolAmmount: totolAmmount.toDouble(),
-                      sellerUID: widget.sellerUID,
-                    )
-                  )
-                );
-              },
-              label: const Text(
-                "Checkout",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-              backgroundColor: Colors.redAccent,
-              icon: const Icon(
-                Icons.navigate_next, 
-                color: Colors.white, 
-                size: 28
-              ),
-            ),
-          ),
-        ],
+          if (cartSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: circularProgress());
+          }
+
+          if (!cartSnapshot.hasData || cartSnapshot.data!.docs.isEmpty) {
+            return _buildEmptyCart();
+          }
+
+          return _buildCartContent(cartSnapshot);
+        },
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: TextWidgetHeader(title: "My Cart List"),
-          ),
-          SliverToBoxAdapter(
-            child: Consumer2<TotalAmmount, CartItemCounter>(
-              builder: (context, amountProvidr, cartProvider, c) {
-                return Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Center(
-                    child: cartProvider.count == 0
-                      ? Container()
-                      : Text(
-                        "Total Price: ${amountProvidr.tAmmount.toString()}",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                  ),
-                );
-              },
-            ),
-          ),
-          cartIDs.isEmpty 
-            ? const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(40.0),
-                  child: Center(
-                    child: Text(
-                      "Your cart is empty!", 
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
+      floatingActionButton: _buildFloatingButtons(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildEmptyCart() {
+    return CustomScrollView(
+      slivers: [
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: TextWidgetHeader(title: "My Cart List"),
+        ),
+        const SliverFillRemaining(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.shopping_cart_outlined,
+                  size: 100,
+                  color: Colors.grey,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "Your cart is empty!",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              )
-            : StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-              .collectionGroup("items")
-              .where("itemID", whereIn: cartIDs)
-              .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                print("LOG: Firestore Error: ${snapshot.error}");
-                return SliverToBoxAdapter(child: Center(child: Text("Error: ${snapshot.error}")));
-              }
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCartContent(AsyncSnapshot<QuerySnapshot> cartSnapshot) {
+    return CustomScrollView(
+      slivers: [
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: TextWidgetHeader(title: "My Cart List"),
+        ),
+        SliverToBoxAdapter(
+          child: Consumer2<TotalAmmount, CartItemCounter>(
+            builder: (context, amountProvider, cartProvider, _) {
+              if (cartProvider.count == 0) return const SizedBox.shrink();
               
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                print("Still loading!!!");
-              }
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    print("works??");
-                    if (snapshot.data == null || index >= snapshot.data!.docs.length) {
-                      return const SizedBox();
-                    }
-
-                    Items model = Items.fromJson(
-                      snapshot.data!.docs[index].data() as Map<String, dynamic>,
-                    );
-
-                    if (index == 0) {
-                      totolAmmount = 0;
-                    }
-
-                    int itemQuantity = (index < quantities.length) ? quantities[index] : 1;
-                    totolAmmount += ((model.price ?? 0) * itemQuantity);
-
-                    if (index == snapshot.data!.docs.length - 1) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (mounted) {
-                          Provider.of<TotalAmmount>(context, listen: false)
-                              .displayTotolAmmount(totolAmmount.toDouble());
-                        }
-                      });
-                    }
-
-                    return CartItemDesign(
-                      model: model,
-                      context: context,
-                      quanNumber: itemQuantity,
-                    );
-                  },
-                  childCount: snapshot.data?.docs.length ?? 0,
+              return Container(
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Total Price:",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "\$${amountProvider.tAmmount.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  ],
                 ),
               );
-            }
-          )
+            },
+          ),
+        ),
+        _buildCartItems(cartSnapshot),
+      ],
+    );
+  }
+
+  Widget _buildCartItems(AsyncSnapshot<QuerySnapshot> cartSnapshot) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final cartDoc = cartSnapshot.data!.docs[index];
+          final cartData = cartDoc.data() as Map<String, dynamic>;
+
+          final String itemID = cartData['itemID'] ?? '';
+          final String menuID = cartData['menuID'] ?? '';
+          final String sellerID = cartData['sellerID'] ?? '';
+          final int quantity = cartData['quantity'] ?? 1;
+
+          if (itemID.isEmpty || menuID.isEmpty || sellerID.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection("sellers")
+                .doc(sellerID)
+                .collection("menus")
+                .doc(menuID)
+                .collection("items")
+                .doc(itemID)
+                .get(),
+            builder: (context, itemSnapshot) {
+              if (itemSnapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (itemSnapshot.hasError || 
+                  !itemSnapshot.hasData || 
+                  !itemSnapshot.data!.exists) {
+                return const SizedBox.shrink();
+              }
+
+              final Items model = Items.fromJson(
+                itemSnapshot.data!.data() as Map<String, dynamic>,
+              );
+
+              model.itemID = itemID;
+              model.menuID = menuID;
+              model.sellerID = sellerID;
+      
+              if (index == 0) {
+                totalAmount = 0;
+              }
+
+              totalAmount += (model.price ?? 0) * quantity;
+
+              if (index == cartSnapshot.data!.docs.length - 1) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    Provider.of<TotalAmmount>(context, listen: false)
+                        .displayTotolAmmount(totalAmount.toDouble());
+                  }
+                });
+              }
+
+              return CartItemDesign(
+                model: model,
+                context: context,
+                quanNumber: quantity,
+              );
+            },
+          );
+        },
+        childCount: cartSnapshot.data?.docs.length ?? 0,
+      ),
+    );
+  }
+
+  Widget _buildFloatingButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: 'clearCart',
+            onPressed: _clearCart,
+            backgroundColor: Theme.of(context).primaryColor,
+            icon: const Icon(Icons.clear_all, color: Colors.white),
+            label: const Text(
+              "Clear Cart",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          FloatingActionButton.extended(
+            heroTag: 'checkout',
+            onPressed: _proceedToCheckout,
+            backgroundColor: Colors.redAccent,
+            icon: const Icon(Icons.navigate_next, color: Colors.white),
+            label: const Text(
+              "Checkout",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );

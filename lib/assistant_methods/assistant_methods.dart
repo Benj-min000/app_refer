@@ -6,6 +6,16 @@ import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+List<int> separateItemQuantities() {
+  List<String>? userCart = sharedPreferences!.getStringList("userCart");
+  if (userCart == null) return [];
+  
+  return userCart.map((item) {
+    var parts = item.split(":");
+    return parts.length > 1 ? int.parse(parts[1]) : 1;
+  }).toList();
+}
+
 List<String> separateOrderItemIds(orderIdList) {
   if (orderIdList == null) {
     return <String>[];
@@ -59,6 +69,46 @@ List<String> separateOrderItemQuantities(orderIdList) {
     }
   }
   return quantities;
+}
+
+Future<void> removeItemFromCart(BuildContext context, String itemID) async {
+  final User? currentUser = firebaseAuth.currentUser;
+  
+  if (currentUser == null) {
+    Fluttertoast.showToast(msg: "User not logged in.");
+    return;
+  }
+  
+  final String uid = currentUser.uid;
+  
+  try {
+    var snapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("carts")
+        .where("itemID", isEqualTo: itemID)
+        .limit(1)
+        .get();
+    if (snapshot.docs.isEmpty) {
+      Fluttertoast.showToast(msg: "Item not found in cart.");
+      return;
+    }
+    
+    await snapshot.docs.first.reference.delete();
+    
+    List<String>? userCart = sharedPreferences!.getStringList("userCart");
+    if (userCart != null) {
+      userCart.removeWhere((item) => item.startsWith("$itemID:"));
+      sharedPreferences!.setStringList("userCart", userCart);
+    }
+    
+    if (context.mounted) {
+      Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+      Fluttertoast.showToast(msg: "Item removed from cart.");
+    }
+  } catch (e) {
+    Fluttertoast.showToast(msg: "Error removing item: $e");
+  }
 }
 
 Future<void> clearCartNow(BuildContext context) async {

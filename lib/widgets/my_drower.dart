@@ -6,6 +6,7 @@ import 'package:user_app/screens/history_screen.dart';
 import 'package:user_app/screens/my_orders_screen.dart';
 import 'package:user_app/screens/search_screen.dart';
 import 'package:user_app/screens/profile_settings_screen.dart';
+import 'package:user_app/services/firebase_data_transfer.dart';
 
 class DrawerItem {
   final String title;
@@ -81,8 +82,29 @@ class MyDrawer extends StatelessWidget {
               ),
             ],
           )),
+
+          const Divider(height: 1, thickness: 1, color: Colors.grey),
+
+          ListTile(
+            leading: Icon(Icons.data_array, color: Colors.black),
+            title: Text("Firebase Export", style: const TextStyle(color: Colors.black)),
+            onTap: () {
+              FirestoreDumpTool.startExport();
+            },
+          ),
+
+          const Divider(height: 1, thickness: 1, color: Colors.grey),
+
+          ListTile(
+            leading: Icon(Icons.data_usage, color: Colors.black),
+            title: Text("Firebase Import", style: const TextStyle(color: Colors.black)),
+            onTap: () {
+              FirestoreDumpTool.startImport();
+            },
+          ),
             
           const Divider(height: 10, color: Colors.grey, thickness: 2),
+
           ListTile(
             leading: const Icon(
               Icons.exit_to_app,
@@ -97,7 +119,7 @@ class MyDrawer extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AuthScreen()));
+                        builder: (_) => const AuthScreen()));
               });
             },
           ),

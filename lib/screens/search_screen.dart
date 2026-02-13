@@ -106,7 +106,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
     _searchController = TextEditingController(text: widget.initialText);
     
-    // Move cursor to the end so they can keep typing
     _searchController.selection = TextSelection.fromPosition(
       TextPosition(offset: _searchController.text.length),
     );
@@ -116,7 +115,6 @@ class _SearchScreenState extends State<SearchScreen> {
       apiKey: apiKey,
     );
     
-    // Perform initial search
     _performSearch(widget.initialText);
   }
 

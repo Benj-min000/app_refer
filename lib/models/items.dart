@@ -10,20 +10,21 @@ class Items {
   String? status;
   double? price;
 
-  Items(
-      {this.menuID,
-      this.sellerID,
-      this.itemID,
-      this.title,
-      this.info,
-      this.publishedDate,
-      this.thumbnailUrl,
-      this.description,
-      this.status,
-      this.price});
+  Items({
+    this.menuID,
+    this.sellerID,
+    this.itemID,
+    this.title,
+    this.info,
+    this.publishedDate,
+    this.thumbnailUrl,
+    this.description,
+    this.status,
+    this.price,
+  });
 
   Items.fromJson(Map<String, dynamic> json) {
-    menuID = json['menuID']; 
+    menuID = json['menuID'];
     sellerID = json['sellerID'];
     itemID = json['itemID'];
     title = json['title'];
@@ -32,21 +33,33 @@ class Items {
     thumbnailUrl = json['thumbnailUrl'];
     description = json['description'];
     status = json['status'];
-    price = json['price'] != null ? double.parse(json['price'].toString()) : 0.0;
+    
+    // Safe price parsing
+    if (json['price'] != null) {
+      if (json['price'] is String) {
+        price = double.tryParse(json['price']) ?? 0.0;
+      } else if (json['price'] is num) {
+        price = (json['price'] as num).toDouble();
+      } else {
+        price = 0.0;
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['menuID'] = menuID;
-    data['sellerID'] = sellerID;
-    data['itemID'] = itemID;
-    data['title'] = title;
-    data['info'] = info;
-    data['publishedDate'] = publishedDate;
-    data['thumbnailUrl'] = thumbnailUrl;
-    data['description'] = description; 
-    data['status'] = status;
-    data['price'] = price;
-    return data;
+    return {
+      'menuID': menuID,
+      'sellerID': sellerID,
+      'itemID': itemID,
+      'title': title,
+      'info': info,
+      'publishedDate': publishedDate,
+      'thumbnailUrl': thumbnailUrl,
+      'description': description,
+      'status': status,
+      'price': price,
+    };
   }
+
+  String get formattedPrice => price?.toStringAsFixed(2) ?? '0.00';
 }

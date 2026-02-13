@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/Home/home.dart';
-import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/sellers.dart';
 import 'package:user_app/screens/cart_screen.dart';
 import 'package:user_app/widgets/sellers_design.dart';
@@ -26,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    clearCartNow(context);
   }
 
   @override

@@ -53,8 +53,8 @@ class _MyAppbarState extends State<MyAppbar> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        CartScreen(sellerUID: widget.sellerUID),
+                    builder: (_) =>
+                        CartScreen(),
                   ),
                 );
               },

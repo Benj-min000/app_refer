@@ -8,51 +8,94 @@ import 'package:user_app/screens/home_screen.dart';
 class PlacedOrderScreen extends StatefulWidget {
   final String? addressID;
   final double? totolAmmount;
-  final String? sellerUID;
 
   const PlacedOrderScreen(
-      {super.key, required this.addressID, required this.totolAmmount, required this.sellerUID});
+      {super.key, required this.addressID, required this.totolAmmount});
 
   @override
   State<PlacedOrderScreen> createState() => _PlacedOrderScreenState();
 }
 
 class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
-  String orderId = DateTime.now().microsecondsSinceEpoch.toString();
+  String orderTime = DateTime.now().microsecondsSinceEpoch.toString();
+  String orderID = "";
+  String? sellerID;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    orderID = FirebaseFirestore.instance.collection("orders").doc().id;
+    getSellerUIDFromCart();
+  }
+
+  Future<void> getSellerUIDFromCart() async {
+    try {
+      String? uid = sharedPreferences!.getString("uid");
+      if (uid == null) return;
+
+      var cartSnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("carts")
+        .limit(1)
+        .get();
+
+      if (cartSnapshot.docs.isNotEmpty) {
+        var cartData = cartSnapshot.docs.first.data();
+        setState(() {
+          sellerID = cartData['sellerID'];
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error getting sellerID: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   void addOrderDetails() {
     writeOrderDetailsForUser({
-      "addressId": widget.addressID,
+      "addressID": widget.addressID,
       "totolAmmount": widget.totolAmmount,
       "orderedBy": sharedPreferences!.getString("uid"),
-      "productIds": sharedPreferences!.getStringList("userCart"),
+      "productIDs": sharedPreferences!.getStringList("userCart"),
       "paymentDetails": "Cash on Delivery",
-      "orderTime": orderId,
+      "orderTime": orderTime,
       "isSuccess": true,
-      "sellerUID": widget.sellerUID,
-      "riderUID": "",
+      "sellerID": sellerID,
+      "riderID": "",
       "status": "normal",
-      "orderId": orderId,
+      "orderID": orderID,
     });
 
     writeOrderDetailsForSeller({
-      "addressId": widget.addressID,
+      "addressID": widget.addressID,
       "totolAmmount": widget.totolAmmount,
       "orderedBy": sharedPreferences!.getString("uid"),
-      "productIds": sharedPreferences!.getStringList("userCart"),
+      "productIDs": sharedPreferences!.getStringList("userCart"),
       "paymentDetails": "Cash on Delivery",
-      "orderTime": orderId,
+      "orderTime": orderID,
       "isSuccess": true,
-      "sellerUID": widget.sellerUID,
-      "riderUID": "",
+      "sellerID": sellerID,
+      "riderID": "",
       "status": "normal",
-      "orderId": orderId,
+      "orderID": orderID,
     }).whenComplete(() {
-      clearCartNow(context);
-      setState(() {
-        orderId = "";
 
+      if (!mounted) return;
+      clearCartNow(context);
+
+      setState(() {
+        orderID = "";
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()));
+            MaterialPageRoute(builder: (_) => const HomeScreen()));
         Fluttertoast.showToast(
             msg: "Congratulations, Order has been placed Successfully");
       });
@@ -64,17 +107,15 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
       .collection("users")
       .doc(sharedPreferences!.getString("uid"))
       .collection("orders")
-      .doc(orderId)
+      .doc(orderID)
       .set(data);
   }
 
-  Future writeOrderDetailsForSeller(
-      Map<String, dynamic> data,
-      ) async {
+  Future writeOrderDetailsForSeller(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
-        .collection("orders")
-        .doc(orderId)
-        .set(data);
+      .collection("orders")
+      .doc(orderID)
+      .set(data);
   }
 
   @override

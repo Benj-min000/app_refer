@@ -45,6 +45,7 @@ dependencies:
   algoliasearch: ^1.44.0
   infinite_scroll_pagination: ^5.1.1
   phone_form_field: ^10.0.17
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
