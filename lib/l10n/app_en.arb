@@ -35,54 +35,190 @@
   "hintSearch": "Find it! Delicious Dishes",
   "@hintSearch": {"description": "Placeholder text for the search bar"},
 
-
-
   "tabFoodDelivery": "Food Delivery",
-  "@tabFoodDelivery": {"description": "Tab label for Food Delivery"},
-
-  "tabGroceryShopping": "Grocery & Shopping",
-  "@tabGroceryShopping": {"description": "Tab label for Grocery / Shopping"},
-
-  "tabPickup": "Pick-up",
-  "@tabPickup": {"description": "Tab label for Pickup orders"},
-
-  "tabGifting": "Send Gifts",
-  "@tabGifting": {"description": "Tab label for sending gifts"},
-
-  "tabBenefits": "View All Benefits",
-  "@tabBenefits": {"description": "Tab label for viewing all benefits"},
-
-
-
-  "categoryDiscounts": "Daily Discounts",
-  "@categoryDiscounts": {"description": "Label for the discount icon"},
-
-  "categoryPork": "Boiled Pork",
-  "@categoryPork": {"description": ""},
-
+  "@tabFoodDelivery": {
+    "description": "Tab label for food delivery section"
+  },
+  
+  "tabPickup": "Pickup",
+  "@tabPickup": {
+    "description": "Tab label for pickup orders section"
+  },
+  
+  "tabGroceryShopping": "Grocery",
+  "@tabGroceryShopping": {
+    "description": "Tab label for grocery shopping section"
+  },
+  
+  "tabGifting": "Gifting",
+  "@tabGifting": {
+    "description": "Tab label for gift shopping section"
+  },
+  
+  "tabBenefits": "Benefits",
+  "@tabBenefits": {
+    "description": "Tab label for benefits and rewards section"
+  },
+  
+  "categoryDiscounts": "Discounts",
+  "@categoryDiscounts": {
+    "description": "Category for discounted items"
+  },
+  
+  "categoryPork": "Pork",
+  "@categoryPork": {
+    "description": "Category for pork dishes"
+  },
+  
   "categoryTonkatsuSashimi": "Tonkatsu & Sashimi",
-  "@categoryTonkatsuSashimi": {"description": ""},
-
+  "@categoryTonkatsuSashimi": {
+    "description": "Category for Japanese tonkatsu and sashimi"
+  },
+  
   "categoryPizza": "Pizza",
-  "@categoryPizza": {"description": ""},
-
-  "categoryStew": "Steamed Stew",
-  "@categoryStew": {"description": ""},
-
-  "categoryChinese": "Chinese Food",
-  "@categoryChinese": {"description": ""},
-
+  "@categoryPizza": {
+    "description": "Category for pizza"
+  },
+  
+  "categoryStew": "Stew",
+  "@categoryStew": {
+    "description": "Category for stew dishes"
+  },
+  
+  "categoryChinese": "Chinese",
+  "@categoryChinese": {
+    "description": "Category for Chinese cuisine"
+  },
+  
   "categoryChicken": "Chicken",
-  "@categoryChicken": {"description": ""},
-
-  "categoryKorean": "Korean Food",
-  "@categoryKorean": {"description": ""},
-
-  "categoryOneBowl": "One-bowl Meals",
-  "@categoryOneBowl": {"description": ""},
-
-  "categoryPichupDiscount": "More",
-  "@categoryPichupDiscount": {"description": "Category label for More / Other items"},
+  "@categoryChicken": {
+    "description": "Category for chicken dishes"
+  },
+  
+  "categoryKorean": "Korean",
+  "@categoryKorean": {
+    "description": "Category for Korean cuisine"
+  },
+  
+  "categoryOneBowl": "One Bowl",
+  "@categoryOneBowl": {
+    "description": "Category for single bowl meals"
+  },
+  
+  "categoryPichupDiscount": "Pickup Discount",
+  "@categoryPichupDiscount": {
+    "description": "Category for pickup order discounts"
+  },
+  
+  "categoryFastFood": "Fast Food",
+  "@categoryFastFood": {
+    "description": "Category for fast food restaurants"
+  },
+  
+  "categoryCoffee": "Coffee",
+  "@categoryCoffee": {
+    "description": "Category for coffee shops"
+  },
+  
+  "categoryBakery": "Bakery",
+  "@categoryBakery": {
+    "description": "Category for bakery items"
+  },
+  
+  "categoryLunch": "Lunch",
+  "@categoryLunch": {
+    "description": "Category for lunch meals"
+  },
+  
+  "categoryFreshProduce": "Fresh Produce",
+  "@categoryFreshProduce": {
+    "description": "Category for fresh fruits and vegetables"
+  },
+  
+  "categoryDairyEggs": "Dairy & Eggs",
+  "@categoryDairyEggs": {
+    "description": "Category for dairy products and eggs"
+  },
+  
+  "categoryMeat": "Meat",
+  "@categoryMeat": {
+    "description": "Category for meat products"
+  },
+  
+  "categoryBeverages": "Beverages",
+  "@categoryBeverages": {
+    "description": "Category for drinks and beverages"
+  },
+  
+  "categoryFrozen": "Frozen",
+  "@categoryFrozen": {
+    "description": "Category for frozen foods"
+  },
+  
+  "categorySnacks": "Snacks",
+  "@categorySnacks": {
+    "description": "Category for snack foods"
+  },
+  
+  "categoryHousehold": "Household",
+  "@categoryHousehold": {
+    "description": "Category for household items and supplies"
+  },
+  
+  "categoryCakes": "Cakes",
+  "@categoryCakes": {
+    "description": "Category for cakes and pastries"
+  },
+  
+  "categoryFlowers": "Flowers",
+  "@categoryFlowers": {
+    "description": "Category for flower arrangements"
+  },
+  
+  "categoryGiftBoxes": "Gift Boxes",
+  "@categoryGiftBoxes": {
+    "description": "Category for pre-made gift boxes"
+  },
+  
+  "categoryPartySupplies": "Party Supplies",
+  "@categoryPartySupplies": {
+    "description": "Category for party decorations and supplies"
+  },
+  
+  "categoryGiftCards": "Gift Cards",
+  "@categoryGiftCards": {
+    "description": "Category for digital and physical gift cards"
+  },
+  
+  "categorySpecialOccasions": "Special Occasions",
+  "@categorySpecialOccasions": {
+    "description": "Category for special occasion gifts"
+  },
+  
+  "categoryDailyDeals": "Daily Deals",
+  "@categoryDailyDeals": {
+    "description": "Category for daily special offers"
+  },
+  
+  "categoryLoyaltyRewards": "Loyalty Rewards",
+  "@categoryLoyaltyRewards": {
+    "description": "Category for loyalty program rewards"
+  },
+  
+  "categoryCoupons": "Coupons",
+  "@categoryCoupons": {
+    "description": "Category for available coupons"
+  },
+  
+  "categoryNewOffers": "New Offers",
+  "@categoryNewOffers": {
+    "description": "Category for newly added offers"
+  },
+  
+  "categoryExclusiveDeals": "Exclusive Deals",
+  "@categoryExclusiveDeals": {
+    "description": "Category for exclusive member deals"
+  },
 
   "seeMore": "See more in {tab}",
   "@seeMore": {

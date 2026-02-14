@@ -3,7 +3,7 @@ import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/screens/history_screen.dart';
-import 'package:user_app/screens/my_orders_screen.dart';
+import 'package:user_app/screens/orders_screen.dart';
 import 'package:user_app/screens/search_screen.dart';
 import 'package:user_app/screens/profile_settings_screen.dart';
 import 'package:user_app/services/firebase_data_transfer.dart';
@@ -28,9 +28,7 @@ class MyDrawer extends StatelessWidget {
 
     final List<DrawerItem> drawerItems = [
       DrawerItem(title: "Profile Settings", icon: Icons.manage_accounts, screen: const ProfileSettingsScreen()),
-      DrawerItem(title: "My Orders", icon: Icons.reorder, screen: MyOrdersScreen()),
-      DrawerItem(title: "History", icon: Icons.access_time, screen: const HistoryScreen()),
-      DrawerItem(title: "Search", icon: Icons.search, screen: SearchScreen(initialText: "")),
+      DrawerItem(title: "Order History", icon: Icons.access_time, screen: const HistoryScreen()),
     ];
 
     return Drawer(

@@ -45,22 +45,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabFoodDelivery => 'Food Delivery';
 
   @override
-  String get tabGroceryShopping => 'Grocery & Shopping';
+  String get tabPickup => 'Pickup';
 
   @override
-  String get tabPickup => 'Pick-up';
+  String get tabGroceryShopping => 'Grocery';
 
   @override
-  String get tabGifting => 'Send Gifts';
+  String get tabGifting => 'Gifting';
 
   @override
-  String get tabBenefits => 'View All Benefits';
+  String get tabBenefits => 'Benefits';
 
   @override
-  String get categoryDiscounts => 'Daily Discounts';
+  String get categoryDiscounts => 'Discounts';
 
   @override
-  String get categoryPork => 'Boiled Pork';
+  String get categoryPork => 'Pork';
 
   @override
   String get categoryTonkatsuSashimi => 'Tonkatsu & Sashimi';
@@ -69,22 +69,88 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryPizza => 'Pizza';
 
   @override
-  String get categoryStew => 'Steamed Stew';
+  String get categoryStew => 'Stew';
 
   @override
-  String get categoryChinese => 'Chinese Food';
+  String get categoryChinese => 'Chinese';
 
   @override
   String get categoryChicken => 'Chicken';
 
   @override
-  String get categoryKorean => 'Korean Food';
+  String get categoryKorean => 'Korean';
 
   @override
-  String get categoryOneBowl => 'One-bowl Meals';
+  String get categoryOneBowl => 'One Bowl';
 
   @override
-  String get categoryPichupDiscount => 'More';
+  String get categoryPichupDiscount => 'Pickup Discount';
+
+  @override
+  String get categoryFastFood => 'Fast Food';
+
+  @override
+  String get categoryCoffee => 'Coffee';
+
+  @override
+  String get categoryBakery => 'Bakery';
+
+  @override
+  String get categoryLunch => 'Lunch';
+
+  @override
+  String get categoryFreshProduce => 'Fresh Produce';
+
+  @override
+  String get categoryDairyEggs => 'Dairy & Eggs';
+
+  @override
+  String get categoryMeat => 'Meat';
+
+  @override
+  String get categoryBeverages => 'Beverages';
+
+  @override
+  String get categoryFrozen => 'Frozen';
+
+  @override
+  String get categorySnacks => 'Snacks';
+
+  @override
+  String get categoryHousehold => 'Household';
+
+  @override
+  String get categoryCakes => 'Cakes';
+
+  @override
+  String get categoryFlowers => 'Flowers';
+
+  @override
+  String get categoryGiftBoxes => 'Gift Boxes';
+
+  @override
+  String get categoryPartySupplies => 'Party Supplies';
+
+  @override
+  String get categoryGiftCards => 'Gift Cards';
+
+  @override
+  String get categorySpecialOccasions => 'Special Occasions';
+
+  @override
+  String get categoryDailyDeals => 'Daily Deals';
+
+  @override
+  String get categoryLoyaltyRewards => 'Loyalty Rewards';
+
+  @override
+  String get categoryCoupons => 'Coupons';
+
+  @override
+  String get categoryNewOffers => 'New Offers';
+
+  @override
+  String get categoryExclusiveDeals => 'Exclusive Deals';
 
   @override
   String seeMore(Object tab) {

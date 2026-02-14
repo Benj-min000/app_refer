@@ -24,6 +24,7 @@ class _MenusScreenState extends State<MenusScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: UnifiedAppBar(
+        title: "${widget.model!.name} Menus",
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -37,11 +38,6 @@ class _MenusScreenState extends State<MenusScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate:
-              TextWidgetHeader(title: "${widget.model!.name} Menus"),
-          ),
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
               .collection("stores")

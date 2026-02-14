@@ -45,10 +45,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tabFoodDelivery => 'Essenslieferung';
 
   @override
-  String get tabGroceryShopping => 'Lebensmittel · Einkaufen';
+  String get tabPickup => 'Abholung';
 
   @override
-  String get tabPickup => 'Abholung';
+  String get tabGroceryShopping => 'Lebensmittel · Einkaufen';
 
   @override
   String get tabGifting => 'Geschenke senden';
@@ -85,6 +85,72 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get categoryPichupDiscount => 'Mehr';
+
+  @override
+  String get categoryFastFood => 'Fastfood';
+
+  @override
+  String get categoryCoffee => 'Kaffee';
+
+  @override
+  String get categoryBakery => 'Bäckerei';
+
+  @override
+  String get categoryLunch => 'Mittagessen';
+
+  @override
+  String get categoryFreshProduce => 'Frisches Obst und Gemüse';
+
+  @override
+  String get categoryDairyEggs => 'Milchprodukte & Eier';
+
+  @override
+  String get categoryMeat => 'Fleisch';
+
+  @override
+  String get categoryBeverages => 'Getränke';
+
+  @override
+  String get categoryFrozen => 'Gefroren';
+
+  @override
+  String get categorySnacks => 'Snacks';
+
+  @override
+  String get categoryHousehold => 'Haushalt';
+
+  @override
+  String get categoryCakes => 'Kuchen';
+
+  @override
+  String get categoryFlowers => 'Blumen';
+
+  @override
+  String get categoryGiftBoxes => 'Geschenkboxen';
+
+  @override
+  String get categoryPartySupplies => 'Partyartikel';
+
+  @override
+  String get categoryGiftCards => 'Geschenkgutscheine';
+
+  @override
+  String get categorySpecialOccasions => 'Besondere Anlässe';
+
+  @override
+  String get categoryDailyDeals => 'Tagesangebote';
+
+  @override
+  String get categoryLoyaltyRewards => 'Treueprämien';
+
+  @override
+  String get categoryCoupons => 'Gutscheine';
+
+  @override
+  String get categoryNewOffers => 'Neue Angebote';
+
+  @override
+  String get categoryExclusiveDeals => 'Exklusive Angebote';
 
   @override
   String seeMore(Object tab) {

@@ -17,7 +17,6 @@ import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 
-import 'package:user_app/Home/home_category_items.dart';
 import 'package:user_app/Home/home_tabs.dart';
 
 import 'package:user_app/screens/address_screen.dart';
@@ -38,12 +37,11 @@ class _DiningPagePageState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
 
   int _selectedTabIndex = 0;
+  bool _showAllCategories = false;
 
   String _location = "";
-
-  // State variable for changing the visibility of the whole address
   bool _showFullAddress = false;
-
+  
   Locale? _lastLocale;
   
   int? _lastAddressIndex;
@@ -148,12 +146,17 @@ class _DiningPagePageState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final homeCategories = getHomeCategories(context);
-    final homeTabs = getHomeTabs(context);
+    final tabs = getHomeTabs(context);
+    final selectedTab = tabs[_selectedTabIndex];
+    final hasMoreCategories = selectedTab.categories.length > 10;
+    final displayedCategories = _showAllCategories 
+      ? selectedTab.categories 
+      : selectedTab.categories.take(10).toList();
 
     return DefaultTabController(
-      length: homeTabs.length,
+      length: tabs.length,
       initialIndex: 0,
+
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +169,7 @@ class _DiningPagePageState extends State<Home> {
               children: [
                 Material(
                   color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
                     onTap: () {
@@ -183,27 +186,23 @@ class _DiningPagePageState extends State<Home> {
                           size: 32,
                         ),
                         
-                        const SizedBox(width: 8,),
-
+                        const SizedBox(width: 8),
                         Expanded(
-                          child: Tooltip(
-                            message: _location,
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _showFullAddress = !_showFullAddress;
-                                });
-                              },
-                              child: Text(
-                                _location,
-                                style: const TextStyle(
-                                  color: Colors.white, 
-                                  fontSize: 14, 
-                                  fontWeight: FontWeight.bold
-                                ),
-                                maxLines: _showFullAddress ? null : 1, 
-                                overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _showFullAddress = !_showFullAddress;
+                              });
+                            },
+                            child: Text(
+                              _location,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
                               ),
+                              maxLines: _showFullAddress ? null : 1,
+                              overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -212,6 +211,7 @@ class _DiningPagePageState extends State<Home> {
                           child: Icon(
                             _showFullAddress ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                             color: Colors.white,
+                            size: 20,
                           ),
                         )
                       ],
@@ -219,7 +219,7 @@ class _DiningPagePageState extends State<Home> {
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 Row(
                   children: [
@@ -275,118 +275,221 @@ class _DiningPagePageState extends State<Home> {
             ),
           ),
 
-          TabBar(
+          Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            labelPadding: const EdgeInsets.symmetric(horizontal: 16.0), 
-            labelColor: Colors.redAccent,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold),
-            unselectedLabelColor: Colors.black54,
-            indicatorColor: Colors.redAccent,
-            indicatorSize: TabBarIndicatorSize.label, 
+            labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+            labelColor: Colors.blue.shade700,
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
+            unselectedLabelColor: Colors.grey[600],
+            unselectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+            indicatorColor: Colors.blue.shade700,
+            indicatorSize: TabBarIndicatorSize.label,
+            indicatorWeight: 3,
             physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.zero, 
-            tabs: homeTabs.map((tabs) => Tab(text: tabs.label)).toList(),
+            padding: EdgeInsets.zero,
+            tabs: tabs.map((tab) => Tab(text: tab.label)).toList(),
             onTap: (index) {
-              setState(() => _selectedTabIndex = index);
+              setState(() {
+                _selectedTabIndex = index;
+                _showAllCategories = false; // Reset when switching tabs
+              });
             },
           ),
+        ),
 
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16.0, 
-              right: 16.0, 
-              top: 16.0, 
-              bottom: 0.0, 
-            ),
-            child: GridView.count(
-              padding: EdgeInsets.zero,
+        // Category Grid
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          child: GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 5,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: 0.65,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: homeCategories.map(categoryBox).toList(),
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
+            itemCount: displayedCategories.length,
+            itemBuilder: (context, index) {
+              final category = displayedCategories[index];
+              return _buildCategoryItem(category);
+            },
           ),
+        ),
 
-          Divider(),
-
-          InkWell(
-            onTap: () { },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Builder(
-                builder: (context) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        context.t.seeMore(homeTabs[_selectedTabIndex].label),
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black54,
+        if (hasMoreCategories)
+          Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _showAllCategories = !_showAllCategories;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _showAllCategories 
+                              ? 'Show Less' 
+                              : context.t.seeMore(selectedTab.label),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
                         ),
-                      ),
-                      const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
-                    ],
-                  );
-                },
-              ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          _showAllCategories 
+                              ? Icons.keyboard_arrow_up 
+                              : Icons.keyboard_arrow_down,
+                          size: 18,
+                          color: Colors.grey[700],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+              ],
             ),
           ),
-          Divider(),
 
           const SizedBox(height: 30),
 
-          const SizedBox(height: 250, width: double.infinity, child: HomeLargeItems()),
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text('EXPLORE',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
+          const SizedBox(
+            height: 250,
+            width: double.infinity,
+            child: HomeLargeItems(),
           ),
-          const SizedBox(height: 180, width: double.infinity, child: HomeMediumItems()),
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text('WHATS ON YOUR MIND?',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
+
+          _buildSectionHeader('EXPLORE'),
+
+          const SizedBox(
+            height: 180,
+            width: double.infinity,
+            child: HomeMediumItems(),
           ),
-          ...List.generate(homePageItemsLenght(), (index) =>
-            SizedBox(
+
+          _buildSectionHeader('WHAT\'S ON YOUR MIND?'),
+
+          ...List.generate(
+            homePageItemsLenght(),
+            (index) => SizedBox(
               height: 100,
-              width: double.infinity, 
-              child: HomePageItems(itemsIndex: index)
+              width: double.infinity,
+              child: HomePageItems(itemsIndex: index),
             ),
           ),
 
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text('IN THE SPOTLIGHT',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
-          ),
-          const SizedBox(height: 220, width: double.infinity, child: CakeItems()),
+          _buildSectionHeader('IN THE SPOTLIGHT'),
 
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text('OUR RESTAURENTS',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
+          const SizedBox(
+            height: 220,
+            width: double.infinity,
+            child: CakeItems(),
           ),
-          
-          ...List.generate(restaurantsListLength(), (index) => 
-            SizedBox(
-              height: 300, 
-              width: double.infinity, 
+
+          _buildSectionHeader('OUR RESTAURANTS'),
+
+          ...List.generate(
+            restaurantsListLength(),
+            (index) => SizedBox(
+              height: 300,
+              width: double.infinity,
               child: RestaurantCard(restaurantIndex: index),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text('FEATURES',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 126, 126, 126))),
+
+          _buildSectionHeader('FEATURES'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryItem(HomeCategoryItem category) {
+    return InkWell(
+      onTap: () {
+        // Handle category tap
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Icon(
+                category.icon,
+                size: 28,
+                color: Colors.blue.shade700,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 32,
+            child: Center(
+              child: Text(
+                category.label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  height: 1.2,
+                ),
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Helper method for section headers
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }

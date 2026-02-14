@@ -6,13 +6,13 @@ import 'package:path_provider/path_provider.dart';
 
 class FirestoreDumpTool {
   static const List<String> knownCollections = [
-    'users', 'store', 'orders', 'addresses', 'carts', 'notifications', 'menus', 'items'
+    'users', 'stores', 'orders', 'addresses', 'carts', 'notifications', 'menus', 'items'
   ];
 
   static Future<void> startExport() async {
     Map<String, dynamic> fullBackup = {};
     try {
-      for (String root in ['users', 'store', 'orders']) {
+      for (String root in ['users', 'stores', 'orders']) {
         debugPrint('Exporting root: $root...');
         fullBackup[root] = await _fetchCollectionRecursive(
           FirebaseFirestore.instance.collection(root),

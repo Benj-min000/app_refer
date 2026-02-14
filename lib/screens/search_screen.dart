@@ -2,6 +2,11 @@ import 'package:algoliasearch/algoliasearch_lite.dart';
 import 'package:flutter/material.dart';
 import 'package:user_app/search/search_tabs.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
+import 'package:user_app/widgets/my_drower.dart';
+import 'package:user_app/screens/home_screen.dart';
+import 'package:user_app/screens/orders_screen.dart';
+import "package:user_app/screens/favorites_screen.dart";
+import 'package:user_app/widgets/unified_bottom_bar.dart';
 
 class Product {
   final String title;
@@ -61,6 +66,8 @@ class _SearchScreenState extends State<SearchScreen> {
   static const String _algoliaAppId = String.fromEnvironment("ALGOLIA_APP_ID");
   static const String _algoliaApiKey = String.fromEnvironment("ALGOLIA_API_KEY");
   static const String _algoliaIndexName = String.fromEnvironment("ALGOLIA_INDEX_NAME");
+
+  int _currentPageIndex = 2;
 
   late TextEditingController _searchController;
 
@@ -167,6 +174,37 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  void _onBottomNavTap(int index) {
+    if (index == _currentPageIndex) return;
+    
+    setState(() {
+      _currentPageIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const OrdersScreen()),
+        );
+        break;
+      case 2:
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+        );
+        break;
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -190,15 +228,15 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Scaffold(
           backgroundColor: Colors.white,
           appBar: UnifiedAppBar(
-            title: "Search!",
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new, 
-                color: Colors.white,
-                size: 28,
-              ),
-              onPressed: () {
-                Navigator.pop(context); 
+          title: "Search!",
+            leading: Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu_open, color: Colors.white, size: 28),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
               },
             ),
             actions: [
@@ -211,7 +249,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     Shadow(
                       color: Colors.pink.withValues(alpha: 0.3),
                       offset: const Offset(1.0, 1.0),
-                      
                       blurRadius: 6.0,
                     ),
                   ],
@@ -220,6 +257,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
               ),
             ],
+          ),
+          drawer: MyDrawer(),
+          
+          bottomNavigationBar: UnifiedBottomNavigationBar(
+            currentIndex: _currentPageIndex,
+            onTap: _onBottomNavTap,
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

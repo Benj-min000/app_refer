@@ -45,10 +45,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get tabFoodDelivery => 'Доставка їжі';
 
   @override
-  String get tabGroceryShopping => 'Продукти · Покупки';
+  String get tabPickup => 'Самовивіз';
 
   @override
-  String get tabPickup => 'Самовивіз';
+  String get tabGroceryShopping => 'Продукти · Покупки';
 
   @override
   String get tabGifting => 'Подарунки';
@@ -85,6 +85,72 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get categoryPichupDiscount => 'Більше';
+
+  @override
+  String get categoryFastFood => 'Фастфуд';
+
+  @override
+  String get categoryCoffee => 'Кава';
+
+  @override
+  String get categoryBakery => 'Пекарня';
+
+  @override
+  String get categoryLunch => 'Обід';
+
+  @override
+  String get categoryFreshProduce => 'Свіжі продукти';
+
+  @override
+  String get categoryDairyEggs => 'Молочні продукти та яйця';
+
+  @override
+  String get categoryMeat => 'М\'ясо';
+
+  @override
+  String get categoryBeverages => 'Напої';
+
+  @override
+  String get categoryFrozen => 'Заморожений';
+
+  @override
+  String get categorySnacks => 'Закуски';
+
+  @override
+  String get categoryHousehold => 'Домогосподарство';
+
+  @override
+  String get categoryCakes => 'Торти';
+
+  @override
+  String get categoryFlowers => 'Квіти';
+
+  @override
+  String get categoryGiftBoxes => 'Подарункові коробки';
+
+  @override
+  String get categoryPartySupplies => 'святкове приладдя';
+
+  @override
+  String get categoryGiftCards => 'Подарункові картки';
+
+  @override
+  String get categorySpecialOccasions => 'Особливі випадки';
+
+  @override
+  String get categoryDailyDeals => 'Щоденні пропозиції';
+
+  @override
+  String get categoryLoyaltyRewards => 'Нагороди за лояльність';
+
+  @override
+  String get categoryCoupons => 'Купони';
+
+  @override
+  String get categoryNewOffers => 'Нові пропозиції';
+
+  @override
+  String get categoryExclusiveDeals => 'Ексклюзивні пропозиції';
 
   @override
   String seeMore(Object tab) {

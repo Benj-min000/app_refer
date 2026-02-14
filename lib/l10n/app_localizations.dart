@@ -164,95 +164,227 @@ abstract class AppLocalizations {
   /// **'Find it! Delicious Dishes'**
   String get hintSearch;
 
-  /// Tab label for Food Delivery
+  /// Tab label for food delivery section
   ///
   /// In en, this message translates to:
   /// **'Food Delivery'**
   String get tabFoodDelivery;
 
-  /// Tab label for Grocery / Shopping
+  /// Tab label for pickup orders section
   ///
   /// In en, this message translates to:
-  /// **'Grocery & Shopping'**
-  String get tabGroceryShopping;
-
-  /// Tab label for Pickup orders
-  ///
-  /// In en, this message translates to:
-  /// **'Pick-up'**
+  /// **'Pickup'**
   String get tabPickup;
 
-  /// Tab label for sending gifts
+  /// Tab label for grocery shopping section
   ///
   /// In en, this message translates to:
-  /// **'Send Gifts'**
+  /// **'Grocery'**
+  String get tabGroceryShopping;
+
+  /// Tab label for gift shopping section
+  ///
+  /// In en, this message translates to:
+  /// **'Gifting'**
   String get tabGifting;
 
-  /// Tab label for viewing all benefits
+  /// Tab label for benefits and rewards section
   ///
   /// In en, this message translates to:
-  /// **'View All Benefits'**
+  /// **'Benefits'**
   String get tabBenefits;
 
-  /// Label for the discount icon
+  /// Category for discounted items
   ///
   /// In en, this message translates to:
-  /// **'Daily Discounts'**
+  /// **'Discounts'**
   String get categoryDiscounts;
 
-  ///
+  /// Category for pork dishes
   ///
   /// In en, this message translates to:
-  /// **'Boiled Pork'**
+  /// **'Pork'**
   String get categoryPork;
 
-  ///
+  /// Category for Japanese tonkatsu and sashimi
   ///
   /// In en, this message translates to:
   /// **'Tonkatsu & Sashimi'**
   String get categoryTonkatsuSashimi;
 
-  ///
+  /// Category for pizza
   ///
   /// In en, this message translates to:
   /// **'Pizza'**
   String get categoryPizza;
 
-  ///
+  /// Category for stew dishes
   ///
   /// In en, this message translates to:
-  /// **'Steamed Stew'**
+  /// **'Stew'**
   String get categoryStew;
 
-  ///
+  /// Category for Chinese cuisine
   ///
   /// In en, this message translates to:
-  /// **'Chinese Food'**
+  /// **'Chinese'**
   String get categoryChinese;
 
-  ///
+  /// Category for chicken dishes
   ///
   /// In en, this message translates to:
   /// **'Chicken'**
   String get categoryChicken;
 
-  ///
+  /// Category for Korean cuisine
   ///
   /// In en, this message translates to:
-  /// **'Korean Food'**
+  /// **'Korean'**
   String get categoryKorean;
 
-  ///
+  /// Category for single bowl meals
   ///
   /// In en, this message translates to:
-  /// **'One-bowl Meals'**
+  /// **'One Bowl'**
   String get categoryOneBowl;
 
-  /// Category label for More / Other items
+  /// Category for pickup order discounts
   ///
   /// In en, this message translates to:
-  /// **'More'**
+  /// **'Pickup Discount'**
   String get categoryPichupDiscount;
+
+  /// Category for fast food restaurants
+  ///
+  /// In en, this message translates to:
+  /// **'Fast Food'**
+  String get categoryFastFood;
+
+  /// Category for coffee shops
+  ///
+  /// In en, this message translates to:
+  /// **'Coffee'**
+  String get categoryCoffee;
+
+  /// Category for bakery items
+  ///
+  /// In en, this message translates to:
+  /// **'Bakery'**
+  String get categoryBakery;
+
+  /// Category for lunch meals
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch'**
+  String get categoryLunch;
+
+  /// Category for fresh fruits and vegetables
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh Produce'**
+  String get categoryFreshProduce;
+
+  /// Category for dairy products and eggs
+  ///
+  /// In en, this message translates to:
+  /// **'Dairy & Eggs'**
+  String get categoryDairyEggs;
+
+  /// Category for meat products
+  ///
+  /// In en, this message translates to:
+  /// **'Meat'**
+  String get categoryMeat;
+
+  /// Category for drinks and beverages
+  ///
+  /// In en, this message translates to:
+  /// **'Beverages'**
+  String get categoryBeverages;
+
+  /// Category for frozen foods
+  ///
+  /// In en, this message translates to:
+  /// **'Frozen'**
+  String get categoryFrozen;
+
+  /// Category for snack foods
+  ///
+  /// In en, this message translates to:
+  /// **'Snacks'**
+  String get categorySnacks;
+
+  /// Category for household items and supplies
+  ///
+  /// In en, this message translates to:
+  /// **'Household'**
+  String get categoryHousehold;
+
+  /// Category for cakes and pastries
+  ///
+  /// In en, this message translates to:
+  /// **'Cakes'**
+  String get categoryCakes;
+
+  /// Category for flower arrangements
+  ///
+  /// In en, this message translates to:
+  /// **'Flowers'**
+  String get categoryFlowers;
+
+  /// Category for pre-made gift boxes
+  ///
+  /// In en, this message translates to:
+  /// **'Gift Boxes'**
+  String get categoryGiftBoxes;
+
+  /// Category for party decorations and supplies
+  ///
+  /// In en, this message translates to:
+  /// **'Party Supplies'**
+  String get categoryPartySupplies;
+
+  /// Category for digital and physical gift cards
+  ///
+  /// In en, this message translates to:
+  /// **'Gift Cards'**
+  String get categoryGiftCards;
+
+  /// Category for special occasion gifts
+  ///
+  /// In en, this message translates to:
+  /// **'Special Occasions'**
+  String get categorySpecialOccasions;
+
+  /// Category for daily special offers
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Deals'**
+  String get categoryDailyDeals;
+
+  /// Category for loyalty program rewards
+  ///
+  /// In en, this message translates to:
+  /// **'Loyalty Rewards'**
+  String get categoryLoyaltyRewards;
+
+  /// Category for available coupons
+  ///
+  /// In en, this message translates to:
+  /// **'Coupons'**
+  String get categoryCoupons;
+
+  /// Category for newly added offers
+  ///
+  /// In en, this message translates to:
+  /// **'New Offers'**
+  String get categoryNewOffers;
+
+  /// Category for exclusive member deals
+  ///
+  /// In en, this message translates to:
+  /// **'Exclusive Deals'**
+  String get categoryExclusiveDeals;
 
   /// No description provided for @seeMore.
   ///

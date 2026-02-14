@@ -44,10 +44,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tabFoodDelivery => '음식배달';
 
   @override
-  String get tabGroceryShopping => '장보기·쇼핑';
+  String get tabPickup => '픽업';
 
   @override
-  String get tabPickup => '픽업';
+  String get tabGroceryShopping => '장보기·쇼핑';
 
   @override
   String get tabGifting => '선물하기';
@@ -84,6 +84,72 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get categoryPichupDiscount => '더';
+
+  @override
+  String get categoryFastFood => '패스트푸드';
+
+  @override
+  String get categoryCoffee => '커피';
+
+  @override
+  String get categoryBakery => '빵집';
+
+  @override
+  String get categoryLunch => '점심';
+
+  @override
+  String get categoryFreshProduce => '신선한 농산물';
+
+  @override
+  String get categoryDairyEggs => '유제품 및 계란';
+
+  @override
+  String get categoryMeat => '고기';
+
+  @override
+  String get categoryBeverages => '음료수';
+
+  @override
+  String get categoryFrozen => '언';
+
+  @override
+  String get categorySnacks => '간식';
+
+  @override
+  String get categoryHousehold => '가정';
+
+  @override
+  String get categoryCakes => '케이크';
+
+  @override
+  String get categoryFlowers => '월경';
+
+  @override
+  String get categoryGiftBoxes => '선물 상자';
+
+  @override
+  String get categoryPartySupplies => '파티 용품';
+
+  @override
+  String get categoryGiftCards => '기프트 카드';
+
+  @override
+  String get categorySpecialOccasions => '특별한 날';
+
+  @override
+  String get categoryDailyDeals => '오늘의 특가 상품';
+
+  @override
+  String get categoryLoyaltyRewards => '로열티 보상';
+
+  @override
+  String get categoryCoupons => '쿠폰';
+
+  @override
+  String get categoryNewOffers => '새로운 혜택';
+
+  @override
+  String get categoryExclusiveDeals => '독점 할인';
 
   @override
   String seeMore(Object tab) {

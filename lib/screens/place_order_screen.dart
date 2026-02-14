@@ -10,6 +10,8 @@ import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/services/location_service.dart';
+import 'package:user_app/widgets/unified_app_bar.dart';
+import 'package:user_app/screens/address_screen.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
   final double? totalAmount;
@@ -41,12 +43,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   }
 
   Future<void> _initializeOrderScreen() async {
-    // Fetch GPS location first
+
     await _fetchCurrentLocation();
     
-    // Then load store info and addresses (addresses need GPS data)
     await Future.wait([
-      _getStoreUIDFromCart(),
+      _getStoreIDFromCart(),
       _loadUserAddresses(),
     ]);
   }
@@ -73,7 +74,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  Future<void> _getStoreUIDFromCart() async {
+  Future<void> _getStoreIDFromCart() async {
     try {
       String? uid = sharedPreferences!.getString("uid");
       if (uid == null) return;
@@ -130,7 +131,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
       List<Address> addresses = [];
       
-      // Add current location as first option (will be populated by GPS data)
       addresses.add(Address(
         label: "Current Location",
         fullAddress: _gpsLocation,
@@ -144,7 +144,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         country: _gpsMapData['country'] ?? '',
       ));
       
-      // Add saved addresses (starting from index 1)
       for (var doc in addressSnapshot.docs) {
         var addressData = doc.data();
         addressData['addressID'] = doc.id;
@@ -166,9 +165,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   bool _validateOrder() {
     if (orderType == "delivery") {
       final addressProvider = Provider.of<AddressChanger>(context, listen: false);
-      // -1 means current location is selected (valid)
-      // 0+ means a saved address is selected (valid)
-      // Any other value means no selection
+      // -1 current location is selected 
+      // > 0 saved address is selected
       if (addressProvider.count < -1 || 
           (addressProvider.count >= 0 && addressProvider.count >= userAddresses.length - 1)) {
         Fluttertoast.showToast(msg: "Please select a delivery address");
@@ -186,7 +184,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     });
 
     try {
-      String orderTime = DateTime.now().millisecondsSinceEpoch.toString();
       final addressProvider = Provider.of<AddressChanger>(context, listen: false);
 
       String? addressID;
@@ -195,20 +192,17 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       if (orderType == "delivery") {
         int selectedIndex = addressProvider.count;
         
-        // Check if current location is selected (index -1)
         if (selectedIndex == -1) {
-          // Create a temporary address document for current location
           String uid = sharedPreferences!.getString("uid")!;
           DocumentReference tempAddressRef = FirebaseFirestore.instance
               .collection("users")
               .doc(uid)
               .collection("addresses")
-              .doc(); // Generate new document ID
+              .doc();
           
           addressID = tempAddressRef.id;
           
-          // Prepare address data matching your standard structure
-         addressData = {
+          addressData = {
             'label': 'Last Order Location - ${DateTime.now().toString().substring(0, 16)}',
             'road': _gpsMapData['road'] ?? '',
             'houseNumber': _gpsMapData['houseNumber'] ?? '',
@@ -240,13 +234,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         addressID = "pickup";
       }
 
+      List<String> cartItems = sharedPreferences!.getStringList("userCart") ?? [];
+
       Map<String, dynamic> orderData = {
         "addressID": addressID,
+        "userID": sharedPreferences!.getString("uid"),
+        "itemIDs": cartItems,
         "totalAmount": widget.totalAmount,
-        "orderedBy": sharedPreferences!.getString("uid"),
-        "productIDs": sharedPreferences!.getStringList("userCart"),
         "paymentDetails": "Cash on Delivery",
-        "orderTime": orderTime,
+        "orderTime": Timestamp.now(),
         "isSuccess": true,
         "storeID": storeID,
         "riderID": "",
@@ -286,26 +282,34 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   Future<void> _writeOrderDetailsForUser(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
-        .collection("users")
-        .doc(sharedPreferences!.getString("uid"))
-        .collection("orders")
-        .doc(orderID)
-        .set(data);
+      .collection("users")
+      .doc(sharedPreferences!.getString("uid"))
+      .collection("orders")
+      .doc(orderID)
+      .set(data);
   }
 
   Future<void> _writeOrderDetailsForStore(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
-        .collection("orders")
-        .doc(orderID)
-        .set(data);
+      .collection("orders")
+      .doc(orderID)
+      .set(data);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Place Order"),
-        backgroundColor: Colors.redAccent,
+      appBar: UnifiedAppBar(
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 28),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+        ),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -429,6 +433,19 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                           );
                         },
                       ),
+                    ListTile(
+                      leading: const Icon(Icons.add_location_alt, color: Colors.blueAccent),
+                      title: const Text("Address Manager"),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () { 
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AddressScreen()
+                          ),
+                        );
+                      },
+                    ),
                   ],
                   if (orderType == "pickup" && storeAddress != null) ...[
                     const Text(

@@ -22,47 +22,20 @@ class _ItemsScreenState extends State<ItemsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: UnifiedAppBar(
-          leading: Builder(
-            builder: (context) {
-              return IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 28), // Change to any icon you like
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              );
-            },
-          ),
-          actions: [
-            IconButton(
-              padding: EdgeInsets.zero,
-              icon: Icon(
-                Icons.shopping_bag,
-                color: Colors.white,
-                size: 28,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    offset: const Offset(2.0, 2.0),
-                    blurRadius: 6.0,
-                  ),
-                ],
-              ),
+        title: "Items ${widget.model!.title}",
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 28),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => CartScreen()),
-                );
+                Navigator.pop(context);
               },
-            ),
-          ],
+            );
+          },
+        ),
       ),
       body: CustomScrollView(
         slivers: [
-          SliverPersistentHeader(
-            delegate: TextWidgetHeader(
-                title: "Items's of ${widget.model!.title}"),
-          ),
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
               .collection("stores")

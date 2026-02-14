@@ -1,6 +1,8 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/Home/home.dart';
 import 'package:user_app/models/stores.dart';
@@ -10,8 +12,11 @@ import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/screens/notification_screen.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:user_app/widgets/unified_bottom_bar.dart';
+import 'package:user_app/widgets/unified_bottom_bar.dart';
+
+import 'package:user_app/screens/orders_screen.dart';
+import 'package:user_app/screens/search_screen.dart';
+import "package:user_app/screens/favorites_screen.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,11 +27,42 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final items = List.generate(28, (index) => "assets/images/slider/$index.jpg");
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
   }
+
+  void _onBottomNavTap(int index) {
+    if (index == _currentPageIndex) return;
+    
+    setState(() {
+      _currentPageIndex = index;
+    });
+
+    switch (index) {
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const OrdersScreen()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SearchScreen(initialText: '')),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+        );
+        break;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +155,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
 
+        bottomNavigationBar: UnifiedBottomNavigationBar(
+          currentIndex: _currentPageIndex,
+          onTap: _onBottomNavTap,
+        ),
+
         drawer: MyDrawer(),
         body: CustomScrollView(
           slivers: [
@@ -171,31 +212,88 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection("stores").snapshots(),
+              stream: FirebaseFirestore.instance.collection("stores").snapshots(),
               builder: (context, snapshot) {
+                // Loading state
                 if (!snapshot.hasData) {
                   return SliverToBoxAdapter(
                     child: Center(child: circularProgress()),
                   );
                 }
-                return SliverMasonryGrid.count(
-                  crossAxisCount: 1, 
-                  itemBuilder: (context, index) {
-                    var doc = snapshot.data!.docs[index];
 
-                    Stores sModel = Stores.fromJson(doc.data() as Map<String, dynamic>);
-                    sModel.storeID = doc.id;
-                  
-                    return StoreDesignWidget(
-                      model: sModel,
-                      context: context,
-                    );
+                // Error state
+                if (snapshot.hasError) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Error loading stores',
+                            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                // Empty state
+                if (snapshot.data!.docs.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(40.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.store_outlined, size: 80, color: Colors.grey[300]),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No stores available',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Check back later for new stores',
+                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                // Data state
+                return SliverMasonryGrid.count(
+                  crossAxisCount: 1,
+                  itemBuilder: (context, index) {
+                    try {
+                      var doc = snapshot.data!.docs[index];
+                      Stores sModel = Stores.fromJson(doc.data() as Map<String, dynamic>);
+                      sModel.storeID = doc.id;
+
+                      return StoreDesignWidget(
+                        model: sModel,
+                        context: context,
+                      );
+                    } catch (e) {
+                      print('Error loading store at index $index: $e');
+                      // Return empty container for broken stores instead of crashing
+                      return const SizedBox.shrink();
+                    }
                   },
                   childCount: snapshot.data!.docs.length,
                 );
               },
-            ),
+            )
           ],
         ),
       ),

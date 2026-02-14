@@ -6,33 +6,11 @@ import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-List<int> separateItemQuantities() {
-  List<String>? userCart = sharedPreferences!.getStringList("userCart");
-  if (userCart == null) return [];
-  
-  return userCart.map((item) {
-    var parts = item.split(":");
-    return parts.length > 1 ? int.parse(parts[1]) : 1;
-  }).toList();
-}
-
-List<String> separateOrderItemIds(orderIdList) {
-  if (orderIdList == null) {
-    return <String>[];
-  }
-
-  return List<String>.from(orderIdList).map((item) {
-    var pos = item.lastIndexOf(":");
-    return (pos != -1) ? item.substring(0, pos) : item;
-  }).toList();
-}
-
 Future<void> addItemToCart(String? itemID, String? menuID, String? storeID, BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;
   final cartRef = FirebaseFirestore.instance.collection("users").doc(uid).collection("carts");
  
   var existingCart = await cartRef.get();
-
   if (existingCart.docs.isNotEmpty) {
     String storeInCart = existingCart.docs.first.get("storeID");
     if (storeInCart != storeID) {
@@ -48,9 +26,14 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? storeID, Buil
       "quantity": itemCounter,
       "publishedDate": DateTime.now(),
     }).then((value) {
-
       List<String> tempCartList = sharedPreferences!.getStringList("userCart") ?? [];
-      tempCartList.add("$itemID:$itemCounter"); 
+    
+      String cartItem = "$storeID:$menuID:$itemID:$itemCounter";
+      
+      tempCartList.removeWhere((item) => item.contains("$storeID:$menuID:$itemID:"));
+      
+      tempCartList.add(cartItem);
+
       sharedPreferences!.setStringList("userCart", tempCartList);
 
       Fluttertoast.showToast(msg: "Item Added Successfully.");
@@ -60,15 +43,18 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? storeID, Buil
   });
 }
 
-List<String> separateOrderItemQuantities(orderIdList) {
-  List<String> quantities = [];
-  for (var item in List<String>.from(orderIdList)) {
-    List<String> parts = item.split(":");
-    if (parts.length > 1) {
-      quantities.add(parts[1]);
-    }
-  }
-  return quantities;
+List<int> separateItemQuantities(List<dynamic> userCart) {
+  return userCart.map((item) {
+    List<String> parts = item.toString().split(':');
+    return parts.length >= 4 ? int.parse(parts[3]) : 1;
+  }).toList();
+}
+
+List<String> separateItemIDs(List<dynamic> userCart) {
+  return userCart.map((item) {
+    List<String> parts = item.toString().split(':');
+    return parts.length >= 3 ? parts[2] : '';
+  }).toList();
 }
 
 Future<void> removeItemFromCart(BuildContext context, String itemID) async {
