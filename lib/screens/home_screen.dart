@@ -63,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Listener(
@@ -78,7 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
           leading: Builder(
             builder: (context) {
               return IconButton(
-                icon: const Icon(Icons.menu_open, color: Colors.white, size: 28), // Change to any icon you like
+                icon: Icon(
+                  Icons.menu_open, 
+                  color: Colors.white, 
+                  size: 28,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
+                ),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -208,9 +218,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+                    child: Text(
+                      "Restaurants",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
                 ],
+                
               ),
             ),
+
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance.collection("stores").snapshots(),
               builder: (context, snapshot) {
@@ -286,7 +311,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     } catch (e) {
                       print('Error loading store at index $index: $e');
-                      // Return empty container for broken stores instead of crashing
                       return const SizedBox.shrink();
                     }
                   },

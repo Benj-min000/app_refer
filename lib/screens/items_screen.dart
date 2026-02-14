@@ -6,8 +6,6 @@ import 'package:user_app/models/menus.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/items_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/widgets/text_widget_header.dart';
-import 'package:user_app/screens/cart_screen.dart';
 
 class ItemsScreen extends StatefulWidget {
   final Menus? model;

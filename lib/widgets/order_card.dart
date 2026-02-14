@@ -134,7 +134,7 @@ class OrderCard extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Image.network(
-            model.thumbnailUrl!,
+            model.imageUrl!,
             width: 70,
             height: 70,
             fit: BoxFit.cover,

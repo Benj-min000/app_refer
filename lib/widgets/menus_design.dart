@@ -37,7 +37,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
               color: Colors.grey[300],
             ),
             Image.network(
-              widget.model!.thumbnailUrl ?? "No Image",
+              widget.model!.imageUrl ?? "No Image",
               height: 220,
               fit: BoxFit.cover,
             ),

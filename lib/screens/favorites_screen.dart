@@ -61,7 +61,18 @@ class _FavoriteScreenState extends State<FavoritesScreen> {
           leading: Builder(
             builder: (context) {
               return IconButton(
-                icon: const Icon(Icons.menu_open, color: Colors.white, size: 28),
+                icon: Icon(
+                  Icons.menu_open, 
+                  color: Colors.white, 
+                  size: 28,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
+                ),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -75,7 +86,7 @@ class _FavoriteScreenState extends State<FavoritesScreen> {
           onTap: _onBottomNavTap,
         ),
         body: Center(
-          child: Text('Favorites Content'), // Add your actual favorites content here
+          child: Text('Favorites Content'),
         ),
       ),
     );

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
-import 'package:user_app/screens/address_screen.dart';
 import 'package:user_app/screens/history_screen.dart';
-import 'package:user_app/screens/orders_screen.dart';
-import 'package:user_app/screens/search_screen.dart';
 import 'package:user_app/screens/profile_settings_screen.dart';
 import 'package:user_app/services/firebase_data_transfer.dart';
 

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:user_app/cake/cakeItems.dart';
 
 import 'package:user_app/restaurants/restaurant_card.dart';
-import 'package:user_app/models/restaurant.dart';
 
 import 'package:user_app/Home/HomePageMediumItems.dart';
 import 'package:user_app/Home/HomeLargeItems.dart';
@@ -25,6 +24,7 @@ import "package:user_app/services/translator_service.dart";
 import 'package:user_app/models/home_page_items.dart';
 
 import 'package:user_app/screens/search_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -309,7 +309,7 @@ class _DiningPagePageState extends State<Home> {
             onTap: (index) {
               setState(() {
                 _selectedTabIndex = index;
-                _showAllCategories = false; // Reset when switching tabs
+                _showAllCategories = false;
               });
             },
           ),
@@ -410,21 +410,42 @@ class _DiningPagePageState extends State<Home> {
 
           _buildSectionHeader('IN THE SPOTLIGHT'),
 
-          const SizedBox(
-            height: 220,
-            width: double.infinity,
-            child: CakeItems(),
-          ),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("stores")
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox(
+                  height: 300,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
 
-          _buildSectionHeader('OUR RESTAURANTS'),
+              if (snapshot.data!.docs.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    'No restaurants available',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                );
+              }
 
-          ...List.generate(
-            restaurantsListLength(),
-            (index) => SizedBox(
-              height: 300,
-              width: double.infinity,
-              child: RestaurantCard(restaurantIndex: index),
-            ),
+              return Column(
+                children: snapshot.data!.docs.map((doc) {
+                  var storeData = doc.data() as Map<String, dynamic>;
+                  return SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: RestaurantCard(
+                      storeID: doc.id,
+                      storeName: storeData['name'] ?? 'Unknown Store',
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
 
           _buildSectionHeader('FEATURES'),

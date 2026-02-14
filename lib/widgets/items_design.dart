@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/screens/item_detail_screen.dart';
+import 'package:user_app/screens/item_details_screen.dart';
 import 'package:user_app/models/items.dart';
 
 class ItemsDesignWidget extends StatefulWidget {
@@ -37,7 +37,7 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget> {
               color: Colors.grey[300],
             ),
             Image.network(
-              widget.model!.thumbnailUrl ?? "No Image",
+              widget.model!.imageUrl ?? "No Image",
               height: 220,
               fit: BoxFit.cover,
             ),

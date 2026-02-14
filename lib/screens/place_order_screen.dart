@@ -14,9 +14,16 @@ import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/screens/address_screen.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
+  final double? originalAmount;
   final double? totalAmount;
+  final double? totalSavings;
 
-  const PlaceOrderScreen({super.key, required this.totalAmount});
+  const PlaceOrderScreen({
+    super.key, 
+    required this.originalAmount, 
+    required this.totalAmount,
+    required this.totalSavings,
+  });
 
   @override
   State<PlaceOrderScreen> createState() => _PlaceOrderScreenState();

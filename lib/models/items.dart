@@ -5,10 +5,13 @@ class Items {
   String? title;
   String? info;
   String? publishedDate;
-  String? thumbnailUrl;
+  String? imageUrl;
   String? description;
   String? status;
   double? price;
+  double? discount; 
+  List<String>? tags;
+  int? likes;
 
   Items({
     this.menuID,
@@ -17,11 +20,32 @@ class Items {
     this.title,
     this.info,
     this.publishedDate,
-    this.thumbnailUrl,
+    this.imageUrl,
     this.description,
     this.status,
     this.price,
+    this.discount,
+    this.tags,
+    this.likes,
   });
+
+  double get discountedPrice {
+    if (price == null || discount == null || discount == 0) {
+      return price ?? 0.0;
+    }
+    return price! * (1 - discount! / 100);
+  }
+  
+  bool get hasDiscount {
+    return discount != null && discount! > 0;
+  }
+  
+  double get savedAmount {
+    if (price == null || discount == null || discount == 0) {
+      return 0.0;
+    }
+    return price! * (discount! / 100);
+  }
 
   Items.fromJson(Map<String, dynamic> json) {
     menuID = json['menuID'];
@@ -30,20 +54,13 @@ class Items {
     title = json['title'];
     info = json['info'];
     publishedDate = json['publishedDate']?.toString();
-    thumbnailUrl = json['thumbnailUrl'];
+    imageUrl = json['imageUrl'];
     description = json['description'];
     status = json['status'];
-    
-    // Safe price parsing
-    if (json['price'] != null) {
-      if (json['price'] is String) {
-        price = double.tryParse(json['price']) ?? 0.0;
-      } else if (json['price'] is num) {
-        price = (json['price'] as num).toDouble();
-      } else {
-        price = 0.0;
-      }
-    }
+    tags =  json['tags'] != null ? List<String>.from(json['tags']) : null;
+    likes = json['likes'] ?? 0;
+    discount = json['discount']?.toDouble();
+    price = json['price']?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
@@ -54,12 +71,13 @@ class Items {
       'title': title,
       'info': info,
       'publishedDate': publishedDate,
-      'thumbnailUrl': thumbnailUrl,
+      'imageUrl': imageUrl,
       'description': description,
       'status': status,
       'price': price,
+      'discount': discount,
+      'tags': tags,
+      'likes': likes,
     };
   }
-
-  String get formattedPrice => price?.toStringAsFixed(2) ?? '0.00';
 }

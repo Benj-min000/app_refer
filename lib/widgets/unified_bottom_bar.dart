@@ -1,9 +1,70 @@
 import 'package:flutter/material.dart';
 
+BottomNavigationBarItem _buildNavItem({
+  required IconData icon,
+  required IconData activeIcon,
+  required String label,
+}) {
+  return BottomNavigationBarItem(
+    icon: Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Icon(
+        icon, 
+        size: 26,
+        shadows: [
+          Shadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            offset: Offset(0, 2.0),
+            blurRadius: 8.0,
+          ),
+        ],
+      ),
+    ),
+    activeIcon: Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Icon(
+        activeIcon, 
+        size: 28,
+        shadows: [
+          Shadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            offset: Offset(0, 2.0),
+            blurRadius: 8.0,
+          ),
+        ],
+      ),
+    ),
+    label: label,
+  );
+}
+
+List<BottomNavigationBarItem> get navBarItems => [
+  _buildNavItem(
+    icon: Icons.home_outlined,
+    activeIcon: Icons.home,
+    label: 'Home',
+  ),
+  _buildNavItem(
+    icon: Icons.receipt_long_outlined,
+    activeIcon: Icons.receipt_long,
+    label: 'Orders',
+  ),
+  _buildNavItem(
+    icon: Icons.search,
+    activeIcon: Icons.search,
+    label: 'Search',
+  ),
+  _buildNavItem(
+    icon: Icons.favorite_outline,
+    activeIcon: Icons.favorite,
+    label: 'Favorites',
+  ),
+];
+
 class UnifiedBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
-  
+
   const UnifiedBottomNavigationBar({
     super.key,
     required this.currentIndex,
@@ -39,52 +100,7 @@ class UnifiedBottomNavigationBar extends StatelessWidget {
           unselectedFontSize: 13,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.home_outlined, size: 26),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.home, size: 28),
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.receipt_long_outlined, size: 26),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.receipt_long, size: 28),
-              ),
-              label: 'Orders',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.search, size: 26),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.search, size: 28),
-              ),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.favorite_outline, size: 26),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.favorite, size: 28),
-              ),
-              label: 'Favorites',
-            ),
-          ],
+          items: navBarItems, 
         ),
       ),
     );

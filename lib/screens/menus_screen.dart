@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/models/menus.dart';
 import 'package:user_app/widgets/menus_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/widgets/text_widget_header.dart';
 
 import 'package:user_app/models/stores.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class MenusScreen extends StatefulWidget {
   final Stores? model;
