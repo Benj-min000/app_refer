@@ -1,6 +1,6 @@
 class Items {
   String? menuID;
-  String? storeID;
+  String? restaurantID;
   String? itemID;
   String? title;
   String? info;
@@ -15,7 +15,7 @@ class Items {
 
   Items({
     this.menuID,
-    this.storeID,
+    this.restaurantID,
     this.itemID,
     this.title,
     this.info,
@@ -49,7 +49,7 @@ class Items {
 
   Items.fromJson(Map<String, dynamic> json) {
     menuID = json['menuID'];
-    storeID = json['storeID'];
+    restaurantID = json['restaurantID'];
     itemID = json['itemID'];
     title = json['title'];
     info = json['info'];
@@ -66,7 +66,7 @@ class Items {
   Map<String, dynamic> toJson() {
     return {
       'menuID': menuID,
-      'storeID': storeID,
+      'restaurantID': restaurantID,
       'itemID': itemID,
       'title': title,
       'info': info,

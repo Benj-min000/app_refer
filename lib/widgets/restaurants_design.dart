@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/screens/items_screen.dart';
-import 'package:user_app/models/menus.dart';
+import 'package:user_app/screens/menus_screen.dart';
+import 'package:user_app/models/restaurants.dart';
 
-class MenusDesignWidget extends StatefulWidget {
-  final Menus? model;
-  final BuildContext? context;
+class RestaurantDesignWidget extends StatefulWidget {
+  final Restaurants? model;
 
-  const MenusDesignWidget({super.key, this.model, this.context});
+  const RestaurantDesignWidget({super.key, this.model});
 
   @override
-  State<MenusDesignWidget> createState() => _MenusDesignWidgetState();
+  State<RestaurantDesignWidget> createState() => _RestaurantDesignWidgetState();
 }
 
-class _MenusDesignWidgetState extends State<MenusDesignWidget> {
+class _RestaurantDesignWidgetState extends State<RestaurantDesignWidget> {
   
+  // Extracted placeholder to avoid code duplication
   Widget _buildImagePlaceholder(String message) {
     return Container(
       height: 220,
@@ -22,7 +22,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.restaurant_menu, size: 60, color: Colors.grey[400]),
+          Icon(Icons.store, size: 60, color: Colors.grey[400]),
           const SizedBox(height: 8),
           Text(
             message,
@@ -37,28 +37,21 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
   Widget build(BuildContext context) {
     final bool hasValidUrl = widget.model?.imageUrl != null && 
                              widget.model!.imageUrl!.isNotEmpty;
-
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => ItemsScreen(model: widget.model)
-          )
+          MaterialPageRoute(builder: (_) => MenusScreen(model: widget.model))
         );
       },
-      splashColor: Colors.pinkAccent,
+      splashColor: Colors.amber,
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
-              Divider(
-                height: 4,
-                thickness: 3,
-                color: Colors.grey[300],
-              ),
+              Divider(height: 50, thickness: 3, color: Colors.grey[300]),
               
               hasValidUrl
                   ? Image.network(
@@ -82,7 +75,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
                         );
                       },
                       errorBuilder: (context, error, stackTrace) {
-                        return _buildImagePlaceholder('Menu image unavailable');
+                        return _buildImagePlaceholder('Image not available');
                       },
                     )
                   : _buildImagePlaceholder('No image provided'),
@@ -90,21 +83,23 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
               const SizedBox(height: 10),
               
               Text(
-                widget.model?.title ?? "No Title",
+                widget.model?.name ?? 'Unknown Store',
                 style: const TextStyle(
-                    color: Colors.pinkAccent, fontSize: 20, fontFamily: "Train"),
+                  color: Colors.pinkAccent,
+                  fontSize: 20,
+                  fontFamily: "Train",
+                ),
               ),
               Text(
-                widget.model?.info ?? "No Info",
+                widget.model?.email ?? '',
                 style: const TextStyle(
-                    color: Colors.grey, fontSize: 16, fontFamily: "Train"),
+                  color: Colors.grey,
+                  fontSize: 14, // Reduced slightly for better hierarchy
+                  fontFamily: "Train",
+                ),
               ),
               
-              Divider(
-                height: 4,
-                thickness: 2,
-                color: Colors.grey[300],
-              )
+              Divider(height: 50, thickness: 2, color: Colors.grey[300]),
             ],
           ),
         ),

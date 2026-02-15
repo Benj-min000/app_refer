@@ -5,12 +5,12 @@ import 'package:user_app/screens/item_details_screen.dart';
 import 'package:user_app/assistant_methods/favorites_methods.dart';
 
 class RestaurantCard extends StatefulWidget {
-  final String storeID;
-  final String storeName;
+  final String restaurantID;
+  final String restaurantName;
 
   const RestaurantCard({
-    required this.storeID,
-    required this.storeName,
+    required this.restaurantID,
+    required this.restaurantName,
     super.key,
   });
 
@@ -23,8 +23,8 @@ class _RestaurantCardState extends State<RestaurantCard> {
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("stores")
-          .doc(widget.storeID)
+          .collection("restaurants")
+          .doc(widget.restaurantID)
           .collection("menus")
           .limit(1)
           .snapshots(),
@@ -37,8 +37,8 @@ class _RestaurantCardState extends State<RestaurantCard> {
 
         return StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
-              .collection("stores")
-              .doc(widget.storeID)
+              .collection("restaurants")
+              .doc(widget.restaurantID)
               .collection("menus")
               .doc(menuID)
               .collection("items")
@@ -66,7 +66,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                   Items item = Items.fromJson(doc.data() as Map<String, dynamic>);
                   item.itemID = doc.id;
                   item.menuID = menuID;
-                  item.storeID = widget.storeID;
+                  item.restaurantID = widget.restaurantID;
 
                   return _buildItemCard(context, item);
                 },
@@ -159,7 +159,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
-                                            widget.storeName,
+                                            widget.restaurantName,
                                             style: TextStyle(
                                               color: Colors.white.withValues(alpha: 0.9),
                                               fontSize: 18,
@@ -320,8 +320,8 @@ class _RestaurantCardState extends State<RestaurantCard> {
                     padding: const EdgeInsets.all(8),
                     iconSize: 28,
                     onPressed: () {
-                      if (item.itemID != null && item.menuID != null && item.storeID != null) {
-                        toggleFavorite(item.storeID!, item.menuID!, item.itemID!);
+                      if (item.itemID != null && item.menuID != null && item.restaurantID != null) {
+                        toggleFavorite(item.restaurantID!, item.menuID!, item.itemID!);
                       }
                     },
                     icon: Icon(

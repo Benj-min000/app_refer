@@ -36,8 +36,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
         slivers: [
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-              .collection("stores")
-              .doc(widget.model!.storeID)
+              .collection("restaurants")
+              .doc(widget.model!.restaurantID)
               .collection("menus")
               .doc(widget.model!.menuID)
               .collection("items")
@@ -73,7 +73,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
                       iModel.itemID = doc.id;
                       iModel.menuID = widget.model!.menuID;
-                      iModel.storeID = widget.model!.storeID;
+                      iModel.restaurantID = widget.model!.restaurantID;
 
                       return ItemsDesignWidget(
                         model: iModel,

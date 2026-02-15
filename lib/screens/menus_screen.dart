@@ -5,11 +5,11 @@ import 'package:user_app/models/menus.dart';
 import 'package:user_app/widgets/menus_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 
-import 'package:user_app/models/stores.dart';
+import 'package:user_app/models/restaurants.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
 class MenusScreen extends StatefulWidget {
-  final Stores? model;
+  final Restaurants? model;
   const MenusScreen({super.key, this.model});
 
   @override
@@ -37,8 +37,8 @@ class _MenusScreenState extends State<MenusScreen> {
         slivers: [
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-              .collection("stores")
-              .doc(widget.model!.storeID)
+              .collection("restaurants")
+              .doc(widget.model!.restaurantID)
               .collection("menus")
               .orderBy("publishedDate", descending: true)
               .snapshots(),
@@ -56,7 +56,7 @@ class _MenusScreenState extends State<MenusScreen> {
 
                     Menus mModel = Menus.fromJson(doc.data()! as Map<String, dynamic>);
                     mModel.menuID = doc.id;               
-                    mModel.storeID = widget.model!.storeID;
+                    mModel.restaurantID = widget.model!.restaurantID;
 
                     return MenusDesignWidget(
                       model: mModel,

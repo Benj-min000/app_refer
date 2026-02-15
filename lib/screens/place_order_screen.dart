@@ -110,7 +110,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     
     try {
       var storeDoc = await FirebaseFirestore.instance
-          .collection("stores")
+          .collection("restaurants")
           .doc(storeID)
           .get();
       

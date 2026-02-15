@@ -21,7 +21,7 @@ Future<void> toggleFavorite(
       .doc(itemID);
 
   DocumentReference itemRef = FirebaseFirestore.instance
-      .collection("stores")
+      .collection("restaurants")
       .doc(storeID)
       .collection("menus")
       .doc(menuID)
@@ -81,7 +81,7 @@ Stream<bool> isFavoriteStream(String itemID) {
 
 Stream<int> itemLikesStream(String storeID, String menuID, String itemID) {
   return FirebaseFirestore.instance
-      .collection("stores")
+      .collection("restaurants")
       .doc(storeID)
       .collection("menus")
       .doc(menuID)

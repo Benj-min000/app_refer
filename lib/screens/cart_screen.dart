@@ -288,17 +288,17 @@ class _CartScreenState extends State<CartScreen> {
 
           final String itemID = cartData['itemID'] ?? '';
           final String menuID = cartData['menuID'] ?? '';
-          final String storeID = cartData['storeID'] ?? '';
+          final String restaurantID = cartData['restaurantID'] ?? '';
           final int quantity = cartData['quantity'] ?? 1;
 
-          if (itemID.isEmpty || menuID.isEmpty || storeID.isEmpty) {
+          if (itemID.isEmpty || menuID.isEmpty || restaurantID.isEmpty) {
             return const SizedBox.shrink();
           }
 
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
-                .collection("stores")
-                .doc(storeID)
+                .collection("restaurants")
+                .doc(restaurantID)
                 .collection("menus")
                 .doc(menuID)
                 .collection("items")
@@ -333,7 +333,7 @@ class _CartScreenState extends State<CartScreen> {
 
               model.itemID = itemID;
               model.menuID = menuID;
-              model.storeID = storeID;
+              model.restaurantID = restaurantID;
       
               // Calculate totals considering discounts
               if (index == 0) {

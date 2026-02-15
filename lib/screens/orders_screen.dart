@@ -83,7 +83,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       
       try {
         var snapshot = await FirebaseFirestore.instance
-            .collection("stores")
+            .collection("restaurants")
             .doc(storeID)
             .collection("menus")
             .doc(menuID)

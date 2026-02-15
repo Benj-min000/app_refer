@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:user_app/Home/home.dart';
-import 'package:user_app/models/stores.dart';
+import 'package:user_app/models/restaurants.dart';
 import 'package:user_app/screens/cart_screen.dart';
-import 'package:user_app/widgets/stores_design.dart';
+import 'package:user_app/widgets/restaurants_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/screens/notification_screen.dart';
@@ -237,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection("stores").snapshots(),
+              stream: FirebaseFirestore.instance.collection("restaurants").snapshots(),
               builder: (context, snapshot) {
                 // Loading state
                 if (!snapshot.hasData) {
@@ -256,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
                           const SizedBox(height: 16),
                           Text(
-                            'Error loading stores',
+                            'Error loading restaurants',
                             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                           ),
                         ],
@@ -277,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icon(Icons.store_outlined, size: 80, color: Colors.grey[300]),
                             const SizedBox(height: 16),
                             Text(
-                              'No stores available',
+                              'No restaurants available',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -286,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Check back later for new stores',
+                              'Check back later for new restaurants',
                               style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                             ),
                           ],
@@ -302,12 +302,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) {
                     try {
                       var doc = snapshot.data!.docs[index];
-                      Stores sModel = Stores.fromJson(doc.data() as Map<String, dynamic>);
-                      sModel.storeID = doc.id;
+                      Restaurants rModel = Restaurants.fromJson(doc.data() as Map<String, dynamic>);
+                      rModel.restaurantID = doc.id;
 
-                      return StoreDesignWidget(
-                        model: sModel,
-                        context: context,
+                      return RestaurantDesignWidget(
+                        model: rModel,
                       );
                     } catch (e) {
                       print('Error loading store at index $index: $e');

@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import 'package:user_app/cake/cakeItems.dart';
-
-import 'package:user_app/restaurants/restaurant_card.dart';
+import 'package:user_app/widgets/restaurant_card.dart';
 
 import 'package:user_app/Home/HomePageMediumItems.dart';
 import 'package:user_app/Home/HomeLargeItems.dart';
@@ -412,7 +410,7 @@ class _DiningPagePageState extends State<Home> {
 
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-                .collection("stores")
+                .collection("restaurants")
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -439,8 +437,8 @@ class _DiningPagePageState extends State<Home> {
                     height: 300,
                     width: double.infinity,
                     child: RestaurantCard(
-                      storeID: doc.id,
-                      storeName: storeData['name'] ?? 'Unknown Store',
+                      restaurantID: doc.id,
+                      restaurantName: storeData['name'] ?? 'Unknown Store',
                     ),
                   );
                 }).toList(),

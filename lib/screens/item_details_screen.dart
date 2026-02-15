@@ -87,8 +87,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                     size: 22,
                   ),
                   onPressed: () {
-                    if (item.itemID != null && item.menuID != null && item.storeID != null) {
-                      toggleFavorite(item.storeID!, item.menuID!, item.itemID!);
+                    if (item.itemID != null && item.menuID != null && item.restaurantID != null) {
+                      toggleFavorite(item.restaurantID!, item.menuID!, item.itemID!);
                     }
                   },
                 );
@@ -219,7 +219,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               const Spacer(),
           
                               StreamBuilder<int>(
-                                stream: itemLikesStream(item.storeID!, item.menuID!, item.itemID!),
+                                stream: itemLikesStream(item.restaurantID!, item.menuID!, item.itemID!),
                                 builder: (context, snapshot) {
                                   // Show the stream data, or fall back to the initial model value while loading
                                   int currentLikes = snapshot.data ?? item.likes ?? 0;
@@ -484,7 +484,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 addItemToCart(
                   item.itemID,
                   item.menuID,
-                  item.storeID,
+                  item.restaurantID,
                   context,
                   quantity,
                 );
