@@ -6,14 +6,14 @@ import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Future<void> addItemToCart(String? itemID, String? menuID, String? storeID, BuildContext context, int itemCounter) async {
+Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID, BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;
   final cartRef = FirebaseFirestore.instance.collection("users").doc(uid).collection("carts");
  
   var existingCart = await cartRef.get();
   if (existingCart.docs.isNotEmpty) {
-    String storeInCart = existingCart.docs.first.get("storeID");
-    if (storeInCart != storeID) {
+    String storeInCart = existingCart.docs.first.get("restaurantID");
+    if (storeInCart != restaurantID) {
       Fluttertoast.showToast(msg: "You can only order from one store at a time.");
       return; 
     }
@@ -22,19 +22,19 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? storeID, Buil
   await cartRef.doc(itemID).set({
       "itemID": itemID,
       "menuID": menuID,
-      "storeID": storeID, 
+      "restaurantID": restaurantID,
       "quantity": itemCounter,
       "publishedDate": DateTime.now(),
     }).then((value) {
-      List<String> tempCartList = sharedPreferences!.getStringList("userCart") ?? [];
+      List<String> tempCartList = getUserPref<List<String>>("userCart") ?? [];
     
-      String cartItem = "$storeID:$menuID:$itemID:$itemCounter";
+      String cartItem = "$restaurantID:$menuID:$itemID:$itemCounter";
       
-      tempCartList.removeWhere((item) => item.contains("$storeID:$menuID:$itemID:"));
+      tempCartList.removeWhere((item) => item.contains("$restaurantID:$menuID:$itemID:"));
       
       tempCartList.add(cartItem);
 
-      sharedPreferences!.setStringList("userCart", tempCartList);
+      saveUserPref<List<String>>("userCart", tempCartList);
 
       Fluttertoast.showToast(msg: "Item Added Successfully.");
 
@@ -82,10 +82,10 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
     
     await snapshot.docs.first.reference.delete();
     
-    List<String>? userCart = sharedPreferences!.getStringList("userCart");
+    List<String>? userCart = getUserPref<List<String>>("userCart");
     if (userCart != null) {
       userCart.removeWhere((item) => item.startsWith("$itemID:"));
-      sharedPreferences!.setStringList("userCart", userCart);
+      saveUserPref<List<String>>("userCart", userCart);
     }
     
     if (context.mounted) {
@@ -125,7 +125,7 @@ Future<void> clearCartNow(BuildContext context) async {
     }
 
     await batch.commit();
-    sharedPreferences!.setStringList("userCart", []);
+    saveUserPref<List<String>>("userCart", []);
 
     if (context.mounted) {
       Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();

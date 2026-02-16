@@ -135,7 +135,7 @@ class _AddressScreenState extends State<AddressScreen> {
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                   .collection("users")
-                  .doc(sharedPreferences!.getString("uid"))
+                  .doc(currentUid)
                   .collection("addresses")
                   .snapshots(),
                 builder: (context, snapshot) {
@@ -145,8 +145,7 @@ class _AddressScreenState extends State<AddressScreen> {
                   int savedAddressesCount = snapshot.data!.docs.length;
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Provider.of<AddressChanger>(context, listen: false)
-                      .setTotalSavedAddresses(savedAddressesCount);
+                    address.setTotalSavedAddresses(savedAddressesCount);
                   });
                   
                   return ListView.builder(

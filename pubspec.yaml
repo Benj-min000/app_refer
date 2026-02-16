@@ -46,6 +46,7 @@ dependencies:
   infinite_scroll_pagination: ^5.1.1
   phone_form_field: ^10.0.17
   path_provider: ^2.1.5
+  fancy_password_field: ^2.0.8
 
 dev_dependencies:
   flutter_test:

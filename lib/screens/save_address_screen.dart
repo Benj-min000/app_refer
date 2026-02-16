@@ -90,21 +90,21 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
   }
 
   Future<void> formValidation() async {
-    if (_state.text.trim().isEmpty ||
-      _completeAddress.text.trim().isEmpty ||
-      _city.text.trim().isEmpty) {
-        
+    if (!formKey.currentState!.validate()) {
+      return; 
+    }
+
+    if (lat == 0.0 || lng == 0.0 || _completeAddress.text.trim().isEmpty) {
       showDialog(
         context: context,
-        builder: (_) => ErrorDialog(message: "Please fill out all required fields (*)."),
+        builder: (_) => const ErrorDialog(message: "Please select a location on the map first."),
       );
-
       return;
     }
 
-    if (formKey.currentState!.validate()) {
-      setState(() => isLoading = true);
+    setState(() => isLoading = true);
 
+    try {
       final model = Address(
         label: _addressLabel.text.trim(),
         country: _completeAddress.text.trim().split(',').last,
@@ -121,22 +121,19 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
 
       await FirebaseFirestore.instance
         .collection("users")
-        .doc(sharedPreferences!.getString("uid") ?? "")
+        .doc(currentUid)
         .collection("addresses")
         .doc(DateTime.now().millisecondsSinceEpoch.toString())
-        .set(model)
-        .then((value) {
-          if(mounted) {
-            Fluttertoast.showToast(msg: "New Address has been saved.");
-            Navigator.pop(context);
-          }
-        })
-        .catchError((error) {
-          Fluttertoast.showToast(msg: "Error: $error");
-        })
-        .whenComplete(() {
-          if (mounted) setState(() => isLoading = false);
-        });
+        .set(model);
+
+    if (mounted) {
+      Fluttertoast.showToast(msg: "New Address has been saved.");
+        Navigator.pop(context);
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: "Error: $error");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 

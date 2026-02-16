@@ -4,6 +4,11 @@ import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/history_screen.dart';
 import 'package:user_app/screens/profile_settings_screen.dart';
 import 'package:user_app/services/firebase_data_transfer.dart';
+import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/assistant_methods/cart_item_counter.dart';
+import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/assistant_methods/total_amount.dart';
+import 'package:provider/provider.dart';
 
 class DrawerItem {
   final String title;
@@ -45,7 +50,7 @@ class MyDrawer extends StatelessWidget {
                       width: 160,
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                          sharedPreferences!.getString("photo")!),
+                          getUserPref<String>("photo")?? ""),
                       ),
                     ),
                   ),
@@ -54,7 +59,7 @@ class MyDrawer extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  sharedPreferences!.getString("name")!,
+                  getUserPref<String>("name") ?? "",
                   style: const TextStyle(
                       color: Colors.black, fontSize: 20, fontFamily: "Train"),
                 )
@@ -108,14 +113,21 @@ class MyDrawer extends StatelessWidget {
               "Sign Out",
               style: TextStyle(color: Colors.black),
             ),
-            onTap: () {
-              firebaseAuth.signOut().then((value) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const AuthScreen()));
-              });
-            },
+            onTap: () async {
+              await firebaseAuth.signOut();
+
+              clearSession();
+
+              Provider.of<CartItemCounter>(context, listen: false).reset();
+              Provider.of<AddressChanger>(context, listen: false).reset();
+              Provider.of<TotalAmount>(context, listen: false).reset();
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const AuthScreen()),
+                (route) => false,
+              );
+            }
           ),
           const Divider(
             height: 10,

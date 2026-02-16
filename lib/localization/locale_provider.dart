@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:user_app/global/global.dart';
 import "package:user_app/models/language.dart";
 
 class LocaleProvider with ChangeNotifier {
@@ -20,13 +21,11 @@ class LocaleProvider with ChangeNotifier {
     _locale = locale;
     notifyListeners();
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language_code', locale.languageCode);
+    await saveUserPref<String>('language_code', locale.languageCode);
   }
 
   Future<void> loadLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? languageCode = prefs.getString('language_code');
+    String? languageCode = getUserPref<String>('language_code');
 
     if (languageCode == null) {
       final String deviceCode = PlatformDispatcher.instance.locale.languageCode;

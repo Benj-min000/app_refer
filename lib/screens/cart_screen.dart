@@ -6,13 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/screens/place_order_screen.dart';
 
-import 'package:user_app/assistant_methods/total_ammount.dart';
+import 'package:user_app/assistant_methods/total_amount.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 
 import 'package:user_app/widgets/cart_item_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/widgets/text_widget_header.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
 import 'package:user_app/global/global.dart';
@@ -25,20 +24,12 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  num totalAmount = 0;
-  num originalAmount = 0;
-  num totalSavings = 0;
 
   @override
   void initState() {
     super.initState();
-    // Total amount displayed
-    totalAmount = 0;
-    // Original amount before the discounts calculations
-    originalAmount = 0;
-    // Total savings from the discounts
-    totalSavings = 0;
-    Provider.of<TotalAmmount>(context, listen: false).displayTotolAmmount(0);
+
+    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
   }
 
   Future<void> _clearCart() async {
@@ -51,6 +42,7 @@ class _CartScreenState extends State<CartScreen> {
     await clearCartNow(context);
 
     if (!mounted) return;
+    Provider.of<TotalAmount>(context, listen: false).reset();
     Navigator.pop(context);
     Fluttertoast.showToast(msg: "Cart has been cleared");
   }
@@ -59,19 +51,13 @@ class _CartScreenState extends State<CartScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => PlaceOrderScreen(
-          originalAmount: originalAmount.toDouble(),
-          totalAmount: totalAmount.toDouble(),
-          totalSavings: totalSavings.toDouble(),
-        ),
+        builder: (_) => PlaceOrderScreen(),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? userId = sharedPreferences!.getString("uid");
-
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: UnifiedAppBar(
@@ -88,7 +74,7 @@ class _CartScreenState extends State<CartScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("users")
-            .doc(userId)
+            .doc(currentUid)
             .collection("carts")
             .snapshots(),
         builder: (context, cartSnapshot) {
@@ -166,9 +152,9 @@ class _CartScreenState extends State<CartScreen> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: Consumer2<TotalAmmount, CartItemCounter>(
-            builder: (context, amountProvider, cartProvider, _) {
-              if (cartProvider.count == 0) return const SizedBox.shrink();
+          child: Consumer<TotalAmount>(
+            builder: (context, amountProvider, _) {
+              if (amountProvider.totalAmount <= 0) return const SizedBox.shrink();
               
               return Container(
                 padding: const EdgeInsets.all(20),
@@ -190,79 +176,36 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 child: Column(
                   children: [
-                    if (totalSavings > 0) ...[
+                    if (amountProvider.totalSavings > 0) ...[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Original Total:",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          Text(
-                            "₹${originalAmount.toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
+                          const Text("Original Total:", style: TextStyle(fontSize: 14, color: Colors.white70)),
+                          Text("₹${amountProvider.originalAmount.toStringAsFixed(2)}",
+                            style: const TextStyle(fontSize: 14, color: Colors.white70, decoration: TextDecoration.lineThrough)),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "You Save:",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          const Text("You Save:", style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w600)),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              "- ₹${totalSavings.toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12)),
+                            child: Text("- ₹${amountProvider.totalSavings.toStringAsFixed(2)}",
+                              style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
                       const Divider(color: Colors.white38, height: 24, thickness: 1),
                     ],
-                    
-                    // Final total
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Total:",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          "₹${amountProvider.tAmmount.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                        const Text("Total:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                        Text("₹${amountProvider.totalAmount.toStringAsFixed(2)}",
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
                       ],
                     ),
                   ],
@@ -272,103 +215,53 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         _buildCartItems(cartSnapshot),
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 100),
-        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
     );
   }
 
   Widget _buildCartItems(AsyncSnapshot<QuerySnapshot> cartSnapshot) {
+    double tempTotal = 0;
+    double tempOriginal = 0;
+    double tempSavings = 0;
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final cartDoc = cartSnapshot.data!.docs[index];
-          final cartData = cartDoc.data() as Map<String, dynamic>;
-
-          final String itemID = cartData['itemID'] ?? '';
-          final String menuID = cartData['menuID'] ?? '';
-          final String restaurantID = cartData['restaurantID'] ?? '';
+          final cartData = cartSnapshot.data!.docs[index].data() as Map<String, dynamic>;
           final int quantity = cartData['quantity'] ?? 1;
-
-          if (itemID.isEmpty || menuID.isEmpty || restaurantID.isEmpty) {
-            return const SizedBox.shrink();
-          }
 
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
-                .collection("restaurants")
-                .doc(restaurantID)
-                .collection("menus")
-                .doc(menuID)
-                .collection("items")
-                .doc(itemID)
+                .collection("restaurants").doc(cartData['restaurantID'])
+                .collection("menus").doc(cartData['menuID'])
+                .collection("items").doc(cartData['itemID'])
                 .get(),
             builder: (context, itemSnapshot) {
-              if (itemSnapshot.connectionState == ConnectionState.waiting) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.blue.shade400,
-                      ),
-                    ),
-                  ),
-                );
-              }
+              if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) return const SizedBox.shrink();
 
-              if (itemSnapshot.hasError || 
-                  !itemSnapshot.hasData || 
-                  !itemSnapshot.data!.exists) {
-                return const SizedBox.shrink();
-              }
-
-              final Items model = Items.fromJson(
-                itemSnapshot.data!.data() as Map<String, dynamic>,
-              );
-
-              model.itemID = itemID;
-              model.menuID = menuID;
-              model.restaurantID = restaurantID;
-      
-              // Calculate totals considering discounts
-              if (index == 0) {
-                totalAmount = 0;
-                originalAmount = 0;
-                totalSavings = 0;
-              }
-
-              final pricePerItem = model.hasDiscount 
-                  ? model.discountedPrice 
-                  : (model.price ?? 0);
+              final Items model = Items.fromJson(itemSnapshot.data!.data() as Map<String, dynamic>);
+              
+              final pricePerItem = model.hasDiscount ? model.discountedPrice : (model.price ?? 0);
               final originalPricePerItem = model.price ?? 0;
               
-              totalAmount += pricePerItem * quantity;
-              originalAmount += originalPricePerItem * quantity;
-              
+              tempTotal += (pricePerItem * quantity);
+              tempOriginal += (originalPricePerItem * quantity);
               if (model.hasDiscount) {
-                totalSavings += (originalPricePerItem - pricePerItem) * quantity;
+                tempSavings += (originalPricePerItem - pricePerItem) * quantity;
               }
 
-              // Update provider after last item
               if (index == cartSnapshot.data!.docs.length - 1) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
-                    Provider.of<TotalAmmount>(context, listen: false)
-                        .displayTotolAmmount(totalAmount.toDouble());
+                    // Update Provider with all 3 values at once
+                    Provider.of<TotalAmount>(context, listen: false)
+                        .setAmounts(tempTotal, tempOriginal, tempSavings);
                   }
                 });
               }
 
-              return CartItemDesign(
-                model: model,
-                context: context,
-                quanNumber: quantity,
-              );
+              return CartItemDesign(model: model, context: context, quanNumber: quantity);
             },
           );
         },

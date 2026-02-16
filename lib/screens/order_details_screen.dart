@@ -34,7 +34,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection("users")
-            .doc(sharedPreferences?.getString("uid"))
+            .doc(currentUid)
             .collection("orders")
             .doc(widget.orderID)
             .get(),
@@ -188,7 +188,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance
                         .collection("users")
-                        .doc(sharedPreferences!.getString("uid"))
+                        .doc(currentUid)
                         .collection("addresses")
                         .doc(dataMap["addressID"])
                         .get(),

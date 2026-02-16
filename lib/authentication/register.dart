@@ -11,9 +11,13 @@ import 'package:user_app/widgets/custom_text_field.dart';
 import 'package:user_app/widgets/error_Dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:user_app/screens/home_screen.dart';
+import 'package:phone_form_field/phone_form_field.dart';
+import 'package:user_app/widgets/custom_phone_field.dart';
+import 'package:user_app/widgets/custom_password_field.dart';
 
 import 'package:user_app/global/global.dart';
 import 'package:user_app/extensions/context_translate_ext.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -28,13 +32,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmePasswordController = TextEditingController();
+  late final PhoneController _phoneController;
   
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
   String downloadUrl = "";
 
   Future<void> _getImage() async {
-    XFile? selectedImage = await _picker.pickImage(source: ImageSource.gallery);
+    XFile? selectedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1080,
+      imageQuality: 85,
+    );
 
     if (selectedImage != null) {
       setState(() {
@@ -43,7 +52,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  void initState() {
+    super.initState();
+    _phoneController = PhoneController(
+      initialValue: const PhoneNumber(isoCode: IsoCode.US, nsn: ''),
+    );
+  }
+
   Future<void> formValidation() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     if (imageXFile == null) {
       showDialog(
         context: context, 
@@ -67,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       try {
         UserCredential auth = await firebaseAuth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+          password: _passwordController.toString(),
         );
 
         User? currentUser = auth.user;
@@ -116,9 +136,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "name": _nameController.text.trim(),
       "photo": downloadUrl.trim(),
       "status": "Approved",
-      "phone": "",
+      "phone": _phoneController.value.international
     });
-
+    
     // Initializing notifications
     await userRef.collection('notifications').add({
       "userID": currentUser.uid,
@@ -129,11 +149,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     // Save data localy
-    await sharedPreferences!.setString("uid", currentUser.uid);
-    await sharedPreferences!.setString("email", currentUser.email.toString());
-    await sharedPreferences!.setString("name", _nameController.text.trim());
-    await sharedPreferences!.setString("photo", downloadUrl.trim());
-    await sharedPreferences!.setString("phone", "");
+    await sharedPreferences!.setString("uid", currentUser.uid); // MASTER KEY
+    await saveUserPref<String>("email", currentUser.email.toString());
+    await saveUserPref<String>("name", _nameController.text.trim());
+    await saveUserPref<String>("photo", downloadUrl.trim());
+    await saveUserPref<String>("phone", _phoneController.value.international);
   }
 
   @override
@@ -142,6 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmePasswordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -187,23 +208,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: context.t.hintName,
                   isObsecure: false,
                 ),
+                
+                CustomPhoneField(
+                  controller: _phoneController,
+                  label: "Phone Number",
+                ),
+
                 CustomTextField(
                   data: Icons.email,
                   controller: _emailController,
                   hintText: context.t.hintEmail,
                   isObsecure: false,
                 ),
-                CustomTextField(
-                  data: Icons.lock,
+                
+                CustomPasswordField(
                   controller: _passwordController,
-                  hintText: context.t.hintPassword,
-                  isObsecure: true,
+                  label: context.t.hintPassword,
+                  isRequired: true,
+                  isConfirmation: false,
                 ),
-                CustomTextField(
-                  data: Icons.lock,
+
+                CustomPasswordField(
                   controller: _confirmePasswordController,
-                  hintText: context.t.hintConfPassword,
-                  isObsecure: true,
+                  label: context.t.hintConfPassword,
+                  isRequired: true,
+                  isConfirmation: true,
                 ),
               ],
             ),
@@ -237,3 +266,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+

@@ -19,6 +19,15 @@ class RestaurantCard extends StatefulWidget {
 }
 
 class _RestaurantCardState extends State<RestaurantCard> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -56,21 +65,60 @@ class _RestaurantCardState extends State<RestaurantCard> {
               return const SizedBox.shrink();
             }
 
-            return SizedBox(
-              height: 340,
-              child: PageView.builder(
-                itemCount: itemSnapshot.data!.docs.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) {
-                  var doc = itemSnapshot.data!.docs[index];
-                  Items item = Items.fromJson(doc.data() as Map<String, dynamic>);
-                  item.itemID = doc.id;
-                  item.menuID = menuID;
-                  item.restaurantID = widget.restaurantID;
+            return Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                SizedBox(
+                  height: 340,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: itemSnapshot.data!.docs.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      var doc = itemSnapshot.data!.docs[index];
+                      Items item = Items.fromJson(doc.data() as Map<String, dynamic>);
+                      item.itemID = doc.id;
+                      item.menuID = menuID;
+                      item.restaurantID = widget.restaurantID;
 
-                  return _buildItemCard(context, item);
-                },
-              ),
+                      return _buildItemCard(context, item);
+                    },
+                  ),
+                ),
+
+                Positioned(
+                  top: 20,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      itemSnapshot.data!.docs.length,
+                      (index) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _currentPage == index 
+                              ? Colors.redAccent 
+                              : Colors.white.withAlpha(180),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 2,
+                              offset: Offset(1, 1),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             );
           },
         );

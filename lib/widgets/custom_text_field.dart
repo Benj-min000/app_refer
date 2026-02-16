@@ -7,15 +7,17 @@ class CustomTextField extends StatefulWidget {
   final bool isObsecure;
   final bool enabled;
   final double fontSize;
+  final ValueChanged<String>? onChanged;
 
-  const CustomTextField(
-      {super.key,
-      this.controller,
-      this.data,
-      this.hintText,
-      this.isObsecure = true,
-      this.enabled = true,
-      this.fontSize = 16.0,
+  const CustomTextField({
+    super.key,
+    this.controller,
+    this.data,
+    this.hintText,
+    this.isObsecure = true,
+    this.enabled = true,
+    this.fontSize = 16.0,
+    this.onChanged,
   });
   
   @override
@@ -32,22 +34,34 @@ class _CustomTextFieldState extends State<CustomTextField> {
     _focusNode = FocusNode();
     _focusNode.addListener(_onFocusChange);
     widget.controller?.addListener(_onTextChange);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateFloatingState();
+    });
+  }
+
+  void _updateFloatingState() {
+    final hasContent = widget.controller?.text.isNotEmpty ?? false;
+    final newFloating = _focusNode.hasFocus || hasContent;
+    
+    if (_isFloating != newFloating) {
+      setState(() {
+        _isFloating = newFloating;
+      });
+    }
   }
 
   void _onFocusChange() {
-    setState(() {
-      _isFloating = _focusNode.hasFocus || (widget.controller?.text.isNotEmpty ?? false);
-    });
+    _updateFloatingState();
   }
 
   void _onTextChange() {
-    setState(() {
-      _isFloating = _focusNode.hasFocus || (widget.controller?.text.isNotEmpty ?? false);
-    });
+    _updateFloatingState();
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    widget.controller?.removeListener(_onTextChange);
     _focusNode.dispose();
     super.dispose();
   }
@@ -67,6 +81,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         controller: widget.controller,
         obscureText: widget.isObsecure,
         cursorColor: Theme.of(context).primaryColor,
+        onChanged: widget.onChanged,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(20),
           prefixIcon: widget.data != null ? Icon(

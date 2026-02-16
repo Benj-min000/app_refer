@@ -73,7 +73,7 @@ class _AddressDesignState extends State<AddressDesign> {
               try {
                 await FirebaseFirestore.instance
                   .collection("users")
-                  .doc(sharedPreferences!.getString("uid"))
+                  .doc(currentUid)
                   .collection("addresses")
                   .doc(widget.addressID)
                   .delete();

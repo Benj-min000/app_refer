@@ -12,18 +12,10 @@ import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/services/location_service.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/screens/address_screen.dart';
+import 'package:user_app/assistant_methods/total_amount.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
-  final double? originalAmount;
-  final double? totalAmount;
-  final double? totalSavings;
-
-  const PlaceOrderScreen({
-    super.key, 
-    required this.originalAmount, 
-    required this.totalAmount,
-    required this.totalSavings,
-  });
+  const PlaceOrderScreen({super.key});
 
   @override
   State<PlaceOrderScreen> createState() => _PlaceOrderScreenState();
@@ -31,9 +23,9 @@ class PlaceOrderScreen extends StatefulWidget {
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   String orderID = "";
-  String? storeID;
+  String? restaurantID;
   String orderType = "delivery"; // "delivery" or "pickup"
-  String? storeAddress;
+  String? restaurantAddress;
   bool isLoading = true;
   bool isPlacingOrder = false;
   List<Address> userAddresses = [];
@@ -50,11 +42,10 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   }
 
   Future<void> _initializeOrderScreen() async {
-
     await _fetchCurrentLocation();
     
     await Future.wait([
-      _getStoreIDFromCart(),
+      _getRestaurantIDFromCart(),
       _loadUserAddresses(),
     ]);
   }
@@ -81,14 +72,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  Future<void> _getStoreIDFromCart() async {
+  Future<void> _getRestaurantIDFromCart() async {
     try {
-      String? uid = sharedPreferences!.getString("uid");
-      if (uid == null) return;
+      if (currentUid == null) return;
 
       var cartSnapshot = await FirebaseFirestore.instance
           .collection("users")
-          .doc(uid)
+          .doc(currentUid)
           .collection("carts")
           .limit(1)
           .get();
@@ -96,43 +86,42 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       if (cartSnapshot.docs.isNotEmpty) {
         var cartData = cartSnapshot.docs.first.data();
         setState(() {
-          storeID = cartData['storeID'];
+          restaurantID = cartData['restaurantID'];
         });
-        await _loadStoreAddress();
+        await _loadRestaurantAddress();
       }
     } catch (e) {
-      print("Error getting storeID: $e");
+      debugPrint(e.toString());
     }
   }
 
-  Future<void> _loadStoreAddress() async {
-    if (storeID == null) return;
+  Future<void> _loadRestaurantAddress() async {
+    if (restaurantID == null) return;
     
     try {
       var storeDoc = await FirebaseFirestore.instance
           .collection("restaurants")
-          .doc(storeID)
+          .doc(restaurantID)
           .get();
       
       if (storeDoc.exists) {
         var storeData = storeDoc.data();
         setState(() {
-          storeAddress = storeData?['address'] ?? "Store address not available";
+          restaurantAddress = storeData?['address'] ?? "Store address not available";
         });
       }
     } catch (e) {
-      print("Error loading store address: $e");
+      debugPrint(e.toString());
     }
   }
 
   Future<void> _loadUserAddresses() async {
     try {
-      String? uid = sharedPreferences!.getString("uid");
-      if (uid == null) return;
+      if (currentUid == null) return;
 
       var addressSnapshot = await FirebaseFirestore.instance
           .collection("users")
-          .doc(uid)
+          .doc(currentUid)
           .collection("addresses")
           .get();
 
@@ -162,10 +151,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error loading addresses: $e");
-      setState(() {
-        isLoading = false;
-      });
+      debugPrint(e.toString());
+      setState(() => isLoading = false);
     }
   }
 
@@ -192,6 +179,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
     try {
       final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+      final amountProvider = Provider.of<TotalAmount>(context, listen: false);
 
       String? addressID;
       Map<String, dynamic> addressData = {};
@@ -200,10 +188,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         int selectedIndex = addressProvider.count;
         
         if (selectedIndex == -1) {
-          String uid = sharedPreferences!.getString("uid")!;
           DocumentReference tempAddressRef = FirebaseFirestore.instance
               .collection("users")
-              .doc(uid)
+              .doc(currentUid)
               .collection("addresses")
               .doc();
           
@@ -241,17 +228,22 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         addressID = "pickup";
       }
 
-      List<String> cartItems = sharedPreferences!.getStringList("userCart") ?? [];
+      List<String> cartItems = getUserPref<List<String>>("userCart") ?? [];
 
       Map<String, dynamic> orderData = {
         "addressID": addressID,
-        "userID": sharedPreferences!.getString("uid"),
+        "userID": currentUid,
         "itemIDs": cartItems,
-        "totalAmount": widget.totalAmount,
+
+        //Total price breakdown
+        "totalAmount": amountProvider.totalAmount,
+        "originalAmount": amountProvider.originalAmount,
+        "totalSavings": amountProvider.totalSavings,
+
         "paymentDetails": "Cash on Delivery",
         "orderTime": Timestamp.now(),
         "isSuccess": true,
-        "storeID": storeID,
+        "restaurantID": restaurantID,
         "riderID": "",
         "status": "normal",
         "orderID": orderID,
@@ -262,8 +254,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       await _writeOrderDetailsForStore(orderData);
 
       if (!mounted) return;
-
       await clearCartNow(context);
+      amountProvider.reset();
 
       if (!mounted) return;
 
@@ -277,20 +269,18 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         (route) => false,
       );
     } catch (e) {
-      print("Error placing order: $e");
+      debugPrint(e.toString());;
       Fluttertoast.showToast(
           msg: "Failed to place order. Please try again.",
           backgroundColor: Colors.red);
-      setState(() {
-        isPlacingOrder = false;
-      });
+      setState(() => isPlacingOrder = false);
     }
   }
 
   Future<void> _writeOrderDetailsForUser(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
       .collection("users")
-      .doc(sharedPreferences!.getString("uid"))
+      .doc(currentUid)
       .collection("orders")
       .doc(orderID)
       .set(data);
@@ -305,15 +295,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final amountProvider = Provider.of<TotalAmount>(context);
+
     return Scaffold(
       appBar: UnifiedAppBar(
         leading: Builder(
           builder: (context) {
             return IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 28),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
             );
           },
         ),
@@ -345,7 +335,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                             children: [
                               const Text("Total Amount:"),
                               Text(
-                                "\$${widget.totalAmount?.toStringAsFixed(2)}",
+                                "\$${amountProvider.totalAmount.toStringAsFixed(2)}",
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -427,15 +417,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                           if (index == 0) {
                             return AddressDesign(
                               model: userAddresses[0],
-                              value: -1, // Use -1 for current location like AddressScreen
+                              value: -1,
                               isCurrentLocationCard: true,
                             );
                           }
                           
-                          // Saved addresses start from index 1, with values 0, 1, 2...
                           return AddressDesign(
                             model: userAddresses[index],
-                            value: index - 1, // Adjust value to match AddressScreen pattern
+                            value: index - 1,
                             addressID: userAddresses[index].addressID,
                           );
                         },
@@ -454,7 +443,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       },
                     ),
                   ],
-                  if (orderType == "pickup" && storeAddress != null) ...[
+                  if (orderType == "pickup" && restaurantAddress != null) ...[
                     const Text(
                       "Pickup Location",
                       style: TextStyle(
@@ -468,7 +457,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       child: ListTile(
                         leading: const Icon(Icons.store, color: Colors.redAccent),
                         title: const Text("Store Address"),
-                        subtitle: Text(storeAddress!),
+                        subtitle: Text(restaurantAddress!),
                       ),
                     ),
                   ],

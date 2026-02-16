@@ -98,10 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       await sharedPreferences!.setString("uid", currentUser.uid);
-      await sharedPreferences!.setString("email", data["email"]);
-      await sharedPreferences!.setString("name", data["name"]);
-      await sharedPreferences!.setString("phone", data["phone"]);
-      await sharedPreferences!.setString("photo", data["photo"]);
+
+      await saveUserPref<String>("email", data["email"]);
+      await saveUserPref<String>("name", data["name"]);
+      await saveUserPref<String>("phone", data["phone"]);
+      await saveUserPref<String>("photo", data["photo"]);
 
       if (!mounted) return;
       Navigator.pushReplacement(

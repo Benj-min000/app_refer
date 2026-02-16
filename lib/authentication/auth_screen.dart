@@ -77,7 +77,7 @@ class _AuthScreenState extends State<AuthScreen> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [Colors.pinkAccent.withValues(alpha: 0.8), Colors.red],
+              colors: [Colors.pinkAccent.withValues(alpha: 0.8), Colors.red.withValues(alpha: 0.9)],
             ),
           ),
           child: const TabBarView(children: [

@@ -252,6 +252,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               ),
                             ],
                           ),
+
                           // Tags
                           if (item.tags != null && item.tags!.isNotEmpty) ...[
                             const SizedBox(height: 8),
@@ -415,13 +416,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                         icon: Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: quantity > 1 ? Colors.blue : Colors.grey[300],
+                                            color: quantity > 1 ? Colors.blue : Colors.grey[400],
                                             shape: BoxShape.circle,
                                           ),
                                           child: Icon(
                                             Icons.remove,
-                                            color: quantity > 1 ? Colors.white : Colors.grey[500],
-                                            size: 20,
+                                            color: quantity > 1 ? Colors.white : Colors.grey[550],
+                                            size: 16,
                                           ),
                                         ),
                                       ),
@@ -430,7 +431,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                         child: Text(
                                           quantity.toString(),
                                           style: const TextStyle(
-                                            fontSize: 22,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black87,
                                           ),
@@ -441,13 +442,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                         icon: Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: quantity < 9 ? Colors.blue : Colors.grey[300],
+                                            color: quantity < 9 ? Colors.blue : Colors.grey[400],
                                             shape: BoxShape.circle,
                                           ),
                                           child: Icon(
                                             Icons.add,
-                                            color: quantity < 9 ? Colors.white : Colors.grey[500],
-                                            size: 20,
+                                            color: quantity < 9 ? Colors.white : Colors.grey[550],
+                                            size: 16,
                                           ),
                                         ),
                                       ),

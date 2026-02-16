@@ -27,7 +27,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("users")
-            .doc(sharedPreferences?.getString("uid"))
+            .doc(currentUid)
             .collection("orders")
             .where("status", isEqualTo: "ended")
             .orderBy("orderTime", descending: true)

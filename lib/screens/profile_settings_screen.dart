@@ -10,6 +10,7 @@ import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
 import 'package:phone_form_field/phone_form_field.dart';
 import "package:user_app/screens/language_screen.dart";
+import 'package:user_app/widgets/custom_phone_field.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class ProfileSettingsScreen extends StatefulWidget {
 
 class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   late TextEditingController _nameController;
-  late PhoneController _phoneController;
+  PhoneController? _phoneController;
 
   bool isLoading = true;
 
@@ -30,7 +31,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   String? currentPhotoUrl;
 
   Future<void> _getImage() async {
-    XFile? selectedImage = await _picker.pickImage(source: ImageSource.gallery);
+    XFile? selectedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1080,
+      imageQuality: 85,
+    );
 
     if (selectedImage != null) {
       setState(() {
@@ -41,17 +46,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   void _prepareUserData() {
     _nameController = TextEditingController(
-      text: sharedPreferences?.getString("name") ?? ""
+      text: getUserPref<String>("name") ?? ""
     );
 
-    String savedPhone = sharedPreferences!.getString("phone") ?? "";
+    String savedPhone =getUserPref<String>("phone") ?? "";
     _phoneController = PhoneController(
       initialValue: savedPhone.isNotEmpty 
           ? PhoneNumber.parse(savedPhone) 
-          : PhoneNumber.parse('+1'), // Default fallback
+          : PhoneNumber.parse('+1'),
     );
-
-    currentPhotoUrl = sharedPreferences!.getString("photo");
+    
+    currentPhotoUrl = getUserPref<String>("photo");
 
     setState(() {
       isLoading = false;
@@ -59,11 +64,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Future<void> _saveUserData() async {
-    String oldName = sharedPreferences!.getString("name") ?? "";
-    String oldPhone = sharedPreferences!.getString("phone") ?? "";
+    String oldName = getUserPref<String>("name") ?? "";
+    String oldPhone = getUserPref<String>("phone") ?? "";
 
     bool isNameChanged = _nameController.text.trim() != oldName;
-    bool isPhoneChanged = _phoneController.value.toString() != oldPhone;
+    bool isPhoneChanged = _phoneController?.value.toString() != oldPhone;
     bool isImageChanged = imageXFile != null;
 
     if (!isNameChanged && !isPhoneChanged && !isImageChanged) {
@@ -80,32 +85,31 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
 
     try {
-      String userUid = sharedPreferences!.getString("uid") ?? "";
       Map<String, dynamic> updateData = {};
 
       if (isImageChanged) {
         fStorage.Reference reference = fStorage.FirebaseStorage.instance
-            .ref().child('users').child(userUid);
+            .ref().child('users').child(currentUid!);
         
         fStorage.UploadTask uploadTask = reference.putFile(File(imageXFile!.path));
         fStorage.TaskSnapshot taskSnapshot = await uploadTask;
         String newDownloadUrl = await taskSnapshot.ref.getDownloadURL();
         
         updateData["photo"] = newDownloadUrl;
-        await sharedPreferences!.setString("photo", newDownloadUrl);
+        await saveUserPref<String>("photo", newDownloadUrl);
       }
 
       if (isNameChanged) {
         updateData["name"] = _nameController.text.trim();
-        await sharedPreferences!.setString("name", _nameController.text.trim());
+        await saveUserPref<String>("name", _nameController.text.trim());
       }
       
       if (isPhoneChanged) {
-        updateData["phone"] =_phoneController.value.toString();
-        await sharedPreferences!.setString("phone", _phoneController.value.toString());
+        updateData["phone"] =_phoneController?.value.toString();
+        await saveUserPref<String>("phone", _phoneController!.value.toString());
       }
 
-      await FirebaseFirestore.instance.collection("users").doc(userUid).update(updateData);
+      await FirebaseFirestore.instance.collection("users").doc(currentUid).update(updateData);
     
       if (!mounted) return;
       Navigator.pop(context);
@@ -133,7 +137,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _phoneController.dispose();
+    _phoneController?.dispose();
     super.dispose();
   }
 
@@ -171,13 +175,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: Stack(
                     children: [
                       Material(
-                        elevation: 10, // Adjust this for shadow depth
+                        elevation: 10,
                         shape: const CircleBorder(),
                         clipBehavior: Clip.antiAlias,
                         child: CircleAvatar(
                           radius: 60,
                           backgroundImage: NetworkImage(
-                            sharedPreferences!.getString("photo")!
+                            getUserPref<String>("photo")!
                           ),
                         ),
                       ),
@@ -222,51 +226,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   enabled: true,
                 ),
 
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      scaffoldBackgroundColor: Colors.white,
-                      appBarTheme: const AppBarTheme(
-                        backgroundColor: Colors.blueAccent,
-                        iconTheme: IconThemeData(color: Colors.white, size: 28),
-                      ),
-                    ),
-                    child: PhoneFormField(
-                      controller: _phoneController,
-                      countrySelectorNavigator: const CountrySelectorNavigator.page(),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(20),
-                        focusColor: Theme.of(context).primaryColor,
-                        labelText: 'Phone Number',
-                        labelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade600),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: PhoneValidator.compose([
-                        PhoneValidator.required(context),
-                        PhoneValidator.validMobile(context),
-                      ]),
-                    ),
-                  ),
+                CustomPhoneField(
+                  controller: _phoneController,
+                  label: "Phone Number",
                 ),
-
+                
                 const Divider(height: 40, thickness: 2),
 
                 ListTile(

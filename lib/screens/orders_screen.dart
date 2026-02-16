@@ -56,17 +56,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
     List<DocumentSnapshot> allItems = [];
     
     // Group items by menu to minimize queries
-    // Format: "storeID:menuID:itemID:quantity"
+    // Format: "restaurantID:menuID:itemID:quantity"
     Map<String, List<String>> menuItemsMap = {};
     
     for (var item in itemIDs) {
       List<String> parts = item.toString().split(':');
       if (parts.length >= 3) {
-        String storeID = parts[0];
+        String restaurantID = parts[0];
         String menuID = parts[1];
         String itemID = parts[2];
         
-        String menuKey = "$storeID:$menuID";
+        String menuKey = "$restaurantID:$menuID";
         if (!menuItemsMap.containsKey(menuKey)) {
           menuItemsMap[menuKey] = [];
         }
@@ -77,14 +77,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
     // Fetch items for each menu
     for (var entry in menuItemsMap.entries) {
       List<String> pathParts = entry.key.split(':');
-      String storeID = pathParts[0];
+      String restaurantID = pathParts[0];
       String menuID = pathParts[1];
       List<String> itemIDs = entry.value;
       
       try {
         var snapshot = await FirebaseFirestore.instance
             .collection("restaurants")
-            .doc(storeID)
+            .doc(restaurantID)
             .collection("menus")
             .doc(menuID)
             .collection("items")
@@ -136,7 +136,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("users")
-            .doc(sharedPreferences?.getString("uid"))
+            .doc(currentUid)
             .collection("orders")
             .where("status", isEqualTo: "normal")
             .orderBy("orderTime", descending: true)

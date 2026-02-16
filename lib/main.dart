@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
-import 'package:user_app/assistant_methods/total_ammount.dart';
+import 'package:user_app/assistant_methods/total_amount.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/global/global.dart';
@@ -45,7 +45,7 @@ Future<void> main() async {
         ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider.value(value: addressChanger),
         ChangeNotifierProvider(create: (_) => CartItemCounter()),
-        ChangeNotifierProvider(create: (_) => TotalAmmount()),
+        ChangeNotifierProvider(create: (c) => TotalAmount()),
       ],
       child: const MyApp(),
     ),

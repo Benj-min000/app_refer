@@ -3,25 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:user_app/global/global.dart';
 
 class CartItemCounter extends ChangeNotifier {
-  int cartListItemCounter = 0;
+  int _cartListItemCounter = 0;
 
-  int get count => cartListItemCounter;
+  int get count => _cartListItemCounter = 0;
 
   Future<void> displayCartListItemsNumber() async {
-    final String? uid = firebaseAuth.currentUser?.uid;
 
-    if (uid != null) {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
+    if (currentUid != null) {
+      AggregateQuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection("users")
-          .doc(uid)
+          .doc(currentUid)
           .collection("carts")
+          .count()
           .get();
 
-      cartListItemCounter = snapshot.docs.length;
-    } else {
-      cartListItemCounter = 0;
-    }
+      int newCount = snapshot.count ?? 0;
 
+      if (_cartListItemCounter == newCount) return;
+
+      _cartListItemCounter = newCount;
+    } else {
+      if (_cartListItemCounter == 0) return;
+      _cartListItemCounter = 0;
+    }
+    notifyListeners();
+  }
+
+  void reset() {
+    _cartListItemCounter = 0;
     notifyListeners();
   }
 }

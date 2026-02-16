@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:user_app/global/global.dart';
 
 class AddressChanger extends ChangeNotifier {
   int _counter = -1; // Default to -1 for "Current Location"
@@ -18,7 +18,6 @@ class AddressChanger extends ChangeNotifier {
   double? get lat => _lat;
   double? get lng => _lng;
 
-  // Added a parameter to accept the address string
   Future<void> displayResult(int newValue, {Map<String, dynamic> address = const {}, double? lat, double? lng}) async {
     _counter = newValue;
     _selectedAddress = address;
@@ -26,36 +25,39 @@ class AddressChanger extends ChangeNotifier {
     _lng = lng;
     notifyListeners();
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('selected_address_index', newValue);
-    await prefs.setString('selected_address_map', json.encode(address));
+    await saveUserPref<int>('selected_address_index', newValue);
+    await saveUserPref<String>('selected_address_map', json.encode(address));
 
     if (lat != null && lng != null) {
-      await prefs.setDouble('selected_lat', lat);
-      await prefs.setDouble('selected_lng', lng);
+      await saveUserPref<double>('selected_lat', lat);
+      await saveUserPref<double>('selected_lng', lng);
     }
   }
 
-  Future<void> loadSavedAddress() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<void> loadSavedAddress() async {    
+    _counter = getUserPref<int>('selected_address_index') ?? -1;
     
-    _counter = prefs.getInt('selected_address_index') ?? -1;
-    
-    String? addressJson = prefs.getString('selected_address_map');
+    String? addressJson = getUserPref<String>('selected_address_map');
     if (addressJson != null) {
       _selectedAddress = json.decode(addressJson);
     } else {
       _selectedAddress = {}; 
     }
 
-    _lat = prefs.getDouble('selected_lat');
-    _lng = prefs.getDouble('selected_lng');
+    _lat = getUserPref<double>('selected_lat');
+    _lng = getUserPref<double>('selected_lng');
     
     notifyListeners();
   }
 
   void setTotalSavedAddresses(int count) {
+    if (_totalSavedAddresses == count) return;
     _totalSavedAddresses = count;
+    notifyListeners();
+  }
+
+  void reset() {
+    _totalSavedAddresses = 0;
     notifyListeners();
   }
 }
