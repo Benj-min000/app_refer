@@ -116,11 +116,13 @@ class MyDrawer extends StatelessWidget {
             onTap: () async {
               await firebaseAuth.signOut();
 
+              // Fully clearing the user session
               clearSession();
 
               Provider.of<CartItemCounter>(context, listen: false).reset();
               Provider.of<AddressChanger>(context, listen: false).reset();
               Provider.of<TotalAmount>(context, listen: false).reset();
+              Provider.of<LocaleProvider>(context, listen: false).reset();
 
               Navigator.pushAndRemoveUntil(
                 context,
