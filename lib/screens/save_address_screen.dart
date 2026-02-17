@@ -52,11 +52,11 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
     setState(() {
       _city.text = result['city'] ?? '';
       _state.text = result['state'] ?? '';
-      _postCode.text = result['postCode'] ?? '';
+      _postCode.text = result['postalCode'] ?? '';
       _street.text = result['road'] ?? '';
       _houseNumber.text = result['houseNumber'] ?? '';
 
-      String sub = result['subpremise'] ?? '';
+      String sub = result['subpremise'] ?? 'flatNumber' ?? '';
       _flatNumber.text = sub.isNotEmpty ? "Apt $sub" : "";
 
       _completeAddress.text = result['fullAddress'] ?? '';
@@ -165,7 +165,19 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
     ];
 
     return Scaffold(
-      appBar: UnifiedAppBar(title: "I-Eat"),
+      appBar:  UnifiedAppBar(
+        title: "Add New Address",
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new, 
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(context); 
+          },
+        ),
+      ),
       floatingActionButton: _isAddressFetched 
         ? FloatingActionButton.extended(
             onPressed: isLoading ? null : () => formValidation(),
@@ -179,81 +191,79 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
           children: [
             if (isLoading) const LinearProgressIndicator(color: Colors.cyan),
             
-            // Use a SizedBox to force the Column to take full width for horizontal centering
             SizedBox(
               width: double.infinity, 
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 15),
+              // We use constraints to ensure the Column can at least fill the screen
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  // Subtracting AppBar height (approx) and status bar to avoid overflow
+                  minHeight: MediaQuery.of(context).size.height - 120, 
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // Vertically centers children
+                  crossAxisAlignment: CrossAxisAlignment.center, // Horizontally centers children
+                  children: [                  
+                    const SizedBox(height: 25),
 
-                  const Text(
-                    "Add New Address",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  
-                  const SizedBox(height: 15),
-
-                  ElevatedButton.icon(
-                    onPressed: _handleMapResult,
-                    icon: const Icon(Icons.location_on, color: Colors.redAccent, size: 22),
-                    label: const Text(
-                      "Find your location on Google Maps",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.cyan,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                    ElevatedButton.icon(
+                      onPressed: _handleMapResult,
+                      icon: const Icon(Icons.location_on, color: Colors.redAccent, size: 22),
+                      label: const Text(
+                        "Find your location on Google Maps",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      elevation: 3,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  if (_isAddressFetched) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40.0),
-                      child: Divider(thickness: 1),
-                    ),
-                    Text(
-                      "Verify & Refine Details", 
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w600,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.cyan,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 3,
                       ),
                     ),
-                    
-                    const SizedBox(height: 20),
 
-                    Form(
-                      key: formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          children: addressFields.map((field) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: field,
-                          )).toList(),
+                    const SizedBox(height: 10),
+
+                    if (_isAddressFetched) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40.0),
+                        child: Divider(thickness: 1),
+                      ),
+                      Text(
+                        "Verify & Refine Details", 
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 100),
-                  ] else ...[
-                    // Initial state view
-                    const SizedBox(height: 60),
-                    const Icon(Icons.map_outlined, size: 120, color: Colors.grey),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Map selection is required to continue", 
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
+                      
+                      const SizedBox(height: 20),
+
+                      Form(
+                        key: formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: addressFields.map((field) => Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: field,
+                            )).toList(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 100),
+                    ] else ...[
+                      const SizedBox(height: 40),
+                      const Icon(Icons.map_outlined, size: 120, color: Colors.grey),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Map selection is required to continue", 
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],

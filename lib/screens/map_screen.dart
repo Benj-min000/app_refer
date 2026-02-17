@@ -82,6 +82,7 @@ class _MapScreenState extends State<MapScreen> {
   void _reverseGeocode(LatLng location) async {
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final langCode = localeProvider.locale.languageCode;
+    
     try {      
       final result = await LocationService.getUserLocationAddressFromGoogle(
         location.latitude, 
@@ -182,7 +183,7 @@ class _MapScreenState extends State<MapScreen> {
                         itemCount: _suggestions.length,
                         separatorBuilder: (context, index) => Divider(
                           height: 1, 
-                          indent: 50, // Starts the line after the icon for a cleaner look
+                          indent: 50, 
                           color: Colors.grey.shade200,
                         ),
                         itemBuilder: (context, index) {
