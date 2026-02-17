@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
 
 import "package:user_app/screens/map_screen.dart";
-import 'package:user_app/widgets/error_Dialog.dart';
+import 'package:user_app/widgets/error_dialog.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 // Language change
 import 'package:user_app/l10n/app_localizations.dart';
@@ -31,6 +32,14 @@ Future<void> main() async {
 
   // Initialize Stripe
   Stripe.publishableKey = "pk_test_51QzJ2DEEJccZQYudjQBnQQRxok2UrcXMsjgKQ0BLvqCr5yQI6xtzLrdfmenrIv8zxUcn51Z2muxyKHSlgsmswkgx004DjT0jnR";
+
+  // This needs to be here so that the user can login 
+  // After release change it to AndroidProvider.playIntegrity
+  // MarcinDebugToken: 3770756b-47ff-40fc-b3ab-5dd0d0608ea6
+  await FirebaseAppCheck.instance.activate(
+    providerAndroid: AndroidDebugProvider(),
+    providerApple: AppleDebugProvider(),
+  );
 
   // Load Saved Locale
   LocaleProvider localeProvider = LocaleProvider();

@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
-import 'package:user_app/widgets/error_Dialog.dart';
+import 'package:user_app/widgets/error_dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
 import 'package:user_app/extensions/context_translate_ext.dart';
+import 'package:user_app/widgets/custom_password_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,9 +35,13 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final authResult = await firebaseAuth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        password: _passwordController.text,
       );
       currentUser = authResult.user;
+
+      if (currentUser != null) {
+        await readDataAndSetDataLocally(currentUser);
+      }
 
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -45,15 +50,15 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (_) => ErrorDialog(message: error.message ?? context.t.errorLoginFailed),
       );
-    }
-
-    if (currentUser != null) {
-      await readDataAndSetDataLocally(currentUser);
-    }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context);
+    }    
   }
 
   Future<void> formValidation() async {
-    if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
+    print("$_passwordController.text");
+    if (_formKey.currentState!.validate()) {
       await loginNow();
     } else {
       showDialog(
@@ -166,11 +171,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           isObsecure: false,
                         ),
 
-                        CustomTextField(
-                          data: Icons.lock,
+                        CustomPasswordField(
                           controller: _passwordController,
-                          hintText: context.t.hintPassword,
-                          isObsecure: true,
+                          label: context.t.hintPassword,
+                          isRequired: true,
+                          isConfirmation: true,
                         ),
 
                         const SizedBox(height: 10),

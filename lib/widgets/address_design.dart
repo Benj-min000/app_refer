@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
-import 'package:user_app/screens/place_order_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/models/address.dart';
 
@@ -36,12 +35,12 @@ class _AddressDesignState extends State<AddressDesign> {
   late Future<String> _translationFuture;
 
   void _selectAddress(AddressChanger addressProvider) {
+    Map<String, dynamic> addressData = widget.model?.toJson() ?? {};
     if (widget.isCurrentLocationCard) {
       // The current GPS location
-      addressProvider.displayResult(widget.value!, address: widget.model?.toJson() ?? {});
+      addressProvider.displayResult(widget.value!, address: addressData);
     } else {
       // The saved addresses
-      Map<String, dynamic> addressData = widget.model?.toJson() ?? {};
       addressProvider.displayResult(
         widget.value!,
         address: addressData,

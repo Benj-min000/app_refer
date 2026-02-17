@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:user_app/widgets/restaurant_card.dart';
@@ -8,7 +7,6 @@ import 'package:user_app/Home/HomeLargeItems.dart';
 
 import 'package:user_app/Home/HomePageItems.dart';
 
-import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 
@@ -16,13 +14,11 @@ import 'package:user_app/extensions/context_translate_ext.dart';
 
 import 'package:user_app/Home/home_tabs.dart';
 
-import 'package:user_app/screens/address_screen.dart';
-import 'package:user_app/assistant_methods/address_changer.dart';
-import "package:user_app/services/translator_service.dart";
 import 'package:user_app/models/home_page_items.dart';
 
 import 'package:user_app/screens/search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:user_app/widgets/address_header.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -36,24 +32,12 @@ class _DiningPagePageState extends State<Home> {
 
   int _selectedTabIndex = 0;
   bool _showAllCategories = false;
-
-  String _location = "";
-  bool _showFullAddress = false;
   
   Locale? _lastLocale;
   
-  int? _lastAddressIndex;
-
-  Timer? _refreshTimer;
-
   @override
   void initState() {
     super.initState();
-    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      if (mounted) {
-        _updateAddress();
-      }
-    });
   }
 
   @override
@@ -62,57 +46,14 @@ class _DiningPagePageState extends State<Home> {
     // Listening for changing the language
     final localeProvider = Provider.of<LocaleProvider>(context);
 
-    // Listening for chaning the address
-    final addressProvider = Provider.of<AddressChanger>(context);
-
     // Updating the address
-    if (_lastLocale != localeProvider.locale || 
-      _lastAddressIndex != addressProvider.count) {
-    
+    if (_lastLocale != localeProvider.locale) {
       _lastLocale = localeProvider.locale;
-      _lastAddressIndex = addressProvider.count;
-
-      _updateAddress();
-    }
-  }
-
-  void _updateAddress() async {
-    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
-    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-    final languageCode = localeProvider.locale.languageCode;
-
-    Map<String, dynamic> dataToProcess;
-
-    if (addressProvider.count >= 0) {
-      dataToProcess = addressProvider.selectedAddress;
-    } else {
-      if (mounted) setState(() => _location = context.t.findingLocalization);
-    
-      try {
-        final dataToProcess = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
-        if (mounted) {
-          setState(() {
-            _location = dataToProcess['fullAddress'];
-          });
-        }
-      } catch (e) {
-        if (mounted) setState(() => _location = context.t.errorAddressNotFound);
-      }
-      return;
-    }
-
-    String finalAddress = await TranslationService.formatAndTranslateAddress(dataToProcess, languageCode);
-    
-    if (mounted) {
-      setState(() {
-        _location = finalAddress;
-      });
     }
   }
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -165,57 +106,7 @@ class _DiningPagePageState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Material(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => AddressScreen()));
-                    },
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.location_on, 
-                          color: Colors.white, 
-                          size: 32,
-                        ),
-                        
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showFullAddress = !_showFullAddress;
-                              });
-                            },
-                            child: Text(
-                              _location,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: _showFullAddress ? null : 1,
-                              overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => setState(() => _showFullAddress = !_showFullAddress),
-                          child: Icon(
-                            _showFullAddress ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                const AddressHeader(),
 
                 const SizedBox(height: 16),
 

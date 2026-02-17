@@ -23,30 +23,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   void _onBottomNavTap(int index) {
     if (index == _currentPageIndex) return;
-    
-    setState(() {
-      _currentPageIndex = index;
-    });
+    setState(() => _currentPageIndex = index);
 
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-        break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const SearchScreen(initialText: '')),
-        );
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-        );
-        break;
+    final Map<int, Widget> routes = {
+      0: const HomeScreen(),
+      2: const SearchScreen(initialText: ''),
+      3: const FavoritesScreen(),
+    };
+
+    if (routes.containsKey(index)) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => routes[index]!),
+      );
     }
   }
 
@@ -93,10 +82,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
         
         allItems.addAll(snapshot.docs);
       } catch (e) {
-        print("Error fetching items from menu $menuID: $e");
+        debugPrint("Error fetching items from menu $menuID: $e");
       }
     }
-    print(allItems);
     return allItems;
   }
 

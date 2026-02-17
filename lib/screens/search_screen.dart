@@ -136,7 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
     filters.add('price:${_currentPriceRange.start.round()} TO ${_currentPriceRange.end.round()}');
     
     String finalFilter = filters.join(' AND ');
-    print("Generated Filter String: $finalFilter");
+    debugPrint("Generated Filter String: $finalFilter");
     return filters.join(' AND ');
   }
 
@@ -176,32 +176,19 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onBottomNavTap(int index) {
     if (index == _currentPageIndex) return;
-    
-    setState(() {
-      _currentPageIndex = index;
-    });
+    setState(() => _currentPageIndex = index);
 
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-        break;
-      case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const OrdersScreen()),
-        );
-        break;
-      case 2:
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-        );
-        break;
+    final Map<int, Widget> routes = {
+      0: const HomeScreen(),
+      1: const OrdersScreen(),
+      3: const FavoritesScreen(),
+    };
+
+    if (routes.containsKey(index)) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => routes[index]!),
+      );
     }
   }
 
@@ -427,7 +414,7 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (context, index) {
         final product = _products[index];
         // Only for debug
-        print('Building item $index: ${product.title} | \$${product.price}');
+        debugPrint('Building item $index: ${product.title} | \$${product.price}');
         
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -451,7 +438,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     errorBuilder: (context, error, stackTrace) {
                       // Error when getting the image
-                      print('Image error for ${product.title}: $error');
+                      debugPrint('Image error for ${product.title}: $error');
                       return Container(
                         width: 80,
                         height: 80,

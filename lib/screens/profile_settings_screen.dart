@@ -5,7 +5,7 @@ import 'package:user_app/widgets/custom_text_field.dart';
 import 'package:user_app/screens/address_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:user_app/widgets/error_Dialog.dart';
+import 'package:user_app/widgets/error_dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
 import 'package:phone_form_field/phone_form_field.dart';

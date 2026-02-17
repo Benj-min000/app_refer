@@ -12,7 +12,7 @@ class TotalAmount extends ChangeNotifier {
   void setAmounts(double total, double original, double savings) {
     if (_totalAmount == total && 
         _originalAmount == original && 
-        _totalSavings == savings) return;
+        _totalSavings == savings) { return; }
 
     _totalAmount = total;
     _originalAmount = original;
@@ -23,7 +23,6 @@ class TotalAmount extends ChangeNotifier {
     });
   }
 
-  @override
   void reset() {
     _totalAmount = 0;
     _originalAmount = 0;

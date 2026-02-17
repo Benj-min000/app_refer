@@ -18,34 +18,23 @@ class _FavoriteScreenState extends State<FavoritesScreen> {
   
   void _onBottomNavTap(int index) {
     if (index == _currentPageIndex) return;
-    
-    setState(() {
-      _currentPageIndex = index;
-    });
+    setState(() => _currentPageIndex = index);
 
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-        break;
-      case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const OrdersScreen()),
-        );
-        break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const SearchScreen(initialText: '')),
-        );
-        break;
-      case 3:
-        break;
+    final Map<int, Widget> routes = {
+      0: const HomeScreen(),
+      1: const OrdersScreen(),
+      2: const SearchScreen(initialText: ''),
+    };
+
+    if (routes.containsKey(index)) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => routes[index]!),
+      );
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {

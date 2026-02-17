@@ -1,3 +1,4 @@
+import "package:flutter/material.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:user_app/global/global.dart';
@@ -52,7 +53,7 @@ Future<void> toggleFavorite(String restaurantID, String menuID, String itemID) a
       Fluttertoast.showToast(msg: "Added to favorites");
     }
   } catch (e) {
-    print("Error toggling favorite: $e");
+    debugPrint("Error toggling favorite: $e");
     Fluttertoast.showToast(msg: "Error updating favorites");
   }
 }
