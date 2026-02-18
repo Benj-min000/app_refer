@@ -7,52 +7,8 @@ import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/screens/orders_screen.dart';
 import "package:user_app/screens/favorites_screen.dart";
 import 'package:user_app/widgets/unified_bottom_bar.dart';
+import 'package:user_app/models/product.dart';
 
-class Product {
-  final String title;
-  final String productType;
-  final String imageUrl;
-  final double price;
-  final List<String> tags;
-  final List<String> colors;
-
-  Product({
-    required this.title, 
-    required this.productType,
-    required this.imageUrl,
-    required this.price,
-    required this.tags,
-    required this.colors,
-  });
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    String image = '';
-    if (json['showcase_image'] != null) {
-      image = json['showcase_image'] as String;
-    } else if (json['images'] != null && (json['images'] as List).isNotEmpty) {
-      image = (json['images'] as List)[0] as String;
-    }
-    
-    List<String> tagList = [];
-    if (json['tags'] != null && json['tags'] is List) {
-      tagList = (json['tags'] as List).map((e) => e.toString()).toList();
-    }
-    
-    List<String> colorList = [];
-    if (json['color'] != null && json['color'] is List) {
-      colorList = (json['color'] as List).map((e) => e.toString()).toList();
-    }
-    
-    return Product(
-      title: json['title'] as String? ?? 'Unknown Product',
-      productType: json['product_type'] as String? ?? 'Unknown',
-      imageUrl: image,
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      tags: tagList,
-      colors: colorList,
-    );
-  }
-}
 
 class SearchScreen extends StatefulWidget {
   final String initialText;
@@ -68,13 +24,10 @@ class _SearchScreenState extends State<SearchScreen> {
   static const String _algoliaIndexName = String.fromEnvironment("ALGOLIA_INDEX_NAME");
 
   int _currentPageIndex = 2;
-
   late TextEditingController _searchController;
+  late final SearchClient _client;
 
   int _selectedTabIndex = 0;
-  
-  // Algolia client
-  late final SearchClient _client;
   
   List<Product> _products = [];
   bool _isLoading = false;
@@ -84,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   final List<String> _selectedCategories = [];
   RangeValues _currentPriceRange = const RangeValues(0, 500);
-  final List<String> _availableCategories = ['Tops', 'Pants', 'Shoes', 'Accessories'];
+  List<String> _availableCategories = [];
 
   String get appId {
     if (_algoliaAppId.isEmpty) {
@@ -117,19 +70,21 @@ class _SearchScreenState extends State<SearchScreen> {
       TextPosition(offset: _searchController.text.length),
     );
     
-    _client = SearchClient(
-      appId: appId,
-      apiKey: apiKey,
-    );
-    
+    _client = SearchClient(appId: appId, apiKey: apiKey);
     _performSearch(widget.initialText);
   }
 
   String _buildFilterString() {
     List<String> filters = [];
 
+    switch(_selectedTabIndex) {
+      case 1: filters.add('type:Restaurant'); break;
+      case 2: filters.add('type:Food'); break;
+      case 3: filters.add('type:Store'); break;
+    }
+
     if (_selectedCategories.isNotEmpty) {
-      final catFilter = _selectedCategories.map((c) => 'product_type:"$c"').join(' OR ');
+      final catFilter = _selectedCategories.map((c) => 'tags:"$c"').join(' OR ');
       filters.add('($catFilter)');
     }
 
@@ -138,6 +93,14 @@ class _SearchScreenState extends State<SearchScreen> {
     String finalFilter = filters.join(' AND ');
     debugPrint("Generated Filter String: $finalFilter");
     return filters.join(' AND ');
+  }
+
+  void _clearAllFilters() {
+    setState(() {
+      _selectedCategories.clear();
+      _currentPriceRange = const RangeValues(0, 500);
+    });
+    _performSearch(_searchController.text);
   }
 
   Future<void> _performSearch(String query) async {
@@ -152,6 +115,7 @@ class _SearchScreenState extends State<SearchScreen> {
         query: query,
         hitsPerPage: 20,
         filters: _buildFilterString(),
+        facets: ['tags'],
       );
 
       final response = await _client.searchIndex(request: searchQuery);
@@ -160,11 +124,20 @@ class _SearchScreenState extends State<SearchScreen> {
           .map((hit) => Product.fromJson(hit))
           .toList();
 
+      List<String> dynamicTags = [];
+      if (response.facets != null && response.facets!['tags'] != null) {
+        dynamicTags = response.facets!['tags']!.keys.toList();
+      }
+
       setState(() {
         _products = products;
         _totalHits = response.nbHits ?? 0;
         _processingTime = response.processingTimeMS ?? 0;
         _isLoading = false;
+
+        if (_availableCategories.isEmpty || _selectedCategories.isEmpty) {
+          _availableCategories = dynamicTags;
+        }
       });
     } catch (e) {
       setState(() {
@@ -252,6 +225,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ],
                 ),
                 onPressed: () {
+                  
                 },
               ),
             ],
@@ -327,7 +301,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: EdgeInsets.zero, 
                 tabs: searchTabs.map((tabs) => Tab(text: tabs.label)).toList(),
                 onTap: (index) {
-                  setState(() => _selectedTabIndex = index);
+                  setState(() {
+                    _selectedTabIndex = index;
+                  });
+                  _performSearch(_searchController.text);
                 },
               ),
 
@@ -474,7 +451,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               const SizedBox(height: 4),
               Text(
-                product.productType.toUpperCase(),
+                product.description.toUpperCase(),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
@@ -492,16 +469,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       color: Colors.green,
                     ),
                   ),
-                  if (product.colors.isNotEmpty) ...[
-                    const SizedBox(width: 8),
-                    Text(
-                      '• ${product.colors.join(", ")}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
                 ],
               ),
               if (product.tags.isNotEmpty) ...[
@@ -545,64 +512,85 @@ class _SearchScreenState extends State<SearchScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text("Filters", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  const Text("Categories", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Wrap(
-                    spacing: 8,
-                    children: _availableCategories.map((cat) {
-                      final isSelected = _selectedCategories.contains(cat);
-                      return FilterChip(
-                        label: Text(cat),
-                        selected: isSelected,
-                        onSelected: (val) {
-                          setModalState(() {
-                            val ? _selectedCategories.add(cat) : _selectedCategories.remove(cat);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  Text("Price Range: \$${_currentPriceRange.start.round()} - \$${_currentPriceRange.end.round()}",
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  RangeSlider(
-                    values: _currentPriceRange,
-                    min: 0,
-                    max: 500,
-                    divisions: 10,
-                    onChanged: (values) {
-                      setModalState(() => _currentPriceRange = values);
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      _clearAllFilters();
+                      Navigator.pop(context);
                     },
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _performSearch(_searchController.text);
-                      },
-                      child: const Text("Apply Filters", style: TextStyle(color: Colors.white)),
+                    icon: const Icon(Icons.refresh, size: 18, color: Colors.redAccent),
+                    label: const Text(
+                      "Reset All",
+                      style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[50],
+                      foregroundColor: Colors.redAccent,
+                      elevation: 0,
+                      side: const BorderSide(color: Colors.redAccent, width: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 10),
                 ],
               ),
-            );
-          },
-        );
-      },
+              const SizedBox(height: 20),
+              const Text("Categories", style: TextStyle(fontWeight: FontWeight.bold)),
+              Wrap(
+                spacing: 8,
+                children: _availableCategories.map((cat) {
+                  final isSelected = _selectedCategories.contains(cat);
+                  return FilterChip(
+                    label: Text(cat),
+                    selected: isSelected,
+                    onSelected: (val) {
+                      setModalState(() {
+                        val ? _selectedCategories.add(cat) : _selectedCategories.remove(cat);
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              Text("Price Range: \$${_currentPriceRange.start.round()} - \$${_currentPriceRange.end.round()}",
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              RangeSlider(
+                values: _currentPriceRange,
+                min: 0,
+                max: 500,
+                divisions: 10,
+                onChanged: (values) {
+                  setModalState(() => _currentPriceRange = values);
+                },
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _performSearch(_searchController.text);
+                  },
+                  child: const Text("Apply Filters", style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
