@@ -11,10 +11,7 @@ Before running this project, ensure you have the following installed:
 - [Flutter](https://docs.flutter.dev/get-started/install) — managed via FVM (do not install a global Flutter version manually)
 - [FVM (Flutter Version Manager)](https://fvm.app/documentation/getting-started/installation)
 - [Android Studio](https://developer.android.com/studio) with the Android SDK configured
-- [Xcode](https://developer.apple.com/xcode/) (macOS only, required for iOS builds)
-- [Firebase CLI](https://firebase.google.com/docs/cli#install_the_firebase_cli)
-- [FlutterFire CLI](https://firebase.flutter.dev/docs/cli/): `dart pub global activate flutterfire_cli`
-
+- 
 ---
 
 ## Setup
