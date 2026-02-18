@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
-// Language change
 import 'package:user_app/l10n/app_localizations.dart';
 import 'package:user_app/models/language.dart';
 
@@ -74,6 +73,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.blue,
         primarySwatch: Colors.lightBlue,
+        bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.white),
       ),
 
       locale: localeProvider.locale,

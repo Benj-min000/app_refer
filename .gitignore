@@ -26,8 +26,6 @@
 .pub/
 /build/
 
-# FVM: Ignore the SDK itself, but KEEP .fvmrc (don't add it here)
-
 # -------------------------------------------------------------------
 # Android Specific (Optimized for Gradle KTS)
 # -------------------------------------------------------------------
