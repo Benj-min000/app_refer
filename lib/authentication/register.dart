@@ -60,15 +60,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> formValidation() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
     if (imageXFile == null) {
       showDialog(
         context: context, 
         builder: (_) => ErrorDialog(message: context.t.errorSelectImage)
       );
+      return;
+    }
+
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
