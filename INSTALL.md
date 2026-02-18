@@ -27,7 +27,12 @@ cd app_refer
 git checkout text/marcin
 ```
 
-### 2. Install the correct Flutter version via FVM
+### 2. Install FVM
+```bash
+dart pub global activate fvm
+```
+
+### 3. Install the correct Flutter version via FVM
 
 ```bash
 fvm install
@@ -35,13 +40,13 @@ fvm install
 
 This reads the `.fvmrc` file and installs Flutter **3.38.9** automatically.
 
-### 3. Install dependencies
+### 4. Install dependencies
 
 ```bash
 fvm flutter pub get
 ```
 
-### 4. Add required config files
+### 5. Add required config files
 
 These files are excluded from version control for security reasons. Obtain them from the project owner and place them as follows:
 
@@ -55,7 +60,7 @@ These files are excluded from version control for security reasons. Obtain them 
 > flutterfire configure
 > ```
 
-### 5. Configure Android signing (release builds only)
+### 6. Configure Android signing (release builds only)
 
 For debug builds this step can be skipped. For release, obtain `key.properties` and the keystore file from the project owner and place `key.properties` at `android/key.properties`.
 
