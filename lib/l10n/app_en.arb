@@ -1,15 +1,335 @@
 {
+  "@@locale": "en",
+
+  "errorAddressNotFound": "Address not Found",
+  "@errorAddressNotFound": {},
+
+  "unknownLocation": "Unknown Location",
+  "@unknownLocation": {},
+
+  "searchAddress": "Search address...",
+  "@searchAddress": {},
+
+  "errorReverseGeo": "Error reverse geocoding: {error}",
+  "@errorReverseGeo": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+
+  "grandLocation": "Please grand the App the locdation permission...",
+  "@grandLocation": {},
+
+  "goBack": "Go Back",
+  "@goBack": {},
+
+  "suggestedMatch": "Suggested match",
+  "@suggestedMatch": {},
+
+  "confirmContinue": "Confirm & Continue",
+  "@confirmContinue": {},
+
+  "refreshLocation": "Refresh Location",
+  "@refreshLocation": {},
+
+  "hintSearch": "Find it! Delicious Dishes",
+  "@hintSearch": {"description": "Placeholder text for the search bar"},
+
+  "tabFoodDelivery": "Food Delivery",
+  "@tabFoodDelivery": {
+    "description": "Tab label for food delivery section"
+  },
+  
+  "tabPickup": "Pickup",
+  "@tabPickup": {
+    "description": "Tab label for pickup orders section"
+  },
+  
+  "tabGroceryShopping": "Grocery",
+  "@tabGroceryShopping": {
+    "description": "Tab label for grocery shopping section"
+  },
+  
+  "tabGifting": "Gifting",
+  "@tabGifting": {
+    "description": "Tab label for gift shopping section"
+  },
+  
+  "tabBenefits": "Benefits",
+  "@tabBenefits": {
+    "description": "Tab label for benefits and rewards section"
+  },
+  
+  "categoryDiscounts": "Discounts",
+  "@categoryDiscounts": {
+    "description": "Category for discounted items"
+  },
+  
+  "categoryPork": "Pork",
+  "@categoryPork": {
+    "description": "Category for pork dishes"
+  },
+  
+  "categoryTonkatsuSashimi": "Tonkatsu & Sashimi",
+  "@categoryTonkatsuSashimi": {
+    "description": "Category for Japanese tonkatsu and sashimi"
+  },
+  
+  "categoryPizza": "Pizza",
+  "@categoryPizza": {
+    "description": "Category for pizza"
+  },
+  
+  "categoryStew": "Stew",
+  "@categoryStew": {
+    "description": "Category for stew dishes"
+  },
+  
+  "categoryChinese": "Chinese",
+  "@categoryChinese": {
+    "description": "Category for Chinese cuisine"
+  },
+  
+  "categoryChicken": "Chicken",
+  "@categoryChicken": {
+    "description": "Category for chicken dishes"
+  },
+  
+  "categoryKorean": "Korean",
+  "@categoryKorean": {
+    "description": "Category for Korean cuisine"
+  },
+  
+  "categoryOneBowl": "One Bowl",
+  "@categoryOneBowl": {
+    "description": "Category for single bowl meals"
+  },
+  
+  "categoryPichupDiscount": "Pickup Discount",
+  "@categoryPichupDiscount": {
+    "description": "Category for pickup order discounts"
+  },
+  
+  "categoryFastFood": "Fast Food",
+  "@categoryFastFood": {
+    "description": "Category for fast food restaurants"
+  },
+  
+  "categoryCoffee": "Coffee",
+  "@categoryCoffee": {
+    "description": "Category for coffee shops"
+  },
+  
+  "categoryBakery": "Bakery",
+  "@categoryBakery": {
+    "description": "Category for bakery items"
+  },
+  
+  "categoryLunch": "Lunch",
+  "@categoryLunch": {
+    "description": "Category for lunch meals"
+  },
+  
+  "categoryFreshProduce": "Fresh Produce",
+  "@categoryFreshProduce": {
+    "description": "Category for fresh fruits and vegetables"
+  },
+  
+  "categoryDairyEggs": "Dairy & Eggs",
+  "@categoryDairyEggs": {
+    "description": "Category for dairy products and eggs"
+  },
+  
+  "categoryMeat": "Meat",
+  "@categoryMeat": {
+    "description": "Category for meat products"
+  },
+  
+  "categoryBeverages": "Beverages",
+  "@categoryBeverages": {
+    "description": "Category for drinks and beverages"
+  },
+  
+  "categoryFrozen": "Frozen",
+  "@categoryFrozen": {
+    "description": "Category for frozen foods"
+  },
+  
+  "categorySnacks": "Snacks",
+  "@categorySnacks": {
+    "description": "Category for snack foods"
+  },
+  
+  "categoryHousehold": "Household",
+  "@categoryHousehold": {
+    "description": "Category for household items and supplies"
+  },
+  
+  "categoryCakes": "Cakes",
+  "@categoryCakes": {
+    "description": "Category for cakes and pastries"
+  },
+  
+  "categoryFlowers": "Flowers",
+  "@categoryFlowers": {
+    "description": "Category for flower arrangements"
+  },
+  
+  "categoryGiftBoxes": "Gift Boxes",
+  "@categoryGiftBoxes": {
+    "description": "Category for pre-made gift boxes"
+  },
+  
+  "categoryPartySupplies": "Party Supplies",
+  "@categoryPartySupplies": {
+    "description": "Category for party decorations and supplies"
+  },
+  
+  "categoryGiftCards": "Gift Cards",
+  "@categoryGiftCards": {
+    "description": "Category for digital and physical gift cards"
+  },
+  
+  "categorySpecialOccasions": "Special Occasions",
+  "@categorySpecialOccasions": {
+    "description": "Category for special occasion gifts"
+  },
+  
+  "categoryDailyDeals": "Daily Deals",
+  "@categoryDailyDeals": {
+    "description": "Category for daily special offers"
+  },
+  
+  "categoryLoyaltyRewards": "Loyalty Rewards",
+  "@categoryLoyaltyRewards": {
+    "description": "Category for loyalty program rewards"
+  },
+  
+  "categoryCoupons": "Coupons",
+  "@categoryCoupons": {
+    "description": "Category for available coupons"
+  },
+  
+  "categoryNewOffers": "New Offers",
+  "@categoryNewOffers": {
+    "description": "Category for newly added offers"
+  },
+  
+  "categoryExclusiveDeals": "Exclusive Deals",
+  "@categoryExclusiveDeals": {
+    "description": "Category for exclusive member deals"
+  },
+
+  "seeMore": "See more in {tab}",
+  "@seeMore": {
+    "placeholders": {
+      "tab": {}
+    }
+  },
+
+  "findingLocalization": "Finding your localization...",
+  "@findingLocalization": {"description": "Text shown while app detects location"},
+
+  "changeLanguage": "Language",
+  "@changeLanguage": {"description": ""},
+
+  "hintName": "Name",
+  "@hintName": {"description": "Placeholder for name input field"},
+
+  "hintEmail": "Email",
+  "@hintEmail": {"description": "Placeholder for email input field"},
+
+  "hintPassword": "Password",
+  "@hintPassword": {"description": "Placeholder for password input field"},
+
+  "hintConfPassword": "Confirm Password",
+  "@hintConfPassword": {"description": "Placeholder for confirm password input field"},
+
+  "login": "Login",
+  "@login": {"description": "Button text for login"},
+
+  "register": "Register",
+  "@register": {"description": "Button text for register"},
+
+  "signUp": "Sign Up",
+  "@signUp": {"description": "Button text for signing up"},
+
+  "registeringAccount": "Registering Account...",
+  "@registeringAccount": {"description": "Status text while registering account"},
+
+  "checkingCredentials": "Checking Credentials...",
+  "@checkingCredentials": {"description": "Status text while checking login credentials"},
+
+  "errorEnterEmailOrPassword": "Please Enter Email or Password",
+  "@errorEnterEmailOrPassword": {"description": "Error when email or password is missing"},
+
+  "errorEnterRegInfo": "Please Enter required information for Registration",
+  "@errorEnterRegInfo": {"description": "Error when registration info is incomplete"},
+
+  "errorSelectImage": "Please Select an Image",
+  "@errorSelectImage": {"description": "Error when no image is selected"},
+
+  "errorNoMatchPasswords": "Passwords don't match!",
+  "@errorNoMatchPasswords": {"description": "Error when passwords do not match"},
+
+  "errorLoginFailed": "Login Failed",
+  "@errorLoginFailed": {"description": "Error when login fails"},
+
+  "errorNoRecordFound": "No record found",
+  "@errorNoRecordFound": {"description": "Error when no database record is found"},
+
+  "blockedAccountMessage": "Admin has blocked your account\n\nMail to: admin@gmail.com",
+  "@blockedAccountMessage": {"description": "Message shown when account is blocked"},
+
+  "networkUnavailable": "Network unavailable. Please try again",
+  "@networkUnavailable": {"description": "Error when network is unavailable"},
+
+  "errorFetchingUserData": "Error fetching user data",
+  "@errorFetchingUserData": {"description": "Error when fetching user data fails"},
+
+  "storageError": "Storage Error: {error}",
+  "@storageError": {
+    "description": "Error dialog when storage fails",
+    "placeholders": {"error": {}}
+  },
+
+
+  
   "helloWorld": "Hello World!",
-  "changeLanguage": "Change Language",
+  "@helloWorld": {"description": "Generic hello world text"},
+
   "welcomeMessage": "Welcome to our app!",
+  "@welcomeMessage": {"description": "Welcome message on home screen"},
+
+
+
   "payment": "Payment",
+  "@payment": {"description": "Label for payment section"},
+
   "checkout": "Proceed to Checkout",
+  "@checkout": {"description": "Button label for checkout"},
+
   "totalAmount": "Total Amount",
+  "@totalAmount": {"description": "Label for total amount"},
+
   "orderSummary": "Order Summary",
+  "@orderSummary": {"description": "Label for order summary section"},
+
   "settings": "Settings",
+  "@settings": {"description": "Label for settings page"},
+
   "offers": "Offers",
+  "@offers": {"description": "Label for offers section"},
+
   "whatsOnYourMind": "What's on your mind?",
+  "@whatsOnYourMind": {"description": "Section heading for user thoughts or suggestions"},
+
   "bookDining": "Book Dining",
+  "@bookDining": {"description": "Button to book dining / table"},
+
   "softDrinks": "Soft Drinks",
-  "deliveryTime": "45-50 mins"
+  "@softDrinks": {"description": "Label for soft drinks"},
+
+  "deliveryTime": "45-50 mins",
+  "@deliveryTime": {"description": "Estimated delivery time"}
 }

@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
-import 'package:user_app/widgets/error_Dialog.dart';
+import 'package:user_app/widgets/error_dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
-import 'package:user_app/mainScreens/home_screen.dart';
-import '../widgets/custom_text_field.dart';
+import 'package:user_app/screens/home_screen.dart';
+import 'package:user_app/widgets/custom_text_field.dart';
+import 'package:user_app/extensions/context_translate_ext.dart';
+import 'package:user_app/widgets/custom_password_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,151 +20,191 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  formValidation() {
-    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-// login
-      loginNow();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> loginNow() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => LoadingDialog(message: context.t.checkingCredentials),
+    );
+
+    User? currentUser;
+
+    try {
+      final authResult = await firebaseAuth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      currentUser = authResult.user;
+
+      if (currentUser != null) {
+        await readDataAndSetDataLocally(currentUser);
+      }
+
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      Navigator.pop(context); 
+      showDialog(
+        context: context,
+        builder: (_) => ErrorDialog(message: error.message ?? context.t.errorLoginFailed),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context);
+    }    
+  }
+
+  Future<void> formValidation() async {
+    print("$_passwordController.text");
+    if (_formKey.currentState!.validate()) {
+      await loginNow();
     } else {
       showDialog(
-          context: context,
-          builder: (context) {
-            return const ErrorDialog(
-              message: "Please Enter Email or Password",
-            );
-          });
-    }
-  }
-
-  loginNow() async {
-    showDialog(
         context: context,
-        builder: (c) {
-          return const LoadingDialog(
-            message: 'Checking Creadential',
-          );
-        });
-    User? currentUser;
-    await firebaseAuth
-        .signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    )
-        .then((auth) {
-      currentUser = auth.user!;
-    }).catchError((error) {
-      Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-              message: error.message.toString(),
-            );
-          });
-    });
-    if (currentUser != null) {
-      readDataAndSetDataLocally(currentUser!);
+        builder: (_) => ErrorDialog(message: context.t.errorEnterEmailOrPassword),
+      );
     }
   }
 
-  Future readDataAndSetDataLocally(User currentUser) async {
-    await FirebaseFirestore.instance
+  Future<void> readDataAndSetDataLocally(User currentUser) async {
+    try {
+      final docRef = FirebaseFirestore.instance
         .collection("users")
-        .doc(currentUser.uid)
-        .get()
-        .then((snapshot) async {
-      if (snapshot.exists) {
-        if (snapshot.data()!["status"] == "Approved") {
-          await sharedPreferences!.setString("uid", currentUser.uid);
-          await sharedPreferences!
-              .setString("email", snapshot.data()!["email"]);
-          await sharedPreferences!.setString("name", snapshot.data()!["name"]);
-          await sharedPreferences!
-              .setString("photo", snapshot.data()!["photo"]);
+        .doc(currentUser.uid);
 
-          List<String> userCartList =
-              snapshot.data()!["userCart"].cast<String>();
-          await sharedPreferences!.setStringList("userCart", userCartList);
+      final snapshot = await docRef.get(const GetOptions(source: Source.serverAndCache));
 
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context);
-          // ignore: use_build_context_synchronously
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()));
-        } else {
-          firebaseAuth.signOut();
-          Navigator.pop(context);
-          Fluttertoast.showToast(
-              msg:
-                  "Admin has Blocked your account \n\n Mail to:admin@gmail.com");
-        }
-      } else {
+      if (!mounted) return;
+      Navigator.pop(context);
+
+      if(!snapshot.exists) {
         firebaseAuth.signOut();
-        Navigator.pop(context);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const AuthScreen()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AuthScreen()),
+        );
         showDialog(
-            context: context,
-            builder: (context) {
-              return const ErrorDialog(
-                message: "no record found",
-              );
-            });
+          context: context,
+          builder: (_) => ErrorDialog(message: context.t.errorNoRecordFound),
+        );
+        return;
       }
-    });
+
+      final data = snapshot.data()!;
+      if (data["status"] != "Approved") {
+        await firebaseAuth.signOut();
+        if(!mounted) return;
+        Fluttertoast.showToast(
+          msg: context.t.blockedAccountMessage,
+        );
+        return;
+      }
+
+      await sharedPreferences!.setString("uid", currentUser.uid);
+
+      await saveUserPref<String>("email", data["email"]);
+      await saveUserPref<String>("name", data["name"]);
+      await saveUserPref<String>("phone", data["phone"]);
+      await saveUserPref<String>("photo", data["photo"]);
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+      
+    } on FirebaseException catch(e) {
+      if (!mounted) return;
+      Navigator.pop(context);
+
+      if (e.code == 'unavailable') {
+        Fluttertoast.showToast(msg: context.t.networkUnavailable);
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(message: e.message ?? context.t.errorFetchingUserData),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Image.asset(
-                'assets/images/login.png',
-                height: 270,
-              ),
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
             ),
-          ),
-          Form(
-            key: _formKey,
             child: Column(
               children: [
-                CustomTextField(
-                  data: Icons.email,
-                  controller: emailController,
-                  hintText: 'Email',
-                  isObsecre: false,
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  padding: const EdgeInsets.all(15),
+                  child: Image.asset(
+                    'assets/images/login.png',
+                    height: 270,
+                  ),
                 ),
-                CustomTextField(
-                  data: Icons.lock,
-                  controller: passwordController,
-                  hintText: 'Password',
-                  isObsecre: true,
+
+                Padding(
+                  padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        CustomTextField(
+                          data: Icons.email,
+                          controller: _emailController,
+                          hintText: context.t.hintEmail,
+                          isObsecure: false,
+                        ),
+
+                        CustomPasswordField(
+                          controller: _passwordController,
+                          label: context.t.hintPassword,
+                          isRequired: true,
+                          isConfirmation: true,
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        ElevatedButton(
+                          onPressed: () async {
+                            await formValidation();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pink.shade300,
+                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                          ),
+                          child: Text(
+                            context.t.login,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white, 
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                      ]
+                    ),
+                  )
                 ),
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              formValidation();
-            },
-            style: ElevatedButton.styleFrom(
-                primary: Colors.pink.shade300,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
-            child: const Text(
-              "Login",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

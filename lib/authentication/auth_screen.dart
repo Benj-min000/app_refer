@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:user_app/authentication/login.dart';
 import 'package:user_app/authentication/register.dart';
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -12,6 +11,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -29,29 +29,43 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
-          automaticallyImplyLeading:
-              false, //removes the default back arrow button from screen
+          automaticallyImplyLeading: false, //removes the default back arrow button from screen
           title: const Text(
             'I-Eat',
             style: TextStyle(
                 fontSize: 50, color: Colors.white, fontFamily: "Train"),
           ),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
               Tab(
-                icon: Icon(
+                icon: const Icon(
                   Icons.lock,
                   color: Colors.white,
                 ),
-                text: ('Login'),
+                child: Text(
+                  context.t.login,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+                
               ),
               Tab(
-                icon: Icon(
+                icon: const Icon(
                   Icons.lock,
                   color: Colors.white,
                 ),
-                text: ('Register'),
+                child: Text(
+                  context.t.register,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
               ),
             ],
             indicatorColor: Colors.white38,
@@ -59,11 +73,11 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [Colors.pinkAccent, Colors.red],
+              colors: [Colors.pinkAccent.withValues(alpha: 0.8), Colors.red.withValues(alpha: 0.9)],
             ),
           ),
           child: const TabBarView(children: [

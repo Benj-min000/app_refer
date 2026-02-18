@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
-import 'package:user_app/mainScreens/home_screen.dart';
+import 'package:user_app/screens/home_screen.dart';
 
 class MySplashScreen extends StatefulWidget {
   const MySplashScreen({super.key});
@@ -12,14 +12,14 @@ class MySplashScreen extends StatefulWidget {
 }
 
 class _MySplashScreenState extends State<MySplashScreen> {
-  startTimer() {
+  void startTimer() {
     Timer(const Duration(seconds: 2), () async {
       if (firebaseAuth.currentUser != null) {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       } else {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const AuthScreen()));
+          context, MaterialPageRoute(builder: (context) => const AuthScreen()));
       }
     });
   }
@@ -57,7 +57,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'Daol pocha',  // Fixed typo "Oreder" to "Order"
+                      'Daol pocha',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
@@ -67,7 +67,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
                       ),
                     ),
                     Text(
-                      "Wroclaw number1 delivery app",
+                      "Wroclaw Number #1 Delivery App",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
@@ -80,7 +80,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              const CircularProgressIndicator(  // ✅ Added loading animation
+              const CircularProgressIndicator(
                 color: Colors.white,
               ),
             ],

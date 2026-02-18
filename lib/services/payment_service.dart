@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,9 +26,9 @@ class PaymentService {
       // 3️⃣ Show the payment sheet
       await Stripe.instance.presentPaymentSheet();
 
-      print('✅ Payment successful!');
+      debugPrint('✅ Payment successful!');
     } catch (e) {
-      print('❌ Payment error: $e');
+      debugPrint('❌ Payment error: $e');
     }
   }
 }

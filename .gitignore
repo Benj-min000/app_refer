@@ -1,27 +1,21 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+# -------------------------------------------------------------------
+# IDE & Editor Specific
+# -------------------------------------------------------------------
+# VS Code: Share launch configs/extensions, ignore user-specific state
+.vscode/*
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# IntelliJ related
+# IntelliJ / Android Studio
 *.iml
 *.ipr
 *.iws
 .idea/
+/android/.idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
+# -------------------------------------------------------------------
+# Flutter / Dart / Pub
+# -------------------------------------------------------------------
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -32,16 +26,59 @@ migrate_working_dir/
 .pub/
 /build/
 
-# Symbolication related
-app.*.symbols
+# -------------------------------------------------------------------
+# Android Specific (Optimized for Gradle KTS)
+# -------------------------------------------------------------------
+.gradle/
+**/android/.gradle/
+**/android/local.properties
+**/android/captures/
+**/android/.cxx/
 
-# Obfuscation related
-app.*.map.json
+# Auto-generated Flutter files for Android
+**/android/app/src/main/*/io/flutter/plugins/GeneratedPluginRegistrant.*
 
-# Android Studio will place build artifacts here
+# Build artifacts
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# -------------------------------------------------------------------
+# Secrets, Configs, and Security
+# -------------------------------------------------------------------
+# Firebase & Environment
+**/android/app/google-services.json
+/lib/firebase_options.dart
 .env
 backend/.env
 frontend/.env
+secrets.json
+
+# Signing keys (Never commit these!)
+**/android/key.properties
+**/*.keystore
+**/*.jks
+
+# -------------------------------------------------------------------
+# Miscellaneous / OS Specific
+# -------------------------------------------------------------------
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.buildlog/
+.history
+.svn/
+
+# Local helper scripts
+clean.bat
+run.bat
+build_apk.bat
+
+# Symbolication / Obfuscation
+app.*.symbols
+app.*.map.json
+
+# FVM Version Cache
+.fvm/

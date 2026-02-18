@@ -1,58 +1,83 @@
 class Items {
-  String? menuId;
-  String? sellerUID;
-  String? itemId;
+  String? menuID;
+  String? restaurantID;
+  String? itemID;
   String? title;
-  String? shortInfo;
+  String? info;
   String? publishedDate;
-  String? thumbnailUrl;
-  String? sellerName;
-  String? longDescription;
+  String? imageUrl;
+  String? description;
   String? status;
-  int? price;
+  double? price;
+  double? discount; 
+  List<String>? tags;
+  int? likes;
 
-  Items(
-      {this.menuId,
-      this.sellerUID,
-      this.itemId,
-      this.title,
-      this.shortInfo,
-      this.publishedDate,
-      this.thumbnailUrl,
-      // this.sellerName,
-      this.longDescription,
-      this.status,
-      this.price});
+  Items({
+    this.menuID,
+    this.restaurantID,
+    this.itemID,
+    this.title,
+    this.info,
+    this.publishedDate,
+    this.imageUrl,
+    this.description,
+    this.status,
+    this.price,
+    this.discount,
+    this.tags,
+    this.likes,
+  });
+
+  double get discountedPrice {
+    if (price == null || discount == null || discount == 0) {
+      return price ?? 0.0;
+    }
+    return price! * (1 - discount! / 100);
+  }
+  
+  bool get hasDiscount {
+    return discount != null && discount! > 0;
+  }
+  
+  double get savedAmount {
+    if (price == null || discount == null || discount == 0) {
+      return 0.0;
+    }
+    return price! * (discount! / 100);
+  }
 
   Items.fromJson(Map<String, dynamic> json) {
-    menuId = json['menuId'];
-    sellerUID = json['sellerUID'];
+    menuID = json['menuID'];
+    restaurantID = json['restaurantID'];
+    itemID = json['itemID'];
     title = json['title'];
-    itemId = json['itemId'];
-    shortInfo = json['shortInfo'];
-    // publishedDate = json['publishedDate'];
-    thumbnailUrl = json['thumbnailUrl'];
-
-    // sellerName = json['sellerName'];
-    longDescription = json['longDescription'];
+    info = json['info'];
+    publishedDate = json['publishedDate']?.toString();
+    imageUrl = json['imageUrl'];
+    description = json['description'];
     status = json['status'];
-    price = json['price'];
+    tags =  json['tags'] != null ? List<String>.from(json['tags']) : null;
+    likes = json['likes'] ?? 0;
+    discount = json['discount']?.toDouble();
+    price = json['price']?.toDouble();
   }
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['menuId'] = menuId;
-    data['sellerUID'] = sellerUID;
-    data['title'] = title;
-    data['itemId'] = itemId;
-
-    data['shortInfo'] = shortInfo;
-    data['publishedDate'] = publishedDate;
-    data['thumbnailUrl'] = thumbnailUrl;
-    // data['sellerName']=sellerName;
-    data['longDescription'] = longDescription;
-    data['status'] = status;
-    data['price'] = price;
-
-    return data;
+    return {
+      'menuID': menuID,
+      'restaurantID': restaurantID,
+      'itemID': itemID,
+      'title': title,
+      'info': info,
+      'publishedDate': publishedDate,
+      'imageUrl': imageUrl,
+      'description': description,
+      'status': status,
+      'price': price,
+      'discount': discount,
+      'tags': tags,
+      'likes': likes,
+    };
   }
 }

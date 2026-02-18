@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/mainScreens/home_screen.dart';
 
 class StatusBanner extends StatelessWidget {
   final bool? status;
@@ -25,40 +24,29 @@ class StatusBanner extends StatelessWidget {
           tileMode: TileMode.clamp,
         ),
       ),
-      height: 40,
+      height: 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()));
-            },
-            child: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
           Text(
             orderStatus == "ended"
                 ? "Parcel Delivered $message"
                 : "Order Placed $message",
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.bold
+            ),
           ),
-          const SizedBox(
-            width: 5,
-          ),
+          const SizedBox(width: 12),
           CircleAvatar(
-            radius: 8,
-            backgroundColor: Colors.grey,
+            radius: 12,
+            backgroundColor: Colors.green,
             child: Center(
               child: Icon(
                 iconData,
                 color: Colors.white,
-                size: 14,
+                size: 16,
               ),
             ),
           )

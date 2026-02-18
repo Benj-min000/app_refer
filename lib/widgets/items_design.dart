@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/mainScreens/item_detail_screen.dart';
+import 'package:user_app/screens/item_details_screen.dart';
 import 'package:user_app/models/items.dart';
 
 class ItemsDesignWidget extends StatefulWidget {
-  Items? model;
-  BuildContext? context;
+  final Items? model;
+  final BuildContext? context;
 
-  ItemsDesignWidget({this.model, this.context});
+  const ItemsDesignWidget({super.key, this.model, this.context});
 
   @override
   State<ItemsDesignWidget> createState() => _ItemsDesignWidgetState();
@@ -18,11 +18,11 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget> {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ItemDetailsScreen(
-                      model: widget.model,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (_) => ItemDetailsScreen(model: widget.model),
+          )
+        );
       },
       splashColor: Colors.amber,
       child: Padding(
@@ -37,7 +37,7 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget> {
               color: Colors.grey[300],
             ),
             Image.network(
-              widget.model!.thumbnailUrl!,
+              widget.model!.imageUrl ?? "No Image",
               height: 220,
               fit: BoxFit.cover,
             ),
@@ -45,12 +45,12 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget> {
               height: 10,
             ),
             Text(
-              widget.model!.title!,
+              widget.model!.title ?? "No Title",
               style: const TextStyle(
                   color: Colors.pinkAccent, fontSize: 20, fontFamily: "Train"),
             ),
             Text(
-              widget.model!.shortInfo!,
+              widget.model!.info ?? "No Info",
               style: const TextStyle(
                   color: Colors.grey, fontSize: 20, fontFamily: "Train"),
             ),
