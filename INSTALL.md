@@ -9,11 +9,8 @@ A Flutter application targeting Android and iOS.
 Before running this project, ensure you have the following installed:
 
 - [Flutter](https://docs.flutter.dev/get-started/install) — managed via FVM (do not install a global Flutter version manually)
-- [FVM (Flutter Version Manager)](https://fvm.app/documentation/getting-started/installation)
+- [JDK-17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) - create a new environment variable JAVA_HOME=C:\your_path\jdk-17
 - [Android Studio](https://developer.android.com/studio) with the Android SDK configured
-- [Xcode](https://developer.apple.com/xcode/) (macOS only, required for iOS builds)
-- [Firebase CLI](https://firebase.google.com/docs/cli#install_the_firebase_cli)
-- [FlutterFire CLI](https://firebase.flutter.dev/docs/cli/): `dart pub global activate flutterfire_cli`
 
 ---
 
@@ -32,7 +29,13 @@ git checkout text/marcin
 dart pub global activate fvm
 ```
 
-### 3. Install the correct Flutter version via FVM
+### 3. Add a new environment variable in Path
+
+```bash
+C:\Users\<username>\AppData\Local\Pub\Cache\bin
+```
+
+### 4. Install the correct Flutter version via FVM
 
 ```bash
 fvm install
@@ -40,13 +43,13 @@ fvm install
 
 This reads the `.fvmrc` file and installs Flutter **3.38.9** automatically.
 
-### 4. Install dependencies
+### 5. Install dependencies
 
 ```bash
 fvm flutter pub get
 ```
 
-### 5. Add required config files
+### 6. Add required config files
 
 These files are excluded from version control for security reasons. Obtain them from the project owner and place them as follows:
 
@@ -54,13 +57,9 @@ These files are excluded from version control for security reasons. Obtain them 
 |------|-------------|
 | `google-services.json` | `android/app/google-services.json` |
 | `firebase_options.dart` | `lib/firebase_options.dart` |
+| `secrets.json` | `/` |
 
-> Alternatively, if you have Firebase access, regenerate `firebase_options.dart` by running:
-> ```bash
-> flutterfire configure
-> ```
-
-### 6. Configure Android signing (release builds only)
+### 7. Configure Android signing (release builds only)
 
 For debug builds this step can be skipped. For release, obtain `key.properties` and the keystore file from the project owner and place `key.properties` at `android/key.properties`.
 
@@ -110,5 +109,5 @@ Connect a device or start an Android emulator, then:
 
 - Always use `fvm flutter` instead of `flutter` directly to ensure the correct SDK version (3.38.9) is used.
 - Use VS Code with the provided `.vscode/launch.json` profiles for a consistent run configuration.
-- Never commit `.env`, `google-services.json`, `key.properties`, or any keystore files.
+- Never commit `.env`, `google-services.json`, `key.properties`, `secrets.jsno` or any keystore files.
 - If you encounter Gradle issues on Android, run `fvm flutter clean` and try again.
