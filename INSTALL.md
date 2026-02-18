@@ -11,7 +11,7 @@ Before running this project, ensure you have the following installed:
 - [Flutter](https://docs.flutter.dev/get-started/install) — managed via FVM (do not install a global Flutter version manually)
 - [FVM (Flutter Version Manager)](https://fvm.app/documentation/getting-started/installation)
 - [Android Studio](https://developer.android.com/studio) with the Android SDK configured
-- 
+
 ---
 
 ## Setup
