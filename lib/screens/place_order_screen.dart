@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/assistant_methods/total_amount.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/models/address.dart';
@@ -12,7 +13,8 @@ import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/services/location_service.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/screens/address_screen.dart';
-import 'package:user_app/assistant_methods/total_amount.dart';
+import 'package:user_app/widgets/accepted_payment.dart';
+
 
 class PlaceOrderScreen extends StatefulWidget {
   const PlaceOrderScreen({super.key});
@@ -23,8 +25,9 @@ class PlaceOrderScreen extends StatefulWidget {
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   String orderID = "";
-  String? restaurantID;
+  String restaurantID = "";
   String orderType = "delivery"; // "delivery" or "pickup"
+  String _selectedPayment = '';
   String? restaurantAddress;
   bool isLoading = true;
   bool isPlacingOrder = false;
@@ -99,15 +102,17 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     if (restaurantID == null) return;
     
     try {
-      var storeDoc = await FirebaseFirestore.instance
+      var addressSnapshot = await FirebaseFirestore.instance
           .collection("restaurants")
           .doc(restaurantID)
+          .collection("addresses")
+          .limit(1)
           .get();
       
-      if (storeDoc.exists) {
-        var storeData = storeDoc.data();
+      if (addressSnapshot.docs.isNotEmpty) {
+        var addressData = addressSnapshot.docs.first.data();
         setState(() {
-          restaurantAddress = storeData?['address'] ?? "Store address not available";
+          restaurantAddress = addressData['fullAddress'] ?? "Store address not available";
         });
       }
     } catch (e) {
@@ -157,6 +162,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   }
 
   bool _validateOrder() {
+    if (_selectedPayment.isEmpty) {
+      Fluttertoast.showToast(msg: "Please select a payment method");
+      return false;
+    }
+
     if (orderType == "delivery") {
       final addressProvider = Provider.of<AddressChanger>(context, listen: false);
       // -1 current location is selected 
@@ -236,11 +246,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         "itemIDs": cartItems,
 
         //Total price breakdown
-        "totalAmount": amountProvider.totalAmount,
-        "originalAmount": amountProvider.originalAmount,
-        "totalSavings": amountProvider.totalSavings,
+        "totalAmount": amountProvider.totalAmount.toStringAsFixed(2),
+        "originalAmount": amountProvider.originalAmount.toStringAsFixed(2),
+        "totalSavings": amountProvider.totalSavings.toStringAsFixed(2),
+        "deliveryFee": _calculateDeliveryFee(),
 
-        "paymentDetails": "Cash on Delivery",
+        "paymentDetails": _selectedPayment,
         "orderTime": Timestamp.now(),
         "isSuccess": true,
         "restaurantID": restaurantID,
@@ -251,7 +262,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       };
 
       await _writeOrderDetailsForUser(orderData);
-      await _writeOrderDetailsForStore(orderData);
+      await _writeOrderDetailsForRestaurant(orderData);
 
       if (!mounted) return;
       await clearCartNow(context);
@@ -277,6 +288,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
+  double _calculateDeliveryFee() {
+    final amountProvider = Provider.of<TotalAmount>(context, listen: false);
+    final orderTotal = amountProvider.totalAmount;
+    
+    if (orderTotal >= 200) return 0;
+    if (orderTotal >= 100) return 9.99;
+    return 14.99;
+  }
+
   Future<void> _writeOrderDetailsForUser(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
       .collection("users")
@@ -286,7 +306,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       .set(data);
   }
 
-  Future<void> _writeOrderDetailsForStore(Map<String, dynamic> data) async {
+  Future<void> _writeOrderDetailsForRestaurant(Map<String, dynamic> data) async {
     await FirebaseFirestore.instance
       .collection("orders")
       .doc(orderID)
@@ -300,6 +320,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: UnifiedAppBar(
+        title: "Place Order!",
         leading: Builder(
           builder: (context) {
             return IconButton(
@@ -317,6 +338,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Card(
+                    color: Colors.grey[50],
                     elevation: 2,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -359,6 +381,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                   ),
                   const SizedBox(height: 12),
                   Card(
+                    color: Colors.grey[50],
                     elevation: 2,
                     child: Column(
                       children: [
@@ -399,6 +422,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     const SizedBox(height: 12),
                     if (userAddresses.isEmpty)
                       Card(
+                        color: Colors.grey[50],
                         elevation: 2,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -430,6 +454,18 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                           );
                         },
                       ),
+
+                    Center(
+                      child: Text(
+                        "or add new location...",
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const Divider(thickness: 2,),
+
                     ListTile(
                       leading: const Icon(Icons.add_location_alt, color: Colors.blueAccent),
                       title: const Text("Address Manager"),
@@ -454,31 +490,23 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     ),
                     const SizedBox(height: 12),
                     Card(
+                      color: Colors.grey[50],
                       elevation: 2,
                       child: ListTile(
-                        leading: const Icon(Icons.store, color: Colors.redAccent),
-                        title: const Text("Store Address"),
+                        leading: const Icon(Icons.restaurant, color: Colors.redAccent),
+                        title: const Text("Restaurant Address"),
                         subtitle: Text(restaurantAddress!),
                       ),
                     ),
                   ],
                   const SizedBox(height: 24),
-                  const Text(
-                    "Payment Method",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+
+                  AcceptedPaymentsWidget(
+                    restaurantID: restaurantID!,
+                    selectedPayment: _selectedPayment,
+                    onPaymentSelected: (value) => setState(() => _selectedPayment = value),
                   ),
-                  const SizedBox(height: 12),
-                  Card(
-                    elevation: 2,
-                    child: ListTile(
-                      leading: const Icon(Icons.payment, color: Colors.redAccent),
-                      title: const Text("Cash on Delivery"),
-                      subtitle: const Text("Payment processing will be added later"),
-                    ),
-                  ),
+
                   const SizedBox(height: 32),
                   SizedBox(
                     width: double.infinity,
@@ -492,22 +520,22 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         ),
                       ),
                       child: isPlacingOrder
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text(
-                              "Place Order",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
                             ),
+                          )
+                        : const Text(
+                            "Place Order",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                     ),
                   ),
                 ],

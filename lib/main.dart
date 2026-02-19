@@ -30,7 +30,7 @@ Future<void> main() async {
   sharedPreferences = await SharedPreferences.getInstance();
 
   // Initialize Stripe
-  Stripe.publishableKey = "pk_test_51QzJ2DEEJccZQYudjQBnQQRxok2UrcXMsjgKQ0BLvqCr5yQI6xtzLrdfmenrIv8zxUcn51Z2muxyKHSlgsmswkgx004DjT0jnR";
+  Stripe.publishableKey = const String.fromEnvironment("STRIPE_PUBLISHABLE_KEY");
 
   // This needs to be here so that the user can login 
   // After release change it to AndroidProvider.playIntegrity

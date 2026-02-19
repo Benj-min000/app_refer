@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 class FirestoreDumpTool {
   static const List<String> knownCollections = [
-    'users', 'restaurants', 'orders', 'addresses', 'carts', 'notifications', 'menus', 'items'
+    'users', 'restaurants', 'orders', 'addresses', 'carts', 'notifications', 'menus', 'items', 'favorites'
   ];
 
   static Future<void> startExport() async {

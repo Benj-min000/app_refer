@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:user_app/models/items.dart';
 
 Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID, BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;

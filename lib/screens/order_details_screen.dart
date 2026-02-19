@@ -6,7 +6,7 @@ import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/shipment_address_design.dart';
 import 'package:user_app/widgets/status_banner.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
-import '../global/global.dart';
+import 'package:user_app/global/global.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final String? orderID;
@@ -121,7 +121,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       _buildInfoRow(
                         "Order Type",
                         dataMap["orderType"] == "pickup" ? "Pickup" : "Delivery",
-                        dataMap["orderType"] == "pickup" ? Icons.store : Icons.delivery_dining,
+                        dataMap["orderType"] == "pickup" ? Icons.restaurant : Icons.delivery_dining,
                       ),
                       const SizedBox(height: 12),
 
@@ -134,7 +134,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                       _buildInfoRow(
                         "Payment",
-                        dataMap["paymentDetails"] ?? "Cash on Delivery",
+                        dataMap["paymentDetails"] ?? "Not available",
                         Icons.payment,
                       ),
                     ],

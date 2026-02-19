@@ -1,19 +1,21 @@
-import 'package:algoliasearch/algoliasearch_lite.dart';
 import 'package:flutter/material.dart';
-import 'package:user_app/search/search_tabs.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:algoliasearch/algoliasearch_lite.dart';
+
+import 'package:user_app/widgets/search_tabs.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/my_drower.dart';
+import 'package:user_app/widgets/unified_bottom_bar.dart';
+
 import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/screens/orders_screen.dart';
 import 'package:user_app/screens/favorites_screen.dart';
 import 'package:user_app/screens/menus_screen.dart';
-import 'package:user_app/widgets/unified_bottom_bar.dart';
-import 'package:user_app/models/items.dart';
-import 'package:user_app/models/menus.dart';
-import 'package:user_app/models/restaurants.dart';
 import 'package:user_app/screens/item_details_screen.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:user_app/screens/cart_screen.dart';
 
+import 'package:user_app/models/items.dart';
+import 'package:user_app/models/restaurants.dart';
 
 class SearchScreen extends StatefulWidget {
   final String initialText;
@@ -103,7 +105,6 @@ class _SearchScreenState extends State<SearchScreen> {
       List<Map<String, dynamic>> combined = [];
       int totalHits = 0;
       int processingTime = 0;
-      List<String> dynamicTags = [];
 
       if (_selectedTabIndex == 0 || _selectedTabIndex == 2) {
         // Search items index
@@ -272,7 +273,12 @@ class _SearchScreenState extends State<SearchScreen> {
               IconButton(
                 icon: Icon(Icons.shopping_bag, size: 28, color: Colors.white,
                     shadows: [Shadow(color: Colors.pink.withValues(alpha: 0.3), offset: const Offset(1, 1), blurRadius: 6)]),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (_) => CartScreen()),
+                  );
+                },
               ),
             ],
           ),
@@ -406,77 +412,110 @@ class _SearchScreenState extends State<SearchScreen> {
             : (result['description'] ?? '') as String;
         final price = result['price'];
 
-        return ListTile(
+        return GestureDetector(
           onTap: () => _onResultTap(result),
-          contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          leading: imageUrl.isNotEmpty
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    imageUrl,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (_, child, progress) => progress == null
-                        ? child
-                        : const SizedBox(width: 80, height: 80, child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-                    errorBuilder: (_, __, ___) => _imageFallback(),
-                  ),
-                )
-              : _imageFallback(),
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: type == 'item' ? Colors.orange[50] : Colors.green[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: type == 'item' ? Colors.orange : Colors.green),
-                ),
-                child: Text(
-                  type == 'item' ? 'Item' : 'Restaurant',
-                  style: TextStyle(fontSize: 10, color: type == 'item' ? Colors.orange[800] : Colors.green[800]),
-                ),
-              ),
-            ],
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 4),
-              Text(subtitle.toUpperCase(),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500)),
-              if (price != null) ...[
-                const SizedBox(height: 4),
-                Text('\$${(price as num).toStringAsFixed(2)}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
-              ],
-              if (result['tags'] != null) ...[
-                const SizedBox(height: 4),
-                Wrap(
-                  spacing: 4,
-                  runSpacing: 4,
-                  children: (result['tags'] as List).take(3).map((tag) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue[200]!),
+          child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            color: Colors.grey[50],
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Image
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: imageUrl.isNotEmpty
+                          ? Image.network(
+                              imageUrl,
+                              width: 100,
+                              height: 110,
+                              fit: BoxFit.cover,
+                            )
+                          : _imageFallback(),
                       ),
-                      child: Text(tag.toString(),
-                          style: TextStyle(fontSize: 10, color: Colors.blue[700])),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ],
+                      if ((result['discount'] ?? 0) > 0)
+                        Positioned(
+                          top: 4,
+                          left: 4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '${(result['discount'] as num).toInt()}% OFF',
+                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 12),
+                  // Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // title + badge row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(title,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: type == 'item' ? Colors.orange[50] : Colors.green[50],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: type == 'item' ? Colors.orange : Colors.green),
+                              ),
+                              child: Text(
+                                type == 'item' ? 'Item' : 'Restaurant',
+                                style: TextStyle(fontSize: 10, color: type == 'item' ? Colors.orange[800] : Colors.green[800]),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(subtitle.toUpperCase(),
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+                        if (price != null) ...[
+                          const SizedBox(height: 4),
+                          Text('\$${(price as num).toStringAsFixed(2)}',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                        ],
+                        if (result['tags'] != null) ...[
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: (result['tags'] as List).take(3).map((tag) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.blue[200]!),
+                                ),
+                                child: Text(tag.toString(), style: TextStyle(fontSize: 10, color: Colors.blue[700])),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },

@@ -25,8 +25,9 @@ Widget build(BuildContext context) {
   if (widget.model == null) return const SizedBox.shrink();
 
   return Card(
+    color: Colors.grey[100],
     margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    elevation: 2,
+    elevation: 4,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     child: Padding(
       padding: const EdgeInsets.all(12),
