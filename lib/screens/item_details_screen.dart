@@ -206,17 +206,22 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                item.title ?? 'Unknown Item',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 28,
-                                  color: Colors.black87,
-                                  height: 1.2,
+                              Flexible(
+                                child: FittedBox(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    item.title ?? 'Unknown Item',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 28,
+                                      color: Colors.black87,
+                                      height: 1.2,
+                                    ),
+                                  ),
                                 ),
                               ),
 
-                              const Spacer(),
+                              const SizedBox(width: 50),
           
                               StreamBuilder<int>(
                                 stream: itemLikesStream(item.restaurantID!, item.menuID!, item.itemID!),
@@ -489,7 +494,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   context,
                   quantity,
                 );
-                Fluttertoast.showToast(msg: "Added to Cart");
               },
               child: Container(
                 height: 60,

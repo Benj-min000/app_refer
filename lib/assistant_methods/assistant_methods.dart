@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:user_app/models/items.dart';
 
 Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID, BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;
@@ -14,7 +15,7 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID,
   if (existingCart.docs.isNotEmpty) {
     String storeInCart = existingCart.docs.first.get("restaurantID");
     if (storeInCart != restaurantID) {
-      Fluttertoast.showToast(msg: "You can only order from one store at a time.");
+      Fluttertoast.showToast(msg: "You can only order from one restuarant at a time.");
       return; 
     }
   }

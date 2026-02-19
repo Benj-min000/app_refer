@@ -298,6 +298,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     final amountProvider = Provider.of<TotalAmount>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: UnifiedAppBar(
         leading: Builder(
           builder: (context) {
@@ -502,6 +503,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                           : const Text(
                               "Place Order",
                               style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),

@@ -49,47 +49,6 @@ class _AddressDesignState extends State<AddressDesign> {
       );
     }
   }
-  
-  // ----------------
-  // ADD TRANSLATION
-  // ----------------
-  void _showDeleteDialog(BuildContext context) {
-    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Delete Address"),
-        content: const Text("Are you sure you want to delete this address?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await FirebaseFirestore.instance
-                  .collection("users")
-                  .doc(currentUid)
-                  .collection("addresses")
-                  .doc(widget.addressID)
-                  .delete();
-                
-                addressProvider.displayResult(-1, address: {});
-
-                Fluttertoast.showToast(msg: "Address deleted successfully");
-              } catch (e) {
-                Fluttertoast.showToast(msg: "Error: $e");
-              }
-            },
-            child: const Text("Delete", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   void initState() {
@@ -142,21 +101,11 @@ class _AddressDesignState extends State<AddressDesign> {
               subtitle:(widget.isCurrentLocationCard && !isSelected) 
                 ? null 
                 : _buildSubtitle(),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!widget.isCurrentLocationCard)
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red, size: 24),
-                      onPressed: () => _showDeleteDialog(context),
-                    ),
-                  Radio<int>(
-                    value: widget.value!,
-                    groupValue: addressProvider.count,
-                    activeColor: Colors.redAccent,
-                    onChanged: (val) => _selectAddress(addressProvider),
-                  ),
-                ],
+              trailing: Radio<int>(
+                value: widget.value!,
+                groupValue: addressProvider.count,
+                activeColor: Colors.redAccent,
+                onChanged: (val) => _selectAddress(addressProvider),
               ),
             ),
             if (isSelected) _buildActionButtons(),
@@ -188,7 +137,8 @@ class _AddressDesignState extends State<AddressDesign> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Building: ${widget.model?.houseNumber ?? ''}"),
-            Text(translatedAddress, 
+            Text("Flat Number: ${widget.model?.flatNumber ?? ''}"),
+            Text("Address: $translatedAddress", 
               style: const TextStyle(fontSize: 14, color: Colors.black87)),
           ],
         );
@@ -213,13 +163,162 @@ class _AddressDesignState extends State<AddressDesign> {
                     isSightSeeing: true,
                   )));
                 },
-                icon: const Icon(Icons.map_outlined, size: 18),
-                label: const Text("See in Maps"),
+                icon: const Icon(Icons.map_outlined, size: 24),
+                label: const Text(
+                  "See in Maps",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
               ),
+
+              if (!widget.isCurrentLocationCard)
+                _buildDeleteButton(),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDeleteButton() {
+    return TextButton.icon(
+      icon: const Icon(
+        Icons.delete_forever,
+        color: Colors.redAccent,
+        size: 24,
+      ),
+      label: Text(
+        "Delete",
+        style: TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold
+        ),
+      ),
+      onPressed: () {
+        _showDeleteConfirmation();
+      },
+    );
+  }
+
+  void _showDeleteConfirmation() {   
+    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        contentPadding: EdgeInsets.zero,
+        elevation: 4,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              decoration: const BoxDecoration(
+                color: Colors.redAccent,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: const Column(
+                children: [
+                  Icon(Icons.delete_outline, color: Colors.white, size: 48),
+                  SizedBox(height: 8),
+                  Text(
+                    'Remove Address',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Text(
+                      'Are you sure you want to remove ${widget.model!.label ?? 'this Address'}?',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40,),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              side: BorderSide(color: Colors.grey.shade400),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              try {
+                                await FirebaseFirestore.instance
+                                  .collection("users")
+                                  .doc(currentUid)
+                                  .collection("addresses")
+                                  .doc(widget.addressID)
+                                  .delete();
+                                
+                                addressProvider.displayResult(-1, address: {});
+
+                                Fluttertoast.showToast(msg: "Address deleted successfully");
+                              } catch (e) {
+                                Fluttertoast.showToast(msg: "Error: $e");
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: const Text(
+                              'Remove',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

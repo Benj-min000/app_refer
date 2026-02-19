@@ -241,6 +241,9 @@ class _CartScreenState extends State<CartScreen> {
               if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) return const SizedBox.shrink();
 
               final Items model = Items.fromJson(itemSnapshot.data!.data() as Map<String, dynamic>);
+              model.itemID = cartData['itemID'];
+              model.menuID = cartData['menuID'];
+              model.restaurantID = cartData['restaurantID'];
               
               final pricePerItem = model.hasDiscount ? model.discountedPrice : (model.price ?? 0);
               final originalPricePerItem = model.price ?? 0;
