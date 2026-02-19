@@ -32,7 +32,7 @@ T? getUserPref<T>(String key) {
   return sharedPreferences!.get(prefixedKey) as T?;
 }
 
-// Use this during Logout to ensure the UID is gone, 
+// Use this during Logout to clear the UID, 
 Future<void> clearSession() async {
   await sharedPreferences!.remove("uid");
   // Optional: await sharedPreferences!.clear(); // Only if you want to wipe everything

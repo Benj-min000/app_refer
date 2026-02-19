@@ -152,7 +152,7 @@ class _DiningPagePageState extends State<Home> {
                             );
                             
                             _searchController.clear();
-                            if (mounted) return;
+                            if (!mounted) return;
                             FocusScope.of(context).unfocus();
                           },
                         ),

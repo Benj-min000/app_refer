@@ -57,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> formValidation() async {
-    print("$_passwordController.text");
     if (_formKey.currentState!.validate()) {
       await loginNow();
     } else {

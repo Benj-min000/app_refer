@@ -97,7 +97,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             ),
                           ),
                           Text(
-                            "₹${dataMap["totalAmount"]?.toStringAsFixed(2) ?? '0.00'}",
+                            "₹${dataMap["totalAmount"] ?? '0.00'}",
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,

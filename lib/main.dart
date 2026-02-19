@@ -31,6 +31,7 @@ Future<void> main() async {
 
   // Initialize Stripe
   Stripe.publishableKey = const String.fromEnvironment("STRIPE_PUBLISHABLE_KEY");
+  await Stripe.instance.applySettings();
 
   // This needs to be here so that the user can login 
   // After release change it to AndroidProvider.playIntegrity

@@ -15,15 +15,42 @@ class UnifiedAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
+  final shadowDecoration = BoxDecoration(
+    shape: BoxShape.circle, 
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.06),
+        blurRadius: 6,
+        offset: const Offset(1, 1),
+      ),
+    ],
+  );
+
+  final Widget? shadowedLeading = leading != null
+      ? Container(
+          margin: const EdgeInsets.all(8),
+          decoration: shadowDecoration,
+          child: leading,
+        )
+      : null;
+
+    final List<Widget>? shadowedActions = actions?.map((widget) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: shadowDecoration,
+        child: widget,
+      );
+    }).toList();
+
     return AppBar(
-      leading: leading,
+      leading: shadowedLeading,
       automaticallyImplyLeading: showBackButton,
       centerTitle: true,
       title: Text(
         title,
         style: const TextStyle(
-          fontFamily: "Signatra", 
+          fontFamily: "Signatra",
           fontSize: 46,
           color: Colors.white,
         ),
@@ -37,8 +64,8 @@ class UnifiedAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      actions: actions, 
-      actionsPadding: EdgeInsets.all(8),
+      actions: shadowedActions,
+      actionsPadding: const EdgeInsets.all(8),
     );
   }
 
