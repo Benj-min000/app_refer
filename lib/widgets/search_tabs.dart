@@ -10,9 +10,9 @@ class SearchTab {
 List<SearchTab> getSearchTabs(BuildContext context) {
   final t = context.t;
   return [
-    SearchTab(label: 'All'), 
-    SearchTab(label: 'Restaurants'), 
-    SearchTab(label: 'Food'),    
-    SearchTab(label: 'Stores'),
+    SearchTab(label: t.searchAll), 
+    SearchTab(label: t.searchRestaurants), 
+    SearchTab(label: t.searchFood),    
+    SearchTab(label: t.searchStores),
   ];
 }

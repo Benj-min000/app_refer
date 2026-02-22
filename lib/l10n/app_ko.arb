@@ -48,6 +48,10 @@
     "categoryNewOffers": "새로운 혜택",
     "categoryExclusiveDeals": "독점 할인",
     "seeMore": "{tab}에서 더 자세히 알아보세요.",
+    "searchAll": "모두",
+    "searchRestaurants": "레스토랑",
+    "searchFood": "음식",
+    "searchStores": "백화점",
     "findingLocalization": "위치를 찾는 중...",
     "changeLanguage": "언어 변경",
     "hintName": "이름",
@@ -80,5 +84,6 @@
     "whatsOnYourMind": "무엇을 생각하고 계신가요?",
     "bookDining": "식사 예약",
     "softDrinks": "청량 음료",
-    "deliveryTime": "45-50분"
+    "myCart": "내 장바구니",
+    "cartCleared": "장바구니가 비워졌습니다"
 }

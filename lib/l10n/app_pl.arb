@@ -48,6 +48,10 @@
     "categoryNewOffers": "Nowe oferty",
     "categoryExclusiveDeals": "Ekskluzywne oferty",
     "seeMore": "Zobacz więcej w {tab}",
+    "searchAll": "Wszystko",
+    "searchRestaurants": "Restauracje",
+    "searchFood": "Żywność",
+    "searchStores": "Sklepy",
     "findingLocalization": "Trwa lokalizowanie...",
     "changeLanguage": "Zmień język",
     "hintName": "Imię",
@@ -80,5 +84,6 @@
     "whatsOnYourMind": "O czym myślisz?",
     "bookDining": "Rezerwacja posiłku",
     "softDrinks": "Napoje bezalkoholowe",
-    "deliveryTime": "45-50 min"
+    "myCart": "Mój koszyk",
+    "cartCleared": "Koszyk został wyczyszczony"
 }

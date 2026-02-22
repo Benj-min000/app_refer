@@ -321,7 +321,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '₹${item.price!.toStringAsFixed(2)}',
+                                      '${item.price!.toStringAsFixed(2)}zł',
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.grey[500],
@@ -340,7 +340,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
-                                        '₹${item.discountedPrice.toStringAsFixed(2)}',
+                                        '${item.discountedPrice.toStringAsFixed(2)}zł',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
@@ -359,7 +359,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                         border: Border.all(color: Colors.green.shade200),
                                       ),
                                       child: Text(
-                                        'Save ₹${item.savedAmount.toStringAsFixed(2)}',
+                                        'Save ${item.savedAmount.toStringAsFixed(2)}zł',
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -379,7 +379,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
-                                    '₹${item.price?.toStringAsFixed(2) ?? '0.00'}',
+                                    '${item.price?.toStringAsFixed(2) ?? '0.00'}zł',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
@@ -519,7 +519,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      "Add to Cart - ₹${((item.hasDiscount ? item.discountedPrice : (item.price ?? 0.0)) * quantity).toStringAsFixed(2)}",
+                      "Add to Cart - ${((item.hasDiscount ? item.discountedPrice : (item.price ?? 0.0)) * quantity).toStringAsFixed(2)}zł",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,

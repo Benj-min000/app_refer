@@ -316,7 +316,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                           children: [
                             if (item.hasDiscount) ...[
                               Text(
-                                '₹${item.price!.toStringAsFixed(2)}',
+                                '${item.price!.toStringAsFixed(2)}zł',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey[800],
@@ -324,7 +324,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                                 ),
                               ),
                               Text(
-                                '₹${item.discountedPrice.toStringAsFixed(2)}',
+                                '${item.discountedPrice.toStringAsFixed(2)}zł',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -333,7 +333,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                               ),
                             ] else
                               Text(
-                                '₹${item.price?.toStringAsFixed(2) ?? '0.00'}',
+                                '${item.price?.toStringAsFixed(2) ?? '0.00'}zł',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -426,7 +426,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '• Save ₹${item.savedAmount.toStringAsFixed(0)}',
+                      '• Save ${item.savedAmount.toStringAsFixed(0)}zł',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,

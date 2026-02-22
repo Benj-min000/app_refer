@@ -392,6 +392,30 @@ abstract class AppLocalizations {
   /// **'See more in {tab}'**
   String seeMore(Object tab);
 
+  /// No description provided for @searchAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get searchAll;
+
+  /// No description provided for @searchRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants'**
+  String get searchRestaurants;
+
+  /// No description provided for @searchFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get searchFood;
+
+  /// No description provided for @searchStores.
+  ///
+  /// In en, this message translates to:
+  /// **'Stores'**
+  String get searchStores;
+
   /// Text shown while app detects location
   ///
   /// In en, this message translates to:
@@ -584,11 +608,17 @@ abstract class AppLocalizations {
   /// **'Soft Drinks'**
   String get softDrinks;
 
-  /// Estimated delivery time
+  /// No description provided for @myCart.
   ///
   /// In en, this message translates to:
-  /// **'45-50 mins'**
-  String get deliveryTime;
+  /// **'My Cart'**
+  String get myCart;
+
+  /// No description provided for @cartCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart has been cleared'**
+  String get cartCleared;
 }
 
 class _AppLocalizationsDelegate

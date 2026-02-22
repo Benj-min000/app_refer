@@ -186,7 +186,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    "₹${model.price}",
+                    "${model.price}zł",
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey[600],
@@ -197,7 +197,7 @@ class OrderCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "₹${(model.price! * quantity).toStringAsFixed(2)}",
+                "${(model.price! * quantity).toStringAsFixed(2)}zł",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

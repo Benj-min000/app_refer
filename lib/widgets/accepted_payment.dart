@@ -63,11 +63,6 @@ class _AcceptedPaymentsWidgetState extends State<AcceptedPaymentsWidget> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Payment Method",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
             Card(
               color: Colors.grey[50],
               elevation: 2,

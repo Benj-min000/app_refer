@@ -238,7 +238,7 @@ Widget build(BuildContext context) {
       children: [
         if (widget.model!.hasDiscount)
           Text(
-            '₹${originalTotal.toStringAsFixed(2)}',
+            '${originalTotal.toStringAsFixed(2)}zł',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[600],
@@ -262,7 +262,7 @@ Widget build(BuildContext context) {
             ),
           ),
           child: Text(
-            '₹${totalPrice.toStringAsFixed(2)}',
+            '${totalPrice.toStringAsFixed(2)}zł',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -278,7 +278,7 @@ Widget build(BuildContext context) {
           Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-              'Save ₹${(originalTotal - totalPrice).toStringAsFixed(2)}',
+              'Save ${(originalTotal - totalPrice).toStringAsFixed(2)}zł',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

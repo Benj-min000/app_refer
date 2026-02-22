@@ -15,6 +15,7 @@ import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
 import 'package:user_app/global/global.dart';
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -44,7 +45,7 @@ class _CartScreenState extends State<CartScreen> {
     if (!mounted) return;
     Provider.of<TotalAmount>(context, listen: false).reset();
     Navigator.pop(context);
-    Fluttertoast.showToast(msg: "Cart has been cleared");
+    Fluttertoast.showToast(msg: context.t.cartCleared);
   }
 
   void _proceedToCheckout() {
@@ -58,10 +59,12 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: UnifiedAppBar(
-        title: "My Cart",
+        title: t.myCart,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
@@ -181,7 +184,7 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text("Original Total:", style: TextStyle(fontSize: 14, color: Colors.white70)),
-                          Text("₹${amountProvider.originalAmount.toStringAsFixed(2)}",
+                          Text("${amountProvider.originalAmount.toStringAsFixed(2)}zł",
                             style: const TextStyle(fontSize: 14, color: Colors.white70, decoration: TextDecoration.lineThrough)),
                         ],
                       ),
@@ -193,7 +196,7 @@ class _CartScreenState extends State<CartScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12)),
-                            child: Text("- ₹${amountProvider.totalSavings.toStringAsFixed(2)}",
+                            child: Text("- ${amountProvider.totalSavings.toStringAsFixed(2)}zł",
                               style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
                           ),
                         ],
@@ -204,7 +207,7 @@ class _CartScreenState extends State<CartScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Total:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                        Text("₹${amountProvider.totalAmount.toStringAsFixed(2)}",
+                        Text("${amountProvider.totalAmount.toStringAsFixed(2)}zł",
                           style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
                       ],
                     ),
