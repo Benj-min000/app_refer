@@ -5,19 +5,15 @@ A Flutter application targeting Android and iOS.
 ---
 
 ## Prerequisites
-
 Before running this project, ensure you have the following installed:
-
 - [Flutter](https://docs.flutter.dev/get-started/install) — managed via FVM (do not install a global Flutter version manually)
 - [JDK-17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) - create a new environment variable JAVA_HOME=C:\your_path\jdk-17
 - [Android Studio](https://developer.android.com/studio) with the Android SDK configured
-
----
+- [Node.js](https://nodejs.org/) (v18 or later) — required for Firebase Functions dependencies
 
 ## Setup
 
 ### 1. Clone the repository
-
 ```bash
 git clone https://github.com/Benj-min000/app_refer.git
 cd app_refer
@@ -30,34 +26,29 @@ dart pub global activate fvm
 ```
 
 ### 3. Add a new environment variable in Path
-
 ```bash
-C:\Users\<username>\AppData\Local\Pub\Cache\bin
+C:\Users\\AppData\Local\Pub\Cache\bin
 ```
 
 ### 4. Install the correct Flutter version via FVM
-
 ```bash
 fvm install
 ```
-
 This reads the `.fvmrc` file and installs Flutter **3.38.9** automatically.
 
-### 5. Install dependencies
-
+### 5. Install Flutter dependencies
 ```bash
 fvm flutter pub get
 ```
 
-### 5.5. Stripe was recently added so there's now a need to install the functions
+### 6. Install Firebase Functions dependencies
 ```bash
 cd functions
 npm install
+cd ..
 ```
-<!-- firebase functions:secrets:set STRIPE_SECRET_KEY -->
 
-### 6. Add required config files
-
+### 7. Add required config files
 These files are excluded from version control for security reasons. Obtain them from the project owner and place them as follows:
 
 | File | Destination |
@@ -66,7 +57,7 @@ These files are excluded from version control for security reasons. Obtain them 
 | `firebase_options.dart` | `lib/firebase_options.dart` |
 | `secrets.json` | `/` |
 
-### 7. Configure Android signing (release builds only)
+### 8. Configure Android signing (release builds only)
 
 For debug builds this step can be skipped. For release, obtain `key.properties` and the keystore file from the project owner and place `key.properties` at `android/key.properties`.
 
