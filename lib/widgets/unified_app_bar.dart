@@ -14,37 +14,25 @@ class UnifiedAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = true,
   });
 
+  static const _iconShadow = [
+    Shadow(
+      color: Color(0x66000000),
+      offset: Offset(2.0, 2.0),
+      blurRadius: 4.0,
+    ),
+  ];
+
+  Widget _withShadow(Widget child) {
+    return IconTheme.merge(
+      data: const IconThemeData(shadows: _iconShadow),
+      child: child,
+    );
+  }
+
   @override
-Widget build(BuildContext context) {
-  final shadowDecoration = BoxDecoration(
-    shape: BoxShape.circle, 
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.06),
-        blurRadius: 6,
-        offset: const Offset(1, 1),
-      ),
-    ],
-  );
-
-  final Widget? shadowedLeading = leading != null
-      ? Container(
-          margin: const EdgeInsets.all(8),
-          decoration: shadowDecoration,
-          child: leading,
-        )
-      : null;
-
-    final List<Widget>? shadowedActions = actions?.map((widget) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: shadowDecoration,
-        child: widget,
-      );
-    }).toList();
-
+  Widget build(BuildContext context) {
     return AppBar(
-      leading: shadowedLeading,
+      leading: leading != null ? _withShadow(leading!) : null,
       automaticallyImplyLeading: showBackButton,
       centerTitle: true,
       title: Text(
@@ -64,7 +52,7 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-      actions: shadowedActions,
+      actions: actions?.map((w) => _withShadow(w)).toList(),
       actionsPadding: const EdgeInsets.all(8),
     );
   }

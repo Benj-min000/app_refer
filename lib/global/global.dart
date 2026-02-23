@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:user_app/assistant_methods/cart_item_counter.dart';
 
 SharedPreferences? sharedPreferences;
 FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
 String? get currentUid => sharedPreferences?.getString("uid");
+
+// Trying to display item counter
+final cartItemCounter = CartItemCounter();
 
 // Example: if UID is "ABC", key "name" becomes "ABC_name"
 Future<void> saveUserPref<T>(String key, T value) async {

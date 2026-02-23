@@ -202,7 +202,6 @@ Widget build(BuildContext context) {
 
   Widget _buildQuantityBadge() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(20),
@@ -210,14 +209,30 @@ Widget build(BuildContext context) {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.clear, size: 14, color: Colors.black54),
-          const SizedBox(width: 4),
+          IconButton(
+            onPressed: () => decrementCartItemQuantity(context, widget.model!.itemID!),
+            icon: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: (widget.quanNumber ?? 1) > 1 ? Colors.blue : Colors.grey[400],
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.remove, color: Colors.white, size: 14),
+            ),
+          ),
           Text(
             '${widget.quanNumber ?? 1}',
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            onPressed: () => incrementCartItemQuantity(context, widget.model!.itemID!),
+            icon: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add, color: Colors.white, size: 14),
             ),
           ),
         ],
@@ -226,69 +241,56 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildPriceTag() {
-    final quantity = widget.quanNumber ?? 1;
-    final pricePerItem = widget.model!.hasDiscount 
-        ? widget.model!.discountedPrice 
-        : (widget.model!.price ?? 0);
-    final totalPrice = pricePerItem * quantity;
-    final originalTotal = (widget.model!.price ?? 0) * quantity;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (widget.model!.hasDiscount)
-          Text(
-            '${originalTotal.toStringAsFixed(2)}zł',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              decoration: TextDecoration.lineThrough,
-            ),
-          ),
-        
-        // Final price
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: widget.model!.hasDiscount 
-                ? Colors.red.shade50 
-                : Colors.green.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: widget.model!.hasDiscount 
-                  ? Colors.red.shade300 
-                  : Colors.green.shade300,
-              width: 1,
-            ),
-          ),
-          child: Text(
-            '${totalPrice.toStringAsFixed(2)}zł',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: widget.model!.hasDiscount 
-                  ? Colors.red.shade700 
-                  : Colors.green.shade700,
-            ),
+  final pricePerItem = widget.model!.hasDiscount
+      ? widget.model!.discountedPrice
+      : (widget.model!.price ?? 0);
+  final originalPerItem = widget.model!.price ?? 0;
+  final savedAmount = originalPerItem - pricePerItem;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      if (widget.model!.hasDiscount)
+        Text(
+          '${originalPerItem.toStringAsFixed(2)} zł',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            decoration: TextDecoration.lineThrough,
           ),
         ),
-        
-        // Savings badge
-        if (widget.model!.hasDiscount)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              'Save ${(originalTotal - totalPrice).toStringAsFixed(2)}zł',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.green.shade700,
-              ),
-            ),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: widget.model!.hasDiscount ? Colors.red.shade50 : Colors.green.shade50,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: widget.model!.hasDiscount ? Colors.red.shade300 : Colors.green.shade300,
           ),
+        ),
+        child: Text(
+          '${pricePerItem.toStringAsFixed(2)} zł',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: widget.model!.hasDiscount ? Colors.red.shade700 : Colors.green.shade700,
+          ),
+        ),
+      ),
+      if (widget.model!.hasDiscount) ...[
+        const SizedBox(height: 4),
+        Text(
+          'Save ${savedAmount.toStringAsFixed(2)} zł',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Colors.green.shade700,
+          ),
+        ),
       ],
-    );
-  }
+    ],
+  );
+}
 
   Widget _buildDeleteButton() {
     return IconButton(

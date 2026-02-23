@@ -12,10 +12,10 @@ import 'package:user_app/screens/orders_screen.dart';
 import 'package:user_app/screens/favorites_screen.dart';
 import 'package:user_app/screens/menus_screen.dart';
 import 'package:user_app/screens/item_details_screen.dart';
-import 'package:user_app/screens/cart_screen.dart';
 
 import 'package:user_app/models/items.dart';
 import 'package:user_app/models/restaurants.dart';
+import 'package:user_app/widgets/cart_icon.dart';
 
 class SearchScreen extends StatefulWidget {
   final String initialText;
@@ -270,16 +270,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.shopping_bag, size: 28, color: Colors.white,
-                    shadows: [Shadow(color: Colors.pink.withValues(alpha: 0.3), offset: const Offset(1, 1), blurRadius: 6)]),
-                onPressed: () {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (_) => CartScreen()),
-                  );
-                },
-              ),
+              const CartIconWidget(),
             ],
           ),
           drawer: MyDrawer(),

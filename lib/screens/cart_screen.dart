@@ -224,14 +224,16 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCartItems(AsyncSnapshot<QuerySnapshot> cartSnapshot) {
+    final docs = cartSnapshot.data!.docs;
     double tempTotal = 0;
     double tempOriginal = 0;
     double tempSavings = 0;
+    int loadedCount = 0;
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final cartData = cartSnapshot.data!.docs[index].data() as Map<String, dynamic>;
+          final cartData = docs[index].data() as Map<String, dynamic>;
           final int quantity = cartData['quantity'] ?? 1;
 
           return FutureBuilder<DocumentSnapshot>(
@@ -241,37 +243,46 @@ class _CartScreenState extends State<CartScreen> {
                 .collection("items").doc(cartData['itemID'])
                 .get(),
             builder: (context, itemSnapshot) {
-              if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) return const SizedBox.shrink();
+              if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) {
+                return const SizedBox.shrink();
+              }
 
-              final Items model = Items.fromJson(itemSnapshot.data!.data() as Map<String, dynamic>);
+              final Items model = Items.fromJson(
+                  itemSnapshot.data!.data() as Map<String, dynamic>);
               model.itemID = cartData['itemID'];
               model.menuID = cartData['menuID'];
               model.restaurantID = cartData['restaurantID'];
-              
-              final pricePerItem = model.hasDiscount ? model.discountedPrice : (model.price ?? 0);
+
+              final pricePerItem = model.hasDiscount
+                  ? model.discountedPrice
+                  : (model.price ?? 0);
               final originalPricePerItem = model.price ?? 0;
-              
-              tempTotal += (pricePerItem * quantity);
-              tempOriginal += (originalPricePerItem * quantity);
-              if (model.hasDiscount) {
-                tempSavings += (originalPricePerItem - pricePerItem) * quantity;
+
+              // Only add to totals once per item per snapshot
+              if (itemSnapshot.connectionState == ConnectionState.done) {
+                loadedCount++;
+                tempTotal += pricePerItem * quantity;
+                tempOriginal += originalPricePerItem * quantity;
+                if (model.hasDiscount) {
+                  tempSavings += (originalPricePerItem - pricePerItem) * quantity;
+                }
+
+                if (loadedCount == docs.length) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      Provider.of<TotalAmount>(context, listen: false)
+                          .setAmounts(tempTotal, tempOriginal, tempSavings);
+                    }
+                  });
+                }
               }
 
-              if (index == cartSnapshot.data!.docs.length - 1) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    // Update Provider with all 3 values at once
-                    Provider.of<TotalAmount>(context, listen: false)
-                        .setAmounts(tempTotal, tempOriginal, tempSavings);
-                  }
-                });
-              }
-
-              return CartItemDesign(model: model, context: context, quanNumber: quantity);
+              return CartItemDesign(
+                  model: model, context: context, quanNumber: quantity);
             },
           );
         },
-        childCount: cartSnapshot.data?.docs.length ?? 0,
+        childCount: docs.length,
       ),
     );
   }

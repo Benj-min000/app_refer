@@ -53,7 +53,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider.value(value: addressChanger),
-        ChangeNotifierProvider(create: (_) => CartItemCounter()),
+        ChangeNotifierProvider.value(value: cartItemCounter),
         ChangeNotifierProvider(create: (c) => TotalAmount()),
       ],
       child: const MyApp(),
