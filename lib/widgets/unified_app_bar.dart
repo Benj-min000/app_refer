@@ -14,16 +14,31 @@ class UnifiedAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = true,
   });
 
+  static const _iconShadow = [
+    Shadow(
+      color: Color(0x66000000),
+      offset: Offset(2.0, 2.0),
+      blurRadius: 4.0,
+    ),
+  ];
+
+  Widget _withShadow(Widget child) {
+    return IconTheme.merge(
+      data: const IconThemeData(shadows: _iconShadow),
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: leading,
+      leading: leading != null ? _withShadow(leading!) : null,
       automaticallyImplyLeading: showBackButton,
       centerTitle: true,
       title: Text(
         title,
         style: const TextStyle(
-          fontFamily: "Signatra", 
+          fontFamily: "Signatra",
           fontSize: 46,
           color: Colors.white,
         ),
@@ -37,8 +52,8 @@ class UnifiedAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      actions: actions, 
-      actionsPadding: EdgeInsets.all(8),
+      actions: actions?.map((w) => _withShadow(w)).toList(),
+      actionsPadding: const EdgeInsets.all(8),
     );
   }
 

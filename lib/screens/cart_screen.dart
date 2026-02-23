@@ -15,6 +15,7 @@ import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
 import 'package:user_app/global/global.dart';
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -44,7 +45,7 @@ class _CartScreenState extends State<CartScreen> {
     if (!mounted) return;
     Provider.of<TotalAmount>(context, listen: false).reset();
     Navigator.pop(context);
-    Fluttertoast.showToast(msg: "Cart has been cleared");
+    Fluttertoast.showToast(msg: context.t.cartCleared);
   }
 
   void _proceedToCheckout() {
@@ -58,10 +59,12 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: UnifiedAppBar(
-        title: "My Cart",
+        title: t.myCart,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
@@ -181,7 +184,7 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text("Original Total:", style: TextStyle(fontSize: 14, color: Colors.white70)),
-                          Text("₹${amountProvider.originalAmount.toStringAsFixed(2)}",
+                          Text("${amountProvider.originalAmount.toStringAsFixed(2)}zł",
                             style: const TextStyle(fontSize: 14, color: Colors.white70, decoration: TextDecoration.lineThrough)),
                         ],
                       ),
@@ -193,7 +196,7 @@ class _CartScreenState extends State<CartScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12)),
-                            child: Text("- ₹${amountProvider.totalSavings.toStringAsFixed(2)}",
+                            child: Text("- ${amountProvider.totalSavings.toStringAsFixed(2)}zł",
                               style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
                           ),
                         ],
@@ -204,7 +207,7 @@ class _CartScreenState extends State<CartScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Total:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                        Text("₹${amountProvider.totalAmount.toStringAsFixed(2)}",
+                        Text("${amountProvider.totalAmount.toStringAsFixed(2)}zł",
                           style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
                       ],
                     ),
@@ -221,14 +224,16 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCartItems(AsyncSnapshot<QuerySnapshot> cartSnapshot) {
+    final docs = cartSnapshot.data!.docs;
     double tempTotal = 0;
     double tempOriginal = 0;
     double tempSavings = 0;
+    int loadedCount = 0;
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final cartData = cartSnapshot.data!.docs[index].data() as Map<String, dynamic>;
+          final cartData = docs[index].data() as Map<String, dynamic>;
           final int quantity = cartData['quantity'] ?? 1;
 
           return FutureBuilder<DocumentSnapshot>(
@@ -238,34 +243,46 @@ class _CartScreenState extends State<CartScreen> {
                 .collection("items").doc(cartData['itemID'])
                 .get(),
             builder: (context, itemSnapshot) {
-              if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) return const SizedBox.shrink();
+              if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) {
+                return const SizedBox.shrink();
+              }
 
-              final Items model = Items.fromJson(itemSnapshot.data!.data() as Map<String, dynamic>);
-              
-              final pricePerItem = model.hasDiscount ? model.discountedPrice : (model.price ?? 0);
+              final Items model = Items.fromJson(
+                  itemSnapshot.data!.data() as Map<String, dynamic>);
+              model.itemID = cartData['itemID'];
+              model.menuID = cartData['menuID'];
+              model.restaurantID = cartData['restaurantID'];
+
+              final pricePerItem = model.hasDiscount
+                  ? model.discountedPrice
+                  : (model.price ?? 0);
               final originalPricePerItem = model.price ?? 0;
-              
-              tempTotal += (pricePerItem * quantity);
-              tempOriginal += (originalPricePerItem * quantity);
-              if (model.hasDiscount) {
-                tempSavings += (originalPricePerItem - pricePerItem) * quantity;
+
+              // Only add to totals once per item per snapshot
+              if (itemSnapshot.connectionState == ConnectionState.done) {
+                loadedCount++;
+                tempTotal += pricePerItem * quantity;
+                tempOriginal += originalPricePerItem * quantity;
+                if (model.hasDiscount) {
+                  tempSavings += (originalPricePerItem - pricePerItem) * quantity;
+                }
+
+                if (loadedCount == docs.length) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      Provider.of<TotalAmount>(context, listen: false)
+                          .setAmounts(tempTotal, tempOriginal, tempSavings);
+                    }
+                  });
+                }
               }
 
-              if (index == cartSnapshot.data!.docs.length - 1) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    // Update Provider with all 3 values at once
-                    Provider.of<TotalAmount>(context, listen: false)
-                        .setAmounts(tempTotal, tempOriginal, tempSavings);
-                  }
-                });
-              }
-
-              return CartItemDesign(model: model, context: context, quanNumber: quantity);
+              return CartItemDesign(
+                  model: model, context: context, quanNumber: quantity);
             },
           );
         },
-        childCount: cartSnapshot.data?.docs.length ?? 0,
+        childCount: docs.length,
       ),
     );
   }

@@ -227,6 +227,20 @@
     }
   },
 
+  "searchAll": "All",
+  "@searchAll": {},
+
+  "searchRestaurants": "Restaurants",
+  "@searchRestaurants": {},
+
+  "searchFood": "Food",
+  "@searchFood": {},
+
+  "searchStores": "Stores",
+  "@searchStores": {},
+
+  
+
   "findingLocalization": "Finding your localization...",
   "@findingLocalization": {"description": "Text shown while app detects location"},
 
@@ -330,6 +344,10 @@
   "softDrinks": "Soft Drinks",
   "@softDrinks": {"description": "Label for soft drinks"},
 
-  "deliveryTime": "45-50 mins",
-  "@deliveryTime": {"description": "Estimated delivery time"}
+  "myCart": "My Cart",
+  "@myCart": {},
+
+  "cartCleared": "Cart has been cleared",
+  "@cartCleared": {}
+
 }

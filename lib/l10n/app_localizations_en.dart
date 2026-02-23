@@ -158,6 +158,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get searchAll => 'All';
+
+  @override
+  String get searchRestaurants => 'Restaurants';
+
+  @override
+  String get searchFood => 'Food';
+
+  @override
+  String get searchStores => 'Stores';
+
+  @override
   String get findingLocalization => 'Finding your localization...';
 
   @override
@@ -258,5 +270,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get softDrinks => 'Soft Drinks';
 
   @override
-  String get deliveryTime => '45-50 mins';
+  String get myCart => 'My Cart';
+
+  @override
+  String get cartCleared => 'Cart has been cleared';
 }

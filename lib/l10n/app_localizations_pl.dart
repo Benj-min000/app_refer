@@ -158,6 +158,18 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get searchAll => 'Wszystko';
+
+  @override
+  String get searchRestaurants => 'Restauracje';
+
+  @override
+  String get searchFood => 'Żywność';
+
+  @override
+  String get searchStores => 'Sklepy';
+
+  @override
   String get findingLocalization => 'Trwa lokalizowanie...';
 
   @override
@@ -258,5 +270,8 @@ class AppLocalizationsPl extends AppLocalizations {
   String get softDrinks => 'Napoje bezalkoholowe';
 
   @override
-  String get deliveryTime => '45-50 min';
+  String get myCart => 'Mój koszyk';
+
+  @override
+  String get cartCleared => 'Koszyk został wyczyszczony';
 }

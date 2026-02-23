@@ -105,6 +105,12 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
     setState(() => isLoading = true);
 
     try {
+      final docRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUid)
+        .collection("addresses")
+        .doc();
+
       final model = Address(
         label: _addressLabel.text.trim(),
         country: _completeAddress.text.trim().split(',').last,
@@ -117,14 +123,10 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
         fullAddress: _completeAddress.text.trim(),
         lat: lat.toString(),
         lng: lng.toString(),
+        addressID: docRef.id, 
       ).toJson();
 
-      await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUid)
-        .collection("addresses")
-        .doc(DateTime.now().millisecondsSinceEpoch.toString())
-        .set(model);
+      await docRef.set(model);
 
     if (mounted) {
       Fluttertoast.showToast(msg: "New Address has been saved.");

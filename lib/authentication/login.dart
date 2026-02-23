@@ -57,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> formValidation() async {
-    print("$_passwordController.text");
     if (_formKey.currentState!.validate()) {
       await loginNow();
     } else {
@@ -103,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       await sharedPreferences!.setString("uid", currentUser.uid);
-
+      cartItemCounter.displayCartListItemsNumber();
       await saveUserPref<String>("email", data["email"]);
       await saveUserPref<String>("name", data["name"]);
       await saveUserPref<String>("phone", data["phone"]);

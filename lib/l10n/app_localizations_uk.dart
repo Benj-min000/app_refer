@@ -158,6 +158,18 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get searchAll => 'Усі';
+
+  @override
+  String get searchRestaurants => 'Ресторани';
+
+  @override
+  String get searchFood => 'Їжа';
+
+  @override
+  String get searchStores => 'Магазини';
+
+  @override
   String get findingLocalization => 'Визначення вашого місцезнаходження...';
 
   @override
@@ -259,5 +271,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get softDrinks => 'Безалкогольні напої';
 
   @override
-  String get deliveryTime => '45-50 хв';
+  String get myCart => 'Мій кошик';
+
+  @override
+  String get cartCleared => 'Кошик очищено';
 }

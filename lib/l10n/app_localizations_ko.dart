@@ -157,6 +157,18 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get searchAll => '모두';
+
+  @override
+  String get searchRestaurants => '레스토랑';
+
+  @override
+  String get searchFood => '음식';
+
+  @override
+  String get searchStores => '백화점';
+
+  @override
   String get findingLocalization => '위치를 찾는 중...';
 
   @override
@@ -256,5 +268,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get softDrinks => '청량 음료';
 
   @override
-  String get deliveryTime => '45-50분';
+  String get myCart => '내 장바구니';
+
+  @override
+  String get cartCleared => '장바구니가 비워졌습니다';
 }

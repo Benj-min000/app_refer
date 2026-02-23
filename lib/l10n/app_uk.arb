@@ -48,6 +48,10 @@
     "categoryNewOffers": "Нові пропозиції",
     "categoryExclusiveDeals": "Ексклюзивні пропозиції",
     "seeMore": "Дивіться більше в {tab}",
+    "searchAll": "Усі",
+    "searchRestaurants": "Ресторани",
+    "searchFood": "Їжа",
+    "searchStores": "Магазини",
     "findingLocalization": "Визначення вашого місцезнаходження...",
     "changeLanguage": "Змінити мову",
     "hintName": "Ім'я",
@@ -80,5 +84,6 @@
     "whatsOnYourMind": "Про що ви думаєте?",
     "bookDining": "Забронювати обід",
     "softDrinks": "Безалкогольні напої",
-    "deliveryTime": "45-50 хв"
+    "myCart": "Мій кошик",
+    "cartCleared": "Кошик очищено"
 }

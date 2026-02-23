@@ -19,6 +19,7 @@ class MenusScreen extends StatefulWidget {
 class _MenusScreenState extends State<MenusScreen> {
   @override
   Widget build(BuildContext context) {
+    debugPrint("LOG: Restaurant ID: ${widget.model!.restaurantID}");
     return Scaffold(
       appBar: UnifiedAppBar(
         title: "${widget.model!.name} Menus",

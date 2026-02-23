@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:user_app/Home/home.dart';
 import 'package:user_app/models/restaurants.dart';
-import 'package:user_app/screens/cart_screen.dart';
+import 'package:user_app/widgets/notification_icon.dart';
 import 'package:user_app/widgets/restaurants_design.dart';
 import 'package:user_app/widgets/my_drower.dart';
 import 'package:user_app/widgets/progress_bar.dart';
-import 'package:user_app/screens/notification_screen.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/unified_bottom_bar.dart';
 import 'package:user_app/screens/orders_screen.dart';
 import 'package:user_app/screens/search_screen.dart';
 import "package:user_app/screens/favorites_screen.dart";
+import 'package:user_app/widgets/cart_icon.dart';
+import 'package:user_app/assistant_methods/cart_item_counter.dart';
+import 'package:provider/provider.dart';
 
 final List<String> _sliderImages = List.generate(28, (index) => "assets/images/slider/$index.jpg");
 
@@ -48,6 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: (_) {
@@ -67,34 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.shopping_bag, color: Colors.white, size: 28),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => CartScreen()));
-              },
-            ),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseAuth.instance.currentUser?.uid != null
-                ? FirebaseFirestore.instance
-                    .collection("users")
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .collection("notifications")
-                    .where("isRead", isEqualTo: false)
-                    .snapshots()
-                : const Stream.empty(),
-              builder: (context, snapshot) {
-                int unreadCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
-                return IconButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen())),
-                  icon: Badge(
-                    isLabelVisible: unreadCount > 0,
-                    label: Text(unreadCount.toString()),
-                    backgroundColor: Colors.red,
-                    child: const Icon(Icons.notifications, color: Colors.white, size: 28),
-                  ),
-                );
-              }
-            ),
+            const CartIconWidget(),
+            const NotificationIconWidget(),
           ],
         ),
         bottomNavigationBar: UnifiedBottomNavigationBar(

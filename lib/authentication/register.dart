@@ -150,7 +150,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     // Save data localy
-    await sharedPreferences!.setString("uid", currentUser.uid); // MASTER KEY
+    await sharedPreferences!.setString("uid", currentUser.uid);
+    cartItemCounter.displayCartListItemsNumber();
     await saveUserPref<String>("email", currentUser.email.toString());
     await saveUserPref<String>("name", _nameController.text.trim());
     await saveUserPref<String>("photo", downloadUrl.trim());

@@ -48,6 +48,10 @@
     "categoryNewOffers": "Neue Angebote",
     "categoryExclusiveDeals": "Exklusive Angebote",
     "seeMore": "Mehr dazu in {tab}",
+    "searchAll": "Alle",
+    "searchRestaurants": "Restaurants",
+    "searchFood": "Essen",
+    "searchStores": "Geschäfte",
     "findingLocalization": "Standort wird ermittelt...",
     "changeLanguage": "Sprache ändern",
     "hintName": "Name",
@@ -80,5 +84,6 @@
     "whatsOnYourMind": "Woran denkst du?",
     "bookDining": "Tisch reservieren",
     "softDrinks": "Erfrischungsgetränke",
-    "deliveryTime": "45-50 Min"
+    "myCart": "Mein Warenkorb",
+    "cartCleared": "Der Warenkorb wurde geleert."
 }

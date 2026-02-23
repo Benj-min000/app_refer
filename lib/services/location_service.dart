@@ -128,4 +128,38 @@ class LocationService {
       throw Exception(e.toString());
     }
   }
+
+  static Future<Map<String, dynamic>> getDistanceAndDuration({
+    required double originLat,
+    required double originLng,
+    required double destinationLat,
+    required double destinationLng,
+    required String mode,
+  }) async {
+
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/distancematrix/json'
+      '?origins=$originLat,$originLng'
+      '&destinations=$destinationLat,$destinationLng'
+      '&mode=$mode'
+      '&key=$googleMapsApiKey'
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final element = data['rows'][0]['elements'][0];
+
+      if (element['status'] == 'OK') {
+        return {
+          'distance': element['distance']['text'], 
+          'distanceValue': element['distance']['value'], 
+          'duration': element['duration']['text'],  
+          'durationValue': element['duration']['value'], 
+        };
+      }
+    }
+    throw Exception("Failed to get distance");
+  }
 }

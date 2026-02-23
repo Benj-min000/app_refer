@@ -25,8 +25,9 @@ Widget build(BuildContext context) {
   if (widget.model == null) return const SizedBox.shrink();
 
   return Card(
+    color: Colors.grey[100],
     margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    elevation: 2,
+    elevation: 4,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     child: Padding(
       padding: const EdgeInsets.all(12),
@@ -201,7 +202,6 @@ Widget build(BuildContext context) {
 
   Widget _buildQuantityBadge() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(20),
@@ -209,14 +209,30 @@ Widget build(BuildContext context) {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.clear, size: 14, color: Colors.black54),
-          const SizedBox(width: 4),
+          IconButton(
+            onPressed: () => decrementCartItemQuantity(context, widget.model!.itemID!),
+            icon: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: (widget.quanNumber ?? 1) > 1 ? Colors.blue : Colors.grey[400],
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.remove, color: Colors.white, size: 14),
+            ),
+          ),
           Text(
             '${widget.quanNumber ?? 1}',
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            onPressed: () => incrementCartItemQuantity(context, widget.model!.itemID!),
+            icon: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add, color: Colors.white, size: 14),
             ),
           ),
         ],
@@ -225,75 +241,62 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildPriceTag() {
-    final quantity = widget.quanNumber ?? 1;
-    final pricePerItem = widget.model!.hasDiscount 
-        ? widget.model!.discountedPrice 
-        : (widget.model!.price ?? 0);
-    final totalPrice = pricePerItem * quantity;
-    final originalTotal = (widget.model!.price ?? 0) * quantity;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (widget.model!.hasDiscount)
-          Text(
-            '₹${originalTotal.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              decoration: TextDecoration.lineThrough,
-            ),
-          ),
-        
-        // Final price
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: widget.model!.hasDiscount 
-                ? Colors.red.shade50 
-                : Colors.green.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: widget.model!.hasDiscount 
-                  ? Colors.red.shade300 
-                  : Colors.green.shade300,
-              width: 1,
-            ),
-          ),
-          child: Text(
-            '₹${totalPrice.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: widget.model!.hasDiscount 
-                  ? Colors.red.shade700 
-                  : Colors.green.shade700,
-            ),
+  final pricePerItem = widget.model!.hasDiscount
+      ? widget.model!.discountedPrice
+      : (widget.model!.price ?? 0);
+  final originalPerItem = widget.model!.price ?? 0;
+  final savedAmount = originalPerItem - pricePerItem;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      if (widget.model!.hasDiscount)
+        Text(
+          '${originalPerItem.toStringAsFixed(2)} zł',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            decoration: TextDecoration.lineThrough,
           ),
         ),
-        
-        // Savings badge
-        if (widget.model!.hasDiscount)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              'Save ₹${(originalTotal - totalPrice).toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.green.shade700,
-              ),
-            ),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: widget.model!.hasDiscount ? Colors.red.shade50 : Colors.green.shade50,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: widget.model!.hasDiscount ? Colors.red.shade300 : Colors.green.shade300,
           ),
+        ),
+        child: Text(
+          '${pricePerItem.toStringAsFixed(2)} zł',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: widget.model!.hasDiscount ? Colors.red.shade700 : Colors.green.shade700,
+          ),
+        ),
+      ),
+      if (widget.model!.hasDiscount) ...[
+        const SizedBox(height: 4),
+        Text(
+          'Save ${savedAmount.toStringAsFixed(2)} zł',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Colors.green.shade700,
+          ),
+        ),
       ],
-    );
-  }
+    ],
+  );
+}
 
   Widget _buildDeleteButton() {
     return IconButton(
-      icon: const Icon(Icons.delete_outline),
-      color: Colors.red[400],
-      iconSize: 24,
+      icon: const Icon(Icons.delete_forever),
+      color: Colors.redAccent,
+      iconSize: 28,
       constraints: const BoxConstraints(),
       padding: EdgeInsets.zero,
       onPressed: () {
@@ -311,52 +314,106 @@ Widget build(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Row(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        contentPadding: EdgeInsets.zero,
+        elevation: 4,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
-            const SizedBox(width: 8),
-            const Text('Remove Item'),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+              decoration: const BoxDecoration(
+                color: Colors.redAccent,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: const Column(
+                children: [
+                  Icon(Icons.delete_outline, color: Colors.white, size: 48),
+                  SizedBox(height: 8),
+                  Text(
+                    'Remove Item',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Text(
+                      'Are you sure you want to remove ${widget.model!.title ?? 'this item'} from your cart?',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40,),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              side: BorderSide(color: Colors.grey.shade400),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await removeItemFromCart(context, widget.model!.itemID!);
+                              Fluttertoast.showToast(msg: "Item removed from cart");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: const Text(
+                              'Remove',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        content: Text(
-          'Remove ${widget.model!.title ?? 'this item'} from cart?',
-          style: const TextStyle(fontSize: 16),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await removeItemFromCart(context, widget.model!.itemID!);
-              Fluttertoast.showToast(msg: "Item removed from cart");
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Remove',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

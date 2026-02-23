@@ -30,7 +30,8 @@ Future<void> main() async {
   sharedPreferences = await SharedPreferences.getInstance();
 
   // Initialize Stripe
-  Stripe.publishableKey = "pk_test_51QzJ2DEEJccZQYudjQBnQQRxok2UrcXMsjgKQ0BLvqCr5yQI6xtzLrdfmenrIv8zxUcn51Z2muxyKHSlgsmswkgx004DjT0jnR";
+  Stripe.publishableKey = const String.fromEnvironment("STRIPE_PUBLISHABLE_KEY");
+  await Stripe.instance.applySettings();
 
   // This needs to be here so that the user can login 
   // After release change it to AndroidProvider.playIntegrity
@@ -52,7 +53,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider.value(value: localeProvider),
         ChangeNotifierProvider.value(value: addressChanger),
-        ChangeNotifierProvider(create: (_) => CartItemCounter()),
+        ChangeNotifierProvider.value(value: cartItemCounter),
         ChangeNotifierProvider(create: (c) => TotalAmount()),
       ],
       child: const MyApp(),

@@ -49,6 +49,13 @@ This reads the `.fvmrc` file and installs Flutter **3.38.9** automatically.
 fvm flutter pub get
 ```
 
+### 5.5. Stripe was recently added so there's now a need to install the functions
+```bash
+cd functions
+npm install
+```
+<!-- firebase functions:secrets:set STRIPE_SECRET_KEY -->
+
 ### 6. Add required config files
 
 These files are excluded from version control for security reasons. Obtain them from the project owner and place them as follows:
