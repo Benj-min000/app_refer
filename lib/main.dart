@@ -1,8 +1,10 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:user_app/l10n/app_localizations.dart';
 import 'package:user_app/models/language.dart';
@@ -10,7 +12,6 @@ import 'package:user_app/models/language.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
-import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/assistant_methods/total_amount.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 

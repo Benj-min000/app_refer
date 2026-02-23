@@ -45,9 +45,9 @@ flutter:
   uses-material-design: true
   generate: true
 
-  assets:
-    - ../assets/images/
-    - ../assets/images/slider/
+  # assets:
+    # - ../assets/images/
+    # - ../assets/images/slider/
     # - assets/translations/
 
   fonts:
