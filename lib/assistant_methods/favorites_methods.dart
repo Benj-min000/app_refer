@@ -31,9 +31,10 @@ Future<void> toggleFavorite(String restaurantID, String menuID, String itemID) a
       await favoriteRef.delete();
       
       // Decrement likes count
-      await itemRef.update({
-        'likes': FieldValue.increment(-1),
-      });
+      await itemRef.set(
+        {'likes': FieldValue.increment(-1)},
+        SetOptions(merge: true),
+      );
       
       Fluttertoast.showToast(msg: "Removed from favorites");
     } else {
@@ -46,9 +47,10 @@ Future<void> toggleFavorite(String restaurantID, String menuID, String itemID) a
       });
       
       // Increment likes count
-      await itemRef.update({
-        'likes': FieldValue.increment(1),
-      });
+      await itemRef.set(
+        {'likes': FieldValue.increment(1)},
+        SetOptions(merge: true),
+      );
       
       Fluttertoast.showToast(msg: "Added to favorites");
     }
