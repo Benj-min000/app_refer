@@ -300,7 +300,7 @@ class _RestaurantCardState extends State<RestaurantCard> {
                         const SizedBox(width: 5),
                         Expanded(
                           child: Text(
-                            item.info ?? 'Delicious food',
+                            item.shortInfo ?? 'Delicious food',
                             style: const TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.w500,

@@ -186,9 +186,9 @@ Widget build(BuildContext context) {
         
         const SizedBox(height: 8),
         
-        if (widget.model!.info != null && widget.model!.info!.isNotEmpty)
+        if (widget.model!.shortInfo != null && widget.model!.shortInfo!.isNotEmpty)
           Text(
-            widget.model!.info!,
+            widget.model!.shortInfo!,
             style: TextStyle(
               color: Colors.grey[800],
               fontSize: 13,

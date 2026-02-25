@@ -86,7 +86,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       try {
-        print("$_passwordController.text");
         UserCredential auth = await firebaseAuth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text,

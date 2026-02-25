@@ -68,7 +68,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
   String _buildItemFilterString() {
     List<String> filters = [];
+
+    filters.add('restaurantStatus:Active');
+
     final itemTags = _selectedCategories.where((c) => _availableItemCategories.contains(c)).toList();
+    
+    
     if (itemTags.isNotEmpty) {
       filters.add('(${itemTags.map((c) => 'tags:"$c"').join(' OR ')})');
     }
@@ -78,7 +83,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
   String _buildRestaurantFilterString() {
     List<String> filters = [];
+    filters.add('status:Active');
+
     final restaurantNames = _selectedCategories.where((c) => _availableRestaurantCategories.contains(c)).toList();
+    
     if (restaurantNames.isNotEmpty) {
       filters.add('(${restaurantNames.map((c) => 'name:"$c"').join(' OR ')})');
     }
@@ -209,8 +217,10 @@ class _SearchScreenState extends State<SearchScreen> {
       final restaurant = Restaurants(
         restaurantID: restaurantID,
         name: result['name'] ?? '',
-        imageUrl: result['imageUrl'] ?? '',
+        logoUrl: result['imageUrl'] ?? '',
+        bannerUrl: result['bannerUrl'] ?? '',
         email: result['email'] ?? '',
+        status: result['status'] ?? '',
       );
       Navigator.push(
         context,

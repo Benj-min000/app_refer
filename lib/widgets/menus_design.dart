@@ -35,8 +35,8 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasValidUrl = widget.model?.imageUrl != null && 
-                             widget.model!.imageUrl!.isNotEmpty;
+    final bool hasValidUrl = widget.model?.bannerUrl != null && 
+                             widget.model!.bannerUrl!.isNotEmpty;
 
     return InkWell(
       onTap: () {
@@ -62,7 +62,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
               
               hasValidUrl
                   ? Image.network(
-                      widget.model!.imageUrl!,
+                      widget.model!.bannerUrl!,
                       height: 220,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -95,7 +95,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
                     color: Colors.pinkAccent, fontSize: 20, fontFamily: "Train"),
               ),
               Text(
-                widget.model?.info ?? "No Info",
+                widget.model?.description ?? "No Info",
                 style: const TextStyle(
                     color: Colors.grey, fontSize: 16, fontFamily: "Train"),
               ),

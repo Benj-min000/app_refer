@@ -35,8 +35,8 @@ class _RestaurantDesignWidgetState extends State<RestaurantDesignWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasValidUrl = widget.model?.imageUrl != null && 
-                             widget.model!.imageUrl!.isNotEmpty;
+    final bool hasValidUrl = widget.model?.logoUrl != null && 
+                             widget.model!.logoUrl!.isNotEmpty;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -55,7 +55,7 @@ class _RestaurantDesignWidgetState extends State<RestaurantDesignWidget> {
               
               hasValidUrl
                   ? Image.network(
-                      widget.model!.imageUrl!,
+                      widget.model!.logoUrl!,
                       height: 220,
                       width: double.infinity,
                       fit: BoxFit.cover,

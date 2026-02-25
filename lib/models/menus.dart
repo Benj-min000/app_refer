@@ -2,27 +2,24 @@ class Menus {
   String? menuID;
   String? restaurantID;
   String? title;
-  String? info;
+  String? description;
   String? publishedDate;
-  String? imageUrl;
-  String? status;
+  String? bannerUrl;
 
   Menus(
       {this.menuID,
       this.restaurantID,
-      this.info,
+      this.description,
       this.title,
       this.publishedDate,
-      this.status,
-      this.imageUrl});
+      this.bannerUrl});
 
   Menus.fromJson(Map<String, dynamic> json) {
     menuID = json["menuID"];
     restaurantID = json["restaurantID"];
     title = json["title"];
-    info = json["info"];
-    imageUrl = json["imageUrl"];
-    status = json["status"];
+    description = json["description"];
+    bannerUrl = json["bannerUrl"];
     publishedDate = json['publishedDate']?.toString(); 
   }
 
@@ -32,10 +29,9 @@ class Menus {
     data["menuID"] = menuID;
     data["restaurantID"] = restaurantID;
     data["title"] = title;
-    data["info"] = info;
+    data["description"] = description;
     data["publishedDate"] = publishedDate;
-    data["imageUrl"] = imageUrl;
-    data["status"] = status;
+    data["bannerUrl"] = bannerUrl;
     return data;
   }
 }

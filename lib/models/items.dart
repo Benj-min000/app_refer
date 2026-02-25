@@ -3,11 +3,12 @@ class Items {
   String? restaurantID;
   String? itemID;
   String? title;
-  String? info;
+  String? shortInfo;
   String? publishedDate;
   String? imageUrl;
   String? description;
   String? status;
+  String? restaurantStatus;
   double? price;
   double? discount; 
   List<String>? tags;
@@ -18,11 +19,12 @@ class Items {
     this.restaurantID,
     this.itemID,
     this.title,
-    this.info,
+    this.shortInfo,
     this.publishedDate,
     this.imageUrl,
     this.description,
     this.status,
+    this.restaurantStatus,
     this.price,
     this.discount,
     this.tags,
@@ -52,11 +54,12 @@ class Items {
     restaurantID = json['restaurantID'];
     itemID = json['itemID'];
     title = json['title'];
-    info = json['info'];
+    shortInfo = json['shortInfo'];
     publishedDate = json['publishedDate']?.toString();
     imageUrl = json['imageUrl'];
     description = json['description'];
     status = json['status'];
+    restaurantStatus = json['restaurantStatus'];
     tags =  json['tags'] != null ? List<String>.from(json['tags']) : null;
     likes = json['likes'] ?? 0;
     discount = json['discount']?.toDouble();
@@ -69,11 +72,12 @@ class Items {
       'restaurantID': restaurantID,
       'itemID': itemID,
       'title': title,
-      'info': info,
+      'shortInfo': shortInfo,
       'publishedDate': publishedDate,
       'imageUrl': imageUrl,
       'description': description,
       'status': status,
+      'restaurantStatus': restaurantStatus,
       'price': price,
       'discount': discount,
       'tags': tags,

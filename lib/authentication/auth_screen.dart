@@ -29,7 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
-          automaticallyImplyLeading: false, //removes the default back arrow button from screen
+          automaticallyImplyLeading: false,
           title: const Text(
             'I-Eat',
             style: TextStyle(

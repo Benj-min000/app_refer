@@ -50,7 +50,7 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget> {
                   color: Colors.pinkAccent, fontSize: 20, fontFamily: "Train"),
             ),
             Text(
-              widget.model!.info ?? "No Info",
+              widget.model!.shortInfo ?? "No Info",
               style: const TextStyle(
                   color: Colors.grey, fontSize: 20, fontFamily: "Train"),
             ),

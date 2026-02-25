@@ -302,6 +302,7 @@ class _DiningPagePageState extends State<Home> {
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection("restaurants")
+                .where("status", isEqualTo: "Active")
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {

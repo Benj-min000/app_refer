@@ -147,7 +147,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection("restaurants").snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection("restaurants")
+                  .where("status", isEqualTo: "Active")
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return SliverToBoxAdapter(child: Center(child: circularProgress()));
