@@ -3,7 +3,6 @@ import 'package:user_app/authentication/auth_screen.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/history_screen.dart';
 import 'package:user_app/screens/profile_settings_screen.dart';
-import 'package:user_app/services/firebase_data_transfer.dart';
 import 'package:user_app/assistant_methods/address_changer.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
@@ -50,7 +49,7 @@ class MyDrawer extends StatelessWidget {
                       width: 160,
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                          getUserPref<String>("photo")?? ""),
+                          getUserPref<String>("photoUrl")?? ""),
                       ),
                     ),
                   ),
@@ -81,26 +80,6 @@ class MyDrawer extends StatelessWidget {
               ),
             ],
           )),
-
-          const Divider(height: 1, thickness: 1, color: Colors.grey),
-
-          ListTile(
-            leading: Icon(Icons.data_array, color: Colors.black),
-            title: Text("Firebase Export", style: const TextStyle(color: Colors.black)),
-            onTap: () {
-              FirestoreDumpTool.startExport();
-            },
-          ),
-
-          const Divider(height: 1, thickness: 1, color: Colors.grey),
-
-          ListTile(
-            leading: Icon(Icons.data_usage, color: Colors.black),
-            title: Text("Firebase Import", style: const TextStyle(color: Colors.black)),
-            onTap: () {
-              FirestoreDumpTool.startImport();
-            },
-          ),
             
           const Divider(height: 10, color: Colors.grey, thickness: 2),
 

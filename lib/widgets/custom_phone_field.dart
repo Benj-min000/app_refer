@@ -66,84 +66,85 @@ class _CustomPhoneFieldState extends State<CustomPhoneField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            PhoneFormField(
-              focusNode: _focusNode,
-              controller: widget.controller,
-              countrySelectorNavigator: const CountrySelectorNavigator.page(),
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(20),
-                focusColor: Theme.of(context).primaryColor,
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-                floatingLabelStyle: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                  backgroundColor: Colors.white,
-                ),
-                errorStyle: TextStyle(
-                  fontSize: 0,
-                  height: 0,
-                ),
-                errorBorder: OutlineInputBorder(
-                  gapPadding: 0,
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.red, width: 2),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  gapPadding: 0,
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.red, width: 2),
-                ),
-                label: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: _isFloating ? BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor,
-                      width: 2,
-                    ),
-                  ) : null,
-                  child: Text(
-                    widget.label ?? "Phone Number",
-                    style: TextStyle(
-                      color: _isFloating ? Theme.of(context).primaryColor : Colors.grey[600],
-                      fontWeight: FontWeight.bold,
-                    ),
+          PhoneFormField(
+            focusNode: _focusNode,
+            controller: widget.controller,
+            countrySelectorNavigator: const CountrySelectorNavigator.dialog(
+              width: 400,
+              showDialCode: true,
+            ),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.all(20),
+              focusColor: Theme.of(context).primaryColor,
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              floatingLabelStyle: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+                backgroundColor: Colors.white,
+              ),
+              errorStyle: TextStyle(
+                fontSize: 0,
+                height: 0,
+              ),
+              errorBorder: OutlineInputBorder(
+                gapPadding: 0,
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.red, width: 2),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                gapPadding: 0,
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.red, width: 2),
+              ),
+              label: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: _isFloating ? BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).primaryColor,
+                    width: 2,
+                  ),
+                ) : null,
+                child: Text(
+                  widget.label ?? "Phone Number",
+                  style: TextStyle(
+                    color: _isFloating ? Theme.of(context).primaryColor : Colors.grey[600],
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade600),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  gapPadding: 0,
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
-                ),
-                filled: true,
-                fillColor: Colors.white,
               ),
-              validator: (phoneNumber) {
-                final validators = PhoneValidator.compose([
-                  PhoneValidator.required(context),
-                  PhoneValidator.validMobile(context),
-                ]);
-                
-                final error = validators(phoneNumber);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    setState(() {
-                      _errorMessage = error;
-                    });
-                  }
-                });
-                return error;
-              },
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade600),
+              ),
+              focusedBorder: OutlineInputBorder(
+                gapPadding: 0,
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.white,
             ),
+            validator: (phoneNumber) {
+              final validators = PhoneValidator.compose([
+                PhoneValidator.required(context),
+                PhoneValidator.validMobile(context),
+              ]);
+              
+              final error = validators(phoneNumber);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && _errorMessage != error) {
+                  setState(() => _errorMessage = error);
+                }
+              });
+              return error;
+            },
+          ),
           CustomErrorMessage(errorMessage: _errorMessage),
         ],
       ),

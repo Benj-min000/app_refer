@@ -56,7 +56,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           : PhoneNumber.parse('+1'),
     );
     
-    currentPhotoUrl = getUserPref<String>("photo");
+    currentPhotoUrl = getUserPref<String>("photoUrl");
 
     setState(() {
       isLoading = false;
@@ -95,8 +95,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         fStorage.TaskSnapshot taskSnapshot = await uploadTask;
         String newDownloadUrl = await taskSnapshot.ref.getDownloadURL();
         
-        updateData["photo"] = newDownloadUrl;
-        await saveUserPref<String>("photo", newDownloadUrl);
+        updateData["photoUrl"] = newDownloadUrl;
+        await saveUserPref<String>("photoUrl", newDownloadUrl);
       }
 
       if (isNameChanged) {
@@ -181,7 +181,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         child: CircleAvatar(
                           radius: 60,
                           backgroundImage: NetworkImage(
-                            getUserPref<String>("photo")!
+                            getUserPref<String>("photoUrl")!
                           ),
                         ),
                       ),

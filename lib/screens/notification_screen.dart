@@ -65,7 +65,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   .collection("users")
                   .doc(userId)
                   .collection("notifications")
-                  .orderBy("timestamp", descending: true)
+                  .orderBy("createdAt", descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -84,7 +84,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                     
                     // Format the timestamp
-                    DateTime date = (data['timestamp'] as Timestamp).toDate();
+                    DateTime date = (data['createdAt'] as Timestamp).toDate();
                     String formattedDate = DateFormat('dd MMM, hh:mm a').format(date);
 
                     return Card(

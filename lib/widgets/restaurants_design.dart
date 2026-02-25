@@ -1,108 +1,151 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/screens/menus_screen.dart';
 import 'package:user_app/models/restaurants.dart';
+import 'package:user_app/screens/menus_screen.dart';
 
-class RestaurantDesignWidget extends StatefulWidget {
+class RestaurantDesignWidget extends StatelessWidget {
   final Restaurants? model;
-
   const RestaurantDesignWidget({super.key, this.model});
 
   @override
-  State<RestaurantDesignWidget> createState() => _RestaurantDesignWidgetState();
-}
+  Widget build(BuildContext context) {
+    final bool hasImage = model?.bannerUrl != null && model!.bannerUrl!.isNotEmpty;
 
-class _RestaurantDesignWidgetState extends State<RestaurantDesignWidget> {
-  
-  // Extracted placeholder to avoid code duplication
-  Widget _buildImagePlaceholder(String message) {
-    return Container(
-      height: 220,
-      width: double.infinity,
-      color: Colors.grey[200],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.store, size: 60, color: Colors.grey[400]),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            style: TextStyle(color: Colors.grey[500], fontSize: 12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => MenusScreen(model: model)),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.07),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Banner image
+              SizedBox(
+                height: 180,
+                width: double.infinity,
+                child: hasImage
+                    ? Image.network(
+                        model!.bannerUrl!,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return Container(
+                            color: Colors.grey[100],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: progress.expectedTotalBytes != null
+                                    ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                                    : null,
+                                strokeWidth: 2,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => _placeholder(),
+                      )
+                    : _placeholder(),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    // Restaurant avatar
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrangeAccent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.deepOrangeAccent.withValues(alpha: 0.3)),
+                      ),
+                      child: const Icon(Icons.restaurant_rounded, color: Colors.deepOrangeAccent, size: 22),
+                    ),
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            model?.name ?? 'Unknown Restaurant',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1A1D2E),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          // if (model?.address != null && model!.address!.isNotEmpty) ...[
+                          //   const SizedBox(height: 2),
+                          //   Row(
+                          //     children: [
+                          //       Icon(Icons.location_on_rounded, size: 12, color: Colors.grey[500]),
+                          //       const SizedBox(width: 2),
+                          //       Flexible(
+                          //         child: Text(
+                          //           model!.address!,
+                          //           style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                          //           maxLines: 1,
+                          //           overflow: TextOverflow.ellipsis,
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ],
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrangeAccent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        children: [
+                          Text('View', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.deepOrangeAccent)),
+                          SizedBox(width: 4),
+                          Icon(Icons.arrow_forward_rounded, size: 18, color:Colors.deepOrangeAccent),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final bool hasValidUrl = widget.model?.logoUrl != null && 
-                             widget.model!.logoUrl!.isNotEmpty;
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => MenusScreen(model: widget.model))
-        );
-      },
-      splashColor: Colors.amber,
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              Divider(height: 50, thickness: 3, color: Colors.grey[300]),
-              
-              hasValidUrl
-                  ? Image.network(
-                      widget.model!.logoUrl!,
-                      height: 220,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          height: 220,
-                          color: Colors.grey[100],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildImagePlaceholder('Image not available');
-                      },
-                    )
-                  : _buildImagePlaceholder('No image provided'),
-
-              const SizedBox(height: 10),
-              
-              Text(
-                widget.model?.name ?? 'Unknown Store',
-                style: const TextStyle(
-                  color: Colors.pinkAccent,
-                  fontSize: 20,
-                  fontFamily: "Train",
-                ),
-              ),
-              Text(
-                widget.model?.email ?? '',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14, // Reduced slightly for better hierarchy
-                  fontFamily: "Train",
-                ),
-              ),
-              
-              Divider(height: 50, thickness: 2, color: Colors.grey[300]),
-            ],
-          ),
-        ),
+  Widget _placeholder() {
+    return Container(
+      color: Colors.grey[100],
+      child: Center(
+        child: Icon(Icons.store_rounded, size: 48, color: Colors.grey[400]),
       ),
     );
   }

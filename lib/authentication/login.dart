@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       final data = snapshot.data()!;
-      if (data["status"] != "Approved") {
+      if (data["role"] != "customer" || data["status"] != "Approved") {
         await firebaseAuth.signOut();
         if(!mounted) return;
         Fluttertoast.showToast(
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await saveUserPref<String>("email", data["email"]);
       await saveUserPref<String>("name", data["name"]);
       await saveUserPref<String>("phone", data["phone"]);
-      await saveUserPref<String>("photo", data["photo"]);
+      await saveUserPref<String>("photoUrl", data["photoUrl"]);
 
       if (!mounted) return;
       Navigator.pushReplacement(

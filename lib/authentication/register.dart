@@ -56,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     _phoneController = PhoneController(
-      initialValue: const PhoneNumber(isoCode: IsoCode.US, nsn: ''),
+      initialValue: const PhoneNumber(isoCode: IsoCode.PL, nsn: ''),
     );
   }
 
@@ -133,11 +133,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> saveDataToFireStore(User currentUser) async {
     DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
     await userRef.set({
-      "email": currentUser.email,
+      "userID": currentUser.uid,
       "name": _nameController.text.trim(),
-      "photo": downloadUrl.trim(),
+      "email": currentUser.email,
+      "phone": _phoneController.value.international,
+      "photoUrl": downloadUrl.trim(),
+      "createdAt": DateTime.now(),
+      "role": 'customer',
       "status": "Approved",
-      "phone": _phoneController.value.international
     });
     
     // Initializing notifications
@@ -145,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "userID": currentUser.uid,
       "title": "Welcome!",
       "body": "Thanks for joining our app, ${_nameController.text.trim()}!",
-      "timestamp": DateTime.now(),
+      "createdAt": DateTime.now(),
       "isRead": false,
     });
 
@@ -154,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     cartItemCounter.displayCartListItemsNumber();
     await saveUserPref<String>("email", currentUser.email.toString());
     await saveUserPref<String>("name", _nameController.text.trim());
-    await saveUserPref<String>("photo", downloadUrl.trim());
+    await saveUserPref<String>("photoUrl", downloadUrl.trim());
     await saveUserPref<String>("phone", _phoneController.value.international);
   }
 

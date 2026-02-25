@@ -217,7 +217,7 @@ class _SearchScreenState extends State<SearchScreen> {
       final restaurant = Restaurants(
         restaurantID: restaurantID,
         name: result['name'] ?? '',
-        logoUrl: result['imageUrl'] ?? '',
+        logoUrl: result['logoUrl'] ?? '',
         bannerUrl: result['bannerUrl'] ?? '',
         email: result['email'] ?? '',
         status: result['status'] ?? '',
@@ -406,7 +406,7 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (context, index) {
         final result = _results[index];
         final type = result['_type'] as String;
-        final imageUrl = (result['imageUrl'] as String?) ?? '';
+        final imageUrl = (result['logoUrl'] ?? result['imageUrl'] as String?) ?? '';
         final title = (result['title'] ?? result['name'] ?? '') as String;
         final subtitle = type == 'item'
             ? (result['description'] ?? '') as String
@@ -432,8 +432,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: imageUrl.isNotEmpty
                           ? Image.network(
                               imageUrl,
-                              width: 100,
-                              height: 110,
+                              width: 90,
+                              height: 100,
                               fit: BoxFit.cover,
                             )
                           : _imageFallback(),

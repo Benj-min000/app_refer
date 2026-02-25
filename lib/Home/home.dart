@@ -324,13 +324,13 @@ class _DiningPagePageState extends State<Home> {
 
               return Column(
                 children: snapshot.data!.docs.map((doc) {
-                  var storeData = doc.data() as Map<String, dynamic>;
+                  var restData = doc.data() as Map<String, dynamic>;
                   return SizedBox(
                     height: 300,
                     width: double.infinity,
                     child: RestaurantCard(
                       restaurantID: doc.id,
-                      restaurantName: storeData['name'] ?? 'Unknown Store',
+                      restaurantName: restData['name'] ?? 'Unknown Store',
                     ),
                   );
                 }).toList(),
