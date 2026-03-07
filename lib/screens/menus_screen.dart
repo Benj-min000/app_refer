@@ -24,47 +24,47 @@ class _MenusScreenState extends State<MenusScreen> {
       appBar: UnifiedAppBar(
         title: "${widget.model!.name} Menus",
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios_new, 
-            size: 28,
-            color: Colors.white,
-          )
-        ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 28,
+              color: Colors.white,
+            )),
       ),
       body: CustomScrollView(
         slivers: [
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-              .collection("restaurants")
-              .doc(widget.model!.restaurantID)
-              .collection("menus")
-              .orderBy("publishedDate", descending: true)
-              .snapshots(),
+                .collection("restaurants")
+                .doc(widget.model!.restaurantID)
+                .collection("menus")
+                .orderBy("createdAt", descending: true)
+                .snapshots(),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                ? SliverToBoxAdapter(
-                  child: Center(
-                    child: circularProgress(),
-                  ),
-                )
-                : SliverMasonryGrid.count(
-                  crossAxisCount: 1,
-                  itemBuilder: (context, index) {
-                    var doc = snapshot.data!.docs[index];
+                  ? SliverToBoxAdapter(
+                      child: Center(
+                        child: circularProgress(),
+                      ),
+                    )
+                  : SliverMasonryGrid.count(
+                      crossAxisCount: 1,
+                      itemBuilder: (context, index) {
+                        var doc = snapshot.data!.docs[index];
 
-                    Menus mModel = Menus.fromJson(doc.data()! as Map<String, dynamic>);
-                    mModel.menuID = doc.id;               
-                    mModel.restaurantID = widget.model!.restaurantID;
+                        Menus mModel =
+                            Menus.fromJson(doc.data()! as Map<String, dynamic>);
+                        mModel.menuID = doc.id;
+                        mModel.restaurantID = widget.model!.restaurantID;
 
-                    return MenusDesignWidget(
-                      model: mModel,
-                      context: context,
-                    );
-                  },
-                  childCount: snapshot.data!.docs.length);
+                        return MenusDesignWidget(
+                          model: mModel,
+                          context: context,
+                        );
+                      },
+                      childCount: snapshot.data!.docs.length);
             },
           ),
         ],

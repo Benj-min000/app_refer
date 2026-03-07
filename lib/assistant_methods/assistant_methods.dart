@@ -38,7 +38,7 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID,
       "menuID": menuID,
       "restaurantID": restaurantID,
       "quantity": itemCounter,
-      "publishedDate": DateTime.now(),
+      "created": DateTime.now(),
     }).then((value) {
       List<String> tempCartList = getUserPref<List<String>>("userCart") ?? [];
     

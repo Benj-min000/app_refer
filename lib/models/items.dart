@@ -1,16 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Items {
   String? menuID;
   String? restaurantID;
   String? itemID;
   String? title;
   String? shortInfo;
-  String? publishedDate;
+  Timestamp? createdAt;
   String? imageUrl;
   String? description;
   String? status;
   String? restaurantStatus;
   double? price;
-  double? discount; 
+  double? discount;
   List<String>? tags;
   int? likes;
 
@@ -20,7 +22,7 @@ class Items {
     this.itemID,
     this.title,
     this.shortInfo,
-    this.publishedDate,
+    this.createdAt,
     this.imageUrl,
     this.description,
     this.status,
@@ -37,11 +39,11 @@ class Items {
     }
     return price! * (1 - discount! / 100);
   }
-  
+
   bool get hasDiscount {
     return discount != null && discount! > 0;
   }
-  
+
   double get savedAmount {
     if (price == null || discount == null || discount == 0) {
       return 0.0;
@@ -55,12 +57,12 @@ class Items {
     itemID = json['itemID'];
     title = json['title'];
     shortInfo = json['shortInfo'];
-    publishedDate = json['publishedDate']?.toString();
+    createdAt = json['createdAt'];
     imageUrl = json['imageUrl'];
     description = json['description'];
     status = json['status'];
     restaurantStatus = json['restaurantStatus'];
-    tags =  json['tags'] != null ? List<String>.from(json['tags']) : null;
+    tags = json['tags'] != null ? List<String>.from(json['tags']) : null;
     likes = json['likes'] ?? 0;
     discount = json['discount']?.toDouble();
     price = json['price']?.toDouble();
@@ -73,7 +75,7 @@ class Items {
       'itemID': itemID,
       'title': title,
       'shortInfo': shortInfo,
-      'publishedDate': publishedDate,
+      'createdAt': createdAt,
       'imageUrl': imageUrl,
       'description': description,
       'status': status,

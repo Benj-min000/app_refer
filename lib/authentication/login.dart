@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       final data = snapshot.data()!;
-      if (data["role"] != "customer" || data["status"] != "Approved") {
+      if (data["role"] != "customer" || data["status"] != "approved") {
         await firebaseAuth.signOut();
         if(!mounted) return;
         Fluttertoast.showToast(

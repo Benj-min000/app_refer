@@ -69,7 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String _buildItemFilterString() {
     List<String> filters = [];
 
-    filters.add('restaurantStatus:Active');
+    filters.add('restaurantStatus:active');
 
     final itemTags = _selectedCategories.where((c) => _availableItemCategories.contains(c)).toList();
     

@@ -140,7 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "photoUrl": downloadUrl.trim(),
       "createdAt": DateTime.now(),
       "role": 'customer',
-      "status": "Approved",
+      "status": "approved",
     });
     
     // Initializing notifications

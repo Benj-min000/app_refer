@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Menus {
   String? menuID;
   String? restaurantID;
   String? title;
   String? description;
-  String? publishedDate;
+  Timestamp? createdAt;
   String? bannerUrl;
 
   Menus(
@@ -11,7 +13,7 @@ class Menus {
       this.restaurantID,
       this.description,
       this.title,
-      this.publishedDate,
+      this.createdAt,
       this.bannerUrl});
 
   Menus.fromJson(Map<String, dynamic> json) {
@@ -20,7 +22,7 @@ class Menus {
     title = json["title"];
     description = json["description"];
     bannerUrl = json["bannerUrl"];
-    publishedDate = json['publishedDate']?.toString(); 
+    createdAt = json['createdAt']; 
   }
 
 
@@ -30,7 +32,7 @@ class Menus {
     data["restaurantID"] = restaurantID;
     data["title"] = title;
     data["description"] = description;
-    data["publishedDate"] = publishedDate;
+    data["createdAt"] = createdAt;
     data["bannerUrl"] = bannerUrl;
     return data;
   }

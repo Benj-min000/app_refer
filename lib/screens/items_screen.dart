@@ -24,7 +24,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 28),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: Colors.white, size: 28),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -36,13 +37,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
         slivers: [
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-              .collection("restaurants")
-              .doc(widget.model!.restaurantID)
-              .collection("menus")
-              .doc(widget.model!.menuID)
-              .collection("items")
-              .orderBy("publishedDate", descending: true)
-              .snapshots(),
+                .collection("restaurants")
+                .doc(widget.model!.restaurantID)
+                .collection("menus")
+                .doc(widget.model!.menuID)
+                .collection("items")
+                .orderBy("createdAt", descending: true)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return SliverToBoxAdapter(
@@ -60,27 +61,28 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 );
               }
               return !snapshot.hasData
-                ? SliverToBoxAdapter(
-                    child: Center(
-                      child: circularProgress(),
-                    ),
-                  )
-                : SliverMasonryGrid.count(
-                    crossAxisCount: 1,
-                    itemBuilder: (context, index) {
-                      var doc = snapshot.data!.docs[index];
-                      Items iModel = Items.fromJson(doc.data()! as Map<String, dynamic>);
+                  ? SliverToBoxAdapter(
+                      child: Center(
+                        child: circularProgress(),
+                      ),
+                    )
+                  : SliverMasonryGrid.count(
+                      crossAxisCount: 1,
+                      itemBuilder: (context, index) {
+                        var doc = snapshot.data!.docs[index];
+                        Items iModel =
+                            Items.fromJson(doc.data()! as Map<String, dynamic>);
 
-                      iModel.itemID = doc.id;
-                      iModel.menuID = widget.model!.menuID;
-                      iModel.restaurantID = widget.model!.restaurantID;
+                        iModel.itemID = doc.id;
+                        iModel.menuID = widget.model!.menuID;
+                        iModel.restaurantID = widget.model!.restaurantID;
 
-                      return ItemsDesignWidget(
-                        model: iModel,
-                        context: context,
-                      );
-                    },
-                    childCount: snapshot.data!.docs.length);
+                        return ItemsDesignWidget(
+                          model: iModel,
+                          context: context,
+                        );
+                      },
+                      childCount: snapshot.data!.docs.length);
             },
           ),
         ],
