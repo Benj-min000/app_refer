@@ -10,12 +10,12 @@ class HomeCategoryItem {
 class HomeTab {
   final String label;
   final List<HomeCategoryItem> categories;
-  
+
   HomeTab({required this.label, required this.categories});
 }
 
 List<HomeTab> getHomeTabs(BuildContext context) {
-  final t = context.t;
+  final t = context.l10n;
   return [
     // Food Delivery Tab
     HomeTab(
@@ -23,7 +23,8 @@ List<HomeTab> getHomeTabs(BuildContext context) {
       categories: [
         HomeCategoryItem(icon: Icons.percent, label: t.categoryDiscounts),
         HomeCategoryItem(icon: Icons.kebab_dining, label: t.categoryPork),
-        HomeCategoryItem(icon: Icons.set_meal, label: t.categoryTonkatsuSashimi),
+        HomeCategoryItem(
+            icon: Icons.set_meal, label: t.categoryTonkatsuSashimi),
         HomeCategoryItem(icon: Icons.local_pizza, label: t.categoryPizza),
         HomeCategoryItem(icon: Icons.soup_kitchen, label: t.categoryStew),
         HomeCategoryItem(icon: Icons.restaurant, label: t.categoryChinese),
@@ -34,12 +35,13 @@ List<HomeTab> getHomeTabs(BuildContext context) {
         HomeCategoryItem(icon: Icons.ramen_dining, label: t.categoryOneBowl),
       ],
     ),
-    
+
     // Pickup Tab
     HomeTab(
       label: t.tabPickup,
       categories: [
-        HomeCategoryItem(icon: Icons.percent_outlined, label: t.categoryPichupDiscount),
+        HomeCategoryItem(
+            icon: Icons.percent_outlined, label: t.categoryPichupDiscount),
         HomeCategoryItem(icon: Icons.fastfood, label: t.categoryFastFood),
         HomeCategoryItem(icon: Icons.coffee, label: t.categoryCoffee),
         HomeCategoryItem(icon: Icons.bakery_dining, label: t.categoryBakery),
@@ -47,22 +49,24 @@ List<HomeTab> getHomeTabs(BuildContext context) {
         HomeCategoryItem(icon: Icons.lunch_dining, label: t.categoryLunch),
       ],
     ),
-    
+
     // Grocery Shopping Tab
     HomeTab(
       label: t.tabGroceryShopping,
       categories: [
-        HomeCategoryItem(icon: Icons.shopping_basket, label: t.categoryFreshProduce),
+        HomeCategoryItem(
+            icon: Icons.shopping_basket, label: t.categoryFreshProduce),
         HomeCategoryItem(icon: Icons.egg, label: t.categoryDairyEggs),
         HomeCategoryItem(icon: Icons.set_meal, label: t.categoryMeat),
         HomeCategoryItem(icon: Icons.water_drop, label: t.categoryBeverages),
         HomeCategoryItem(icon: Icons.bakery_dining, label: t.categoryBakery),
         HomeCategoryItem(icon: Icons.icecream, label: t.categoryFrozen),
         HomeCategoryItem(icon: Icons.local_dining, label: t.categorySnacks),
-        HomeCategoryItem(icon: Icons.cleaning_services, label: t.categoryHousehold),
+        HomeCategoryItem(
+            icon: Icons.cleaning_services, label: t.categoryHousehold),
       ],
     ),
-    
+
     // Gifting Tab
     HomeTab(
       label: t.tabGifting,
@@ -70,12 +74,14 @@ List<HomeTab> getHomeTabs(BuildContext context) {
         HomeCategoryItem(icon: Icons.cake, label: t.categoryCakes),
         HomeCategoryItem(icon: Icons.local_florist, label: t.categoryFlowers),
         HomeCategoryItem(icon: Icons.card_giftcard, label: t.categoryGiftBoxes),
-        HomeCategoryItem(icon: Icons.celebration, label: t.categoryPartySupplies),
+        HomeCategoryItem(
+            icon: Icons.celebration, label: t.categoryPartySupplies),
         HomeCategoryItem(icon: Icons.redeem, label: t.categoryGiftCards),
-        HomeCategoryItem(icon: Icons.favorite, label: t.categorySpecialOccasions),
+        HomeCategoryItem(
+            icon: Icons.favorite, label: t.categorySpecialOccasions),
       ],
     ),
-    
+
     // Benefits Tab
     HomeTab(
       label: t.tabBenefits,
@@ -84,7 +90,8 @@ List<HomeTab> getHomeTabs(BuildContext context) {
         HomeCategoryItem(icon: Icons.stars, label: t.categoryLoyaltyRewards),
         HomeCategoryItem(icon: Icons.discount, label: t.categoryCoupons),
         HomeCategoryItem(icon: Icons.new_releases, label: t.categoryNewOffers),
-        HomeCategoryItem(icon: Icons.workspace_premium, label: t.categoryExclusiveDeals),
+        HomeCategoryItem(
+            icon: Icons.workspace_premium, label: t.categoryExclusiveDeals),
       ],
     ),
   ];

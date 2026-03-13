@@ -19,18 +19,18 @@ import 'package:user_app/extensions/context_translate_ext.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
-  
+
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-
   @override
   void initState() {
     super.initState();
 
-    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+    Provider.of<CartItemCounter>(context, listen: false)
+        .displayCartListItemsNumber();
   }
 
   Future<void> _clearCart() async {
@@ -39,13 +39,13 @@ class _CartScreenState extends State<CartScreen> {
       barrierDismissible: false,
       builder: (_) => circularProgress(),
     );
-    
+
     await clearCartNow(context);
 
     if (!mounted) return;
     Provider.of<TotalAmount>(context, listen: false).reset();
     Navigator.pop(context);
-    Fluttertoast.showToast(msg: context.t.cartCleared);
+    Fluttertoast.showToast(msg: context.l10n.cartCleared);
   }
 
   void _proceedToCheckout() {
@@ -59,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
+    final t = context.l10n;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -157,8 +157,9 @@ class _CartScreenState extends State<CartScreen> {
         SliverToBoxAdapter(
           child: Consumer<TotalAmount>(
             builder: (context, amountProvider, _) {
-              if (amountProvider.totalAmount <= 0) return const SizedBox.shrink();
-              
+              if (amountProvider.totalAmount <= 0)
+                return const SizedBox.shrink();
+
               return Container(
                 padding: const EdgeInsets.all(20),
                 margin: const EdgeInsets.all(16),
@@ -183,32 +184,58 @@ class _CartScreenState extends State<CartScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Original Total:", style: TextStyle(fontSize: 14, color: Colors.white70)),
-                          Text("${amountProvider.originalAmount.toStringAsFixed(2)}zł",
-                            style: const TextStyle(fontSize: 14, color: Colors.white70, decoration: TextDecoration.lineThrough)),
+                          const Text("Original Total:",
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.white70)),
+                          Text(
+                              "${amountProvider.originalAmount.toStringAsFixed(2)}zł",
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white70,
+                                  decoration: TextDecoration.lineThrough)),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("You Save:", style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w600)),
+                          const Text("You Save:",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600)),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12)),
-                            child: Text("- ${amountProvider.totalSavings.toStringAsFixed(2)}zł",
-                              style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Text(
+                                "- ${amountProvider.totalSavings.toStringAsFixed(2)}zł",
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
-                      const Divider(color: Colors.white38, height: 24, thickness: 1),
+                      const Divider(
+                          color: Colors.white38, height: 24, thickness: 1),
                     ],
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Total:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                        Text("${amountProvider.totalAmount.toStringAsFixed(2)}zł",
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
+                        const Text("Total:",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                        Text(
+                            "${amountProvider.totalAmount.toStringAsFixed(2)}zł",
+                            style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                       ],
                     ),
                   ],
@@ -238,9 +265,12 @@ class _CartScreenState extends State<CartScreen> {
 
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
-                .collection("restaurants").doc(cartData['restaurantID'])
-                .collection("menus").doc(cartData['menuID'])
-                .collection("items").doc(cartData['itemID'])
+                .collection("restaurants")
+                .doc(cartData['restaurantID'])
+                .collection("menus")
+                .doc(cartData['menuID'])
+                .collection("items")
+                .doc(cartData['itemID'])
                 .get(),
             builder: (context, itemSnapshot) {
               if (!itemSnapshot.hasData || !itemSnapshot.data!.exists) {
@@ -264,7 +294,8 @@ class _CartScreenState extends State<CartScreen> {
                 tempTotal += pricePerItem * quantity;
                 tempOriginal += originalPricePerItem * quantity;
                 if (model.hasDiscount) {
-                  tempSavings += (originalPricePerItem - pricePerItem) * quantity;
+                  tempSavings +=
+                      (originalPricePerItem - pricePerItem) * quantity;
                 }
 
                 if (loadedCount == docs.length) {

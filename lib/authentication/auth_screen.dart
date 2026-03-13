@@ -11,7 +11,6 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -39,34 +38,31 @@ class _AuthScreenState extends State<AuthScreen> {
           bottom: TabBar(
             tabs: [
               Tab(
-                icon: const Icon(
-                  Icons.lock,
-                  color: Colors.white,
-                ),
-                child: Text(
-                  context.t.login,
-                  style: TextStyle(
-                    fontSize: 16,
+                  icon: const Icon(
+                    Icons.lock,
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
                   ),
-                )
-                
-              ),
+                  child: Text(
+                    context.l10n.login,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
               Tab(
-                icon: const Icon(
-                  Icons.lock,
-                  color: Colors.white,
-                ),
-                child: Text(
-                  context.t.register,
-                  style: TextStyle(
-                    fontSize: 16,
+                  icon: const Icon(
+                    Icons.lock,
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
                   ),
-                )
-              ),
+                  child: Text(
+                    context.l10n.register,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
             ],
             indicatorColor: Colors.white38,
             indicatorWeight: 6,
@@ -77,7 +73,10 @@ class _AuthScreenState extends State<AuthScreen> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [Colors.pinkAccent.withValues(alpha: 0.8), Colors.red.withValues(alpha: 0.9)],
+              colors: [
+                Colors.pinkAccent.withValues(alpha: 0.8),
+                Colors.red.withValues(alpha: 0.9)
+              ],
             ),
           ),
           child: const TabBarView(children: [

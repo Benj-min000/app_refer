@@ -18,7 +18,6 @@ import 'package:user_app/widgets/custom_password_field.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/extensions/context_translate_ext.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -31,9 +30,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmePasswordController = TextEditingController();
+  final TextEditingController _confirmePasswordController =
+      TextEditingController();
   late final PhoneController _phoneController;
-  
+
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
   String downloadUrl = "";
@@ -63,9 +63,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> formValidation() async {
     if (imageXFile == null) {
       showDialog(
-        context: context, 
-        builder: (_) => ErrorDialog(message: context.t.errorSelectImage)
-      );
+          context: context,
+          builder: (_) => ErrorDialog(message: context.l10n.errorSelectImage));
       return;
     }
 
@@ -74,16 +73,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (_passwordController.text != _confirmePasswordController.text) {
-      showDialog(context: context, builder: (_) => ErrorDialog(message: context.t.errorNoMatchPasswords));
+      showDialog(
+          context: context,
+          builder: (_) =>
+              ErrorDialog(message: context.l10n.errorNoMatchPasswords));
       return;
     }
 
-    if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
+    if (_nameController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
       showDialog(
-        context: context, 
-        barrierDismissible: false,
-        builder: (_) => LoadingDialog(message: context.t.registeringAccount)
-      );
+          context: context,
+          barrierDismissible: false,
+          builder: (_) =>
+              LoadingDialog(message: context.l10n.registeringAccount));
 
       try {
         UserCredential auth = await firebaseAuth.createUserWithEmailAndPassword(
@@ -94,13 +98,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         User? currentUser = auth.user;
 
         if (currentUser != null) {
-          String fileName = currentUser.uid; 
+          String fileName = currentUser.uid;
           fStorage.Reference reference = fStorage.FirebaseStorage.instance
-            .ref()
-            .child('users')
-            .child(fileName);
-          
-          fStorage.UploadTask uploadTask = reference.putFile(File(imageXFile!.path));
+              .ref()
+              .child('users')
+              .child(fileName);
+
+          fStorage.UploadTask uploadTask =
+              reference.putFile(File(imageXFile!.path));
           fStorage.TaskSnapshot taskSnapshot = await uploadTask;
 
           downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -110,28 +115,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (!mounted) return;
           Navigator.pop(context);
           Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (_) => const HomeScreen())
-          );
+              context, MaterialPageRoute(builder: (_) => const HomeScreen()));
         }
       } catch (error) {
-          if(!mounted) return;
-          Navigator.pop(context); 
-          showDialog(
-            context: context, 
-            builder: (_) => ErrorDialog(message: context.t.storageError(error)),
-          );
-        }
+        if (!mounted) return;
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (_) =>
+              ErrorDialog(message: context.l10n.storageError(error)),
+        );
+      }
     } else {
       showDialog(
-        context: context,
-        builder: (_) => ErrorDialog(message: context.t.errorEnterRegInfo)
-      );
+          context: context,
+          builder: (_) => ErrorDialog(message: context.l10n.errorEnterRegInfo));
     }
   }
 
   Future<void> saveDataToFireStore(User currentUser) async {
-    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
     await userRef.set({
       "userID": currentUser.uid,
       "name": _nameController.text.trim(),
@@ -142,7 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "role": 'customer',
       "status": "approved",
     });
-    
+
     // Initializing notifications
     await userRef.collection('notifications').add({
       "userID": currentUser.uid,
@@ -210,57 +214,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 CustomTextField(
                   data: Icons.person,
                   controller: _nameController,
-                  hintText: context.t.hintName,
+                  hintText: context.l10n.hintName,
                   isObsecure: false,
                 ),
-                
                 CustomPhoneField(
                   controller: _phoneController,
                   label: "Phone Number",
                 ),
-
                 CustomTextField(
                   data: Icons.email,
                   controller: _emailController,
-                  hintText: context.t.hintEmail,
+                  hintText: context.l10n.hintEmail,
                   isObsecure: false,
                 ),
-                
                 CustomPasswordField(
                   controller: _passwordController,
-                  label: context.t.hintPassword,
+                  label: context.l10n.hintPassword,
                   isRequired: true,
                   isConfirmation: false,
                 ),
-
                 CustomPasswordField(
                   controller: _confirmePasswordController,
-                  label: context.t.hintConfPassword,
+                  label: context.l10n.hintConfPassword,
                   isRequired: true,
                   isConfirmation: true,
                 ),
               ],
             ),
           ),
-
           const SizedBox(height: 10),
-
           ElevatedButton(
             onPressed: () async => {
               await formValidation(),
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.pink.shade300,
-              padding:
-                const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
+                backgroundColor: Colors.pink.shade300,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
             child: Text(
-              context.t.signUp,
-              style:
-                TextStyle(
+              context.l10n.signUp,
+              style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white, 
-                  fontWeight: FontWeight.bold
-                ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(
@@ -271,4 +267,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-

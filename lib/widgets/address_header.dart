@@ -33,13 +33,12 @@ class _AddressHeaderState extends State<AddressHeader> {
     final addressProvider = Provider.of<AddressChanger>(context);
 
     // This runs whenever the language (Locale) or Providers change
-    if (_lastLocale != localeProvider.locale || 
-      _lastAddressIndex != addressProvider.count) {
-    
+    if (_lastLocale != localeProvider.locale ||
+        _lastAddressIndex != addressProvider.count) {
       _lastLocale = localeProvider.locale;
       _lastAddressIndex = addressProvider.count;
       _updateAddress();
-    } 
+    }
   }
 
   @override
@@ -67,23 +66,26 @@ class _AddressHeaderState extends State<AddressHeader> {
     if (addressProvider.count >= 0) {
       dataToProcess = addressProvider.selectedAddress;
     } else {
-      if (mounted) setState(() => _location = context.t.findingLocalization);
-    
+      if (mounted) setState(() => _location = context.l10n.findingLocalization);
+
       try {
-        final dataToProcess = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
+        final dataToProcess = await LocationService.fetchUserCurrentLocation(
+            langCode: languageCode);
         if (mounted) {
           setState(() {
             _location = dataToProcess['fullAddress'];
           });
         }
       } catch (e) {
-        if (mounted) setState(() => _location = context.t.errorAddressNotFound);
+        if (mounted)
+          setState(() => _location = context.l10n.errorAddressNotFound);
       }
       return;
     }
 
-    String finalAddress = await TranslationService.formatAndTranslateAddress(dataToProcess, languageCode);
-    
+    String finalAddress = await TranslationService.formatAndTranslateAddress(
+        dataToProcess, languageCode);
+
     if (mounted) {
       setState(() {
         _location = finalAddress;
@@ -94,7 +96,8 @@ class _AddressHeaderState extends State<AddressHeader> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AddressScreen())),
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (_) => AddressScreen())),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -104,15 +107,24 @@ class _AddressHeaderState extends State<AddressHeader> {
             child: InkWell(
               onTap: () => setState(() => _showFullAddress = !_showFullAddress),
               child: Text(
-                _location.isEmpty ? context.t.findingLocalization : _location,
-                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                _location.isEmpty
+                    ? context.l10n.findingLocalization
+                    : _location,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
                 maxLines: _showFullAddress ? null : 1,
-                overflow: _showFullAddress ? TextOverflow.visible : TextOverflow.ellipsis,
+                overflow: _showFullAddress
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
               ),
             ),
           ),
           Icon(
-            _showFullAddress ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            _showFullAddress
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
             color: Colors.white,
             size: 20,
           ),

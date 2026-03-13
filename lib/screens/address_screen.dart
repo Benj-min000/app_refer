@@ -45,7 +45,7 @@ class _AddressScreenState extends State<AddressScreen> {
       }
     });
   }
-  
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -56,9 +56,8 @@ class _AddressScreenState extends State<AddressScreen> {
     // Listening for chaning the address
     final addressProvider = Provider.of<AddressChanger>(context);
 
-    if (_lastLocale != localeProvider.locale || 
-      _lastAddressIndex != addressProvider.count) {
-    
+    if (_lastLocale != localeProvider.locale ||
+        _lastAddressIndex != addressProvider.count) {
       _lastLocale = localeProvider.locale;
       _lastAddressIndex = addressProvider.count;
 
@@ -72,12 +71,13 @@ class _AddressScreenState extends State<AddressScreen> {
 
     if (mounted) {
       setState(() {
-        _gpsLocation = context.t.findingLocalization; 
+        _gpsLocation = context.l10n.findingLocalization;
       });
     }
 
     try {
-      final gpsData = await LocationService.fetchUserCurrentLocation(langCode: languageCode);
+      final gpsData = await LocationService.fetchUserCurrentLocation(
+          langCode: languageCode);
       if (mounted) {
         setState(() {
           _gpsMapData = gpsData;
@@ -85,7 +85,8 @@ class _AddressScreenState extends State<AddressScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _gpsLocation = context.t.errorAddressNotFound);
+      if (mounted)
+        setState(() => _gpsLocation = context.l10n.errorAddressNotFound);
     }
   }
 
@@ -102,22 +103,24 @@ class _AddressScreenState extends State<AddressScreen> {
         title: "Address Manager",
         leading: IconButton(
           icon: const Icon(
-            Icons.arrow_back_ios_new, 
+            Icons.arrow_back_ios_new,
             color: Colors.white,
             size: 28,
           ),
           onPressed: () {
-            Navigator.pop(context); 
+            Navigator.pop(context);
           },
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => SaveAddressScreen()));
+              context, MaterialPageRoute(builder: (_) => SaveAddressScreen()));
         },
-        label: const Text("Add New Address", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        label: const Text(
+          "Add New Address",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.blue,
         icon: const Icon(
           Icons.add_location,
@@ -129,15 +132,14 @@ class _AddressScreenState extends State<AddressScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 24),
-
           Consumer<AddressChanger>(builder: (context, address, c) {
             return Flexible(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                  .collection("users")
-                  .doc(currentUid)
-                  .collection("addresses")
-                  .snapshots(),
+                    .collection("users")
+                    .doc(currentUid)
+                    .collection("addresses")
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(child: circularProgress());
@@ -147,7 +149,7 @@ class _AddressScreenState extends State<AddressScreen> {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     address.setTotalSavedAddresses(savedAddressesCount);
                   });
-                  
+
                   return ListView.builder(
                     itemCount: savedAddressesCount + 2,
                     shrinkWrap: true,
@@ -158,12 +160,13 @@ class _AddressScreenState extends State<AddressScreen> {
                           value: -1, // Unique ID for GPS selection
                           isCurrentLocationCard: true,
                           model: Address(
-                            fullAddress: _gpsLocation, 
+                            fullAddress: _gpsLocation,
                             lat: _gpsMapData['lat']?.toString() ?? '0.0',
                             lng: _gpsMapData['lng']?.toString() ?? '0.0',
                             road: _gpsMapData['road'] ?? '',
                             houseNumber: _gpsMapData['houseNumber'] ?? '',
-                            flatNumber: _gpsMapData['flatNumber'] ?? _gpsMapData['subpremise'],
+                            flatNumber: _gpsMapData['flatNumber'] ??
+                                _gpsMapData['subpremise'],
                             postalCode: _gpsMapData['postalCode'] ?? '',
                             city: _gpsMapData['city'] ?? '',
                             state: _gpsMapData['state'] ?? '',
@@ -179,13 +182,12 @@ class _AddressScreenState extends State<AddressScreen> {
 
                       int dataIndex = index - 1;
                       final docSnapshot = snapshot.data!.docs[dataIndex];
-                      
+
                       return AddressDesign(
                         value: dataIndex,
                         addressID: docSnapshot.id,
                         model: Address.fromJson(
-                          docSnapshot.data()! as Map<String, dynamic>
-                        ),
+                            docSnapshot.data()! as Map<String, dynamic>),
                       );
                     },
                   );

@@ -1,353 +1,1390 @@
 {
   "@@locale": "en",
-
   "errorAddressNotFound": "Address not Found",
   "@errorAddressNotFound": {},
-
   "unknownLocation": "Unknown Location",
   "@unknownLocation": {},
-
   "searchAddress": "Search address...",
   "@searchAddress": {},
-
   "errorReverseGeo": "Error reverse geocoding: {error}",
   "@errorReverseGeo": {
     "placeholders": {
       "error": {}
     }
   },
-
   "grandLocation": "Please grand the App the locdation permission...",
   "@grandLocation": {},
-
   "goBack": "Go Back",
   "@goBack": {},
-
   "suggestedMatch": "Suggested match",
   "@suggestedMatch": {},
-
   "confirmContinue": "Confirm & Continue",
   "@confirmContinue": {},
-
   "refreshLocation": "Refresh Location",
   "@refreshLocation": {},
-
   "hintSearch": "Find it! Delicious Dishes",
-  "@hintSearch": {"description": "Placeholder text for the search bar"},
-
+  "@hintSearch": {
+    "description": "Placeholder text for the search bar"
+  },
   "tabFoodDelivery": "Food Delivery",
   "@tabFoodDelivery": {
     "description": "Tab label for food delivery section"
   },
-  
   "tabPickup": "Pickup",
   "@tabPickup": {
     "description": "Tab label for pickup orders section"
   },
-  
   "tabGroceryShopping": "Grocery",
   "@tabGroceryShopping": {
     "description": "Tab label for grocery shopping section"
   },
-  
   "tabGifting": "Gifting",
   "@tabGifting": {
     "description": "Tab label for gift shopping section"
   },
-  
   "tabBenefits": "Benefits",
   "@tabBenefits": {
     "description": "Tab label for benefits and rewards section"
   },
-  
   "categoryDiscounts": "Discounts",
   "@categoryDiscounts": {
     "description": "Category for discounted items"
   },
-  
   "categoryPork": "Pork",
   "@categoryPork": {
     "description": "Category for pork dishes"
   },
-  
   "categoryTonkatsuSashimi": "Tonkatsu & Sashimi",
   "@categoryTonkatsuSashimi": {
     "description": "Category for Japanese tonkatsu and sashimi"
   },
-  
   "categoryPizza": "Pizza",
   "@categoryPizza": {
     "description": "Category for pizza"
   },
-  
   "categoryStew": "Stew",
   "@categoryStew": {
     "description": "Category for stew dishes"
   },
-  
   "categoryChinese": "Chinese",
   "@categoryChinese": {
     "description": "Category for Chinese cuisine"
   },
-  
   "categoryChicken": "Chicken",
   "@categoryChicken": {
     "description": "Category for chicken dishes"
   },
-  
   "categoryKorean": "Korean",
   "@categoryKorean": {
     "description": "Category for Korean cuisine"
   },
-  
   "categoryOneBowl": "One Bowl",
   "@categoryOneBowl": {
     "description": "Category for single bowl meals"
   },
-  
   "categoryPichupDiscount": "Pickup Discount",
   "@categoryPichupDiscount": {
     "description": "Category for pickup order discounts"
   },
-  
   "categoryFastFood": "Fast Food",
   "@categoryFastFood": {
     "description": "Category for fast food restaurants"
   },
-  
   "categoryCoffee": "Coffee",
   "@categoryCoffee": {
     "description": "Category for coffee shops"
   },
-  
   "categoryBakery": "Bakery",
   "@categoryBakery": {
     "description": "Category for bakery items"
   },
-  
   "categoryLunch": "Lunch",
   "@categoryLunch": {
     "description": "Category for lunch meals"
   },
-  
   "categoryFreshProduce": "Fresh Produce",
   "@categoryFreshProduce": {
     "description": "Category for fresh fruits and vegetables"
   },
-  
   "categoryDairyEggs": "Dairy & Eggs",
   "@categoryDairyEggs": {
     "description": "Category for dairy products and eggs"
   },
-  
   "categoryMeat": "Meat",
   "@categoryMeat": {
     "description": "Category for meat products"
   },
-  
   "categoryBeverages": "Beverages",
   "@categoryBeverages": {
     "description": "Category for drinks and beverages"
   },
-  
   "categoryFrozen": "Frozen",
   "@categoryFrozen": {
     "description": "Category for frozen foods"
   },
-  
   "categorySnacks": "Snacks",
   "@categorySnacks": {
     "description": "Category for snack foods"
   },
-  
   "categoryHousehold": "Household",
   "@categoryHousehold": {
     "description": "Category for household items and supplies"
   },
-  
   "categoryCakes": "Cakes",
   "@categoryCakes": {
     "description": "Category for cakes and pastries"
   },
-  
   "categoryFlowers": "Flowers",
   "@categoryFlowers": {
     "description": "Category for flower arrangements"
   },
-  
   "categoryGiftBoxes": "Gift Boxes",
   "@categoryGiftBoxes": {
     "description": "Category for pre-made gift boxes"
   },
-  
   "categoryPartySupplies": "Party Supplies",
   "@categoryPartySupplies": {
     "description": "Category for party decorations and supplies"
   },
-  
   "categoryGiftCards": "Gift Cards",
   "@categoryGiftCards": {
     "description": "Category for digital and physical gift cards"
   },
-  
   "categorySpecialOccasions": "Special Occasions",
   "@categorySpecialOccasions": {
     "description": "Category for special occasion gifts"
   },
-  
   "categoryDailyDeals": "Daily Deals",
   "@categoryDailyDeals": {
     "description": "Category for daily special offers"
   },
-  
   "categoryLoyaltyRewards": "Loyalty Rewards",
   "@categoryLoyaltyRewards": {
     "description": "Category for loyalty program rewards"
   },
-  
   "categoryCoupons": "Coupons",
   "@categoryCoupons": {
     "description": "Category for available coupons"
   },
-  
   "categoryNewOffers": "New Offers",
   "@categoryNewOffers": {
     "description": "Category for newly added offers"
   },
-  
   "categoryExclusiveDeals": "Exclusive Deals",
   "@categoryExclusiveDeals": {
     "description": "Category for exclusive member deals"
   },
-
   "seeMore": "See more in {tab}",
   "@seeMore": {
     "placeholders": {
       "tab": {}
     }
   },
-
   "searchAll": "All",
   "@searchAll": {},
-
   "searchRestaurants": "Restaurants",
   "@searchRestaurants": {},
-
   "searchFood": "Food",
   "@searchFood": {},
-
   "searchStores": "Stores",
   "@searchStores": {},
-
-  
-
   "findingLocalization": "Finding your localization...",
-  "@findingLocalization": {"description": "Text shown while app detects location"},
-
+  "@findingLocalization": {
+    "description": "Text shown while app detects location"
+  },
   "changeLanguage": "Language",
-  "@changeLanguage": {"description": ""},
-
+  "@changeLanguage": {
+    "description": ""
+  },
   "hintName": "Name",
-  "@hintName": {"description": "Placeholder for name input field"},
-
+  "@hintName": {
+    "description": "Placeholder for name input field"
+  },
   "hintEmail": "Email",
-  "@hintEmail": {"description": "Placeholder for email input field"},
-
+  "@hintEmail": {
+    "description": "Placeholder for email input field"
+  },
   "hintPassword": "Password",
-  "@hintPassword": {"description": "Placeholder for password input field"},
-
+  "@hintPassword": {
+    "description": "Placeholder for password input field"
+  },
   "hintConfPassword": "Confirm Password",
-  "@hintConfPassword": {"description": "Placeholder for confirm password input field"},
-
+  "@hintConfPassword": {
+    "description": "Placeholder for confirm password input field"
+  },
   "login": "Login",
-  "@login": {"description": "Button text for login"},
-
+  "@login": {
+    "description": "Button text for login"
+  },
   "register": "Register",
-  "@register": {"description": "Button text for register"},
-
+  "@register": {
+    "description": "Button text for register"
+  },
   "signUp": "Sign Up",
-  "@signUp": {"description": "Button text for signing up"},
-
+  "@signUp": {
+    "description": "Button text for signing up"
+  },
   "registeringAccount": "Registering Account...",
-  "@registeringAccount": {"description": "Status text while registering account"},
-
+  "@registeringAccount": {
+    "description": "Status text while registering account"
+  },
   "checkingCredentials": "Checking Credentials...",
-  "@checkingCredentials": {"description": "Status text while checking login credentials"},
-
+  "@checkingCredentials": {
+    "description": "Status text while checking login credentials"
+  },
   "errorEnterEmailOrPassword": "Please Enter Email or Password",
-  "@errorEnterEmailOrPassword": {"description": "Error when email or password is missing"},
-
+  "@errorEnterEmailOrPassword": {
+    "description": "Error when email or password is missing"
+  },
   "errorEnterRegInfo": "Please Enter required information for Registration",
-  "@errorEnterRegInfo": {"description": "Error when registration info is incomplete"},
-
+  "@errorEnterRegInfo": {
+    "description": "Error when registration info is incomplete"
+  },
   "errorSelectImage": "Please Select an Image",
-  "@errorSelectImage": {"description": "Error when no image is selected"},
-
+  "@errorSelectImage": {
+    "description": "Error when no image is selected"
+  },
   "errorNoMatchPasswords": "Passwords don't match!",
-  "@errorNoMatchPasswords": {"description": "Error when passwords do not match"},
-
+  "@errorNoMatchPasswords": {
+    "description": "Error when passwords do not match"
+  },
   "errorLoginFailed": "Login Failed",
-  "@errorLoginFailed": {"description": "Error when login fails"},
-
+  "@errorLoginFailed": {
+    "description": "Error when login fails"
+  },
   "errorNoRecordFound": "No record found",
-  "@errorNoRecordFound": {"description": "Error when no database record is found"},
-
+  "@errorNoRecordFound": {
+    "description": "Error when no database record is found"
+  },
   "blockedAccountMessage": "Admin has blocked your account\n\nMail to: admin@gmail.com",
-  "@blockedAccountMessage": {"description": "Message shown when account is blocked"},
-
+  "@blockedAccountMessage": {
+    "description": "Message shown when account is blocked"
+  },
   "networkUnavailable": "Network unavailable. Please try again",
-  "@networkUnavailable": {"description": "Error when network is unavailable"},
-
+  "@networkUnavailable": {
+    "description": "Error when network is unavailable"
+  },
   "errorFetchingUserData": "Error fetching user data",
-  "@errorFetchingUserData": {"description": "Error when fetching user data fails"},
-
+  "@errorFetchingUserData": {
+    "description": "Error when fetching user data fails"
+  },
   "storageError": "Storage Error: {error}",
   "@storageError": {
     "description": "Error dialog when storage fails",
-    "placeholders": {"error": {}}
+    "placeholders": {
+      "error": {}
+    }
   },
-
-
-  
   "helloWorld": "Hello World!",
-  "@helloWorld": {"description": "Generic hello world text"},
-
+  "@helloWorld": {
+    "description": "Generic hello world text"
+  },
   "welcomeMessage": "Welcome to our app!",
-  "@welcomeMessage": {"description": "Welcome message on home screen"},
-
-
-
+  "@welcomeMessage": {
+    "description": "Welcome message on home screen"
+  },
   "payment": "Payment",
-  "@payment": {"description": "Label for payment section"},
-
+  "@payment": {
+    "description": "Label for payment section"
+  },
   "checkout": "Proceed to Checkout",
-  "@checkout": {"description": "Button label for checkout"},
-
+  "@checkout": {
+    "description": "Button label for checkout"
+  },
   "totalAmount": "Total Amount",
-  "@totalAmount": {"description": "Label for total amount"},
-
+  "@totalAmount": {
+    "description": "Label for total amount"
+  },
   "orderSummary": "Order Summary",
-  "@orderSummary": {"description": "Label for order summary section"},
-
+  "@orderSummary": {
+    "description": "Label for order summary section"
+  },
   "settings": "Settings",
-  "@settings": {"description": "Label for settings page"},
-
+  "@settings": {
+    "description": "Label for settings page"
+  },
   "offers": "Offers",
-  "@offers": {"description": "Label for offers section"},
-
+  "@offers": {
+    "description": "Label for offers section"
+  },
   "whatsOnYourMind": "What's on your mind?",
-  "@whatsOnYourMind": {"description": "Section heading for user thoughts or suggestions"},
-
+  "@whatsOnYourMind": {
+    "description": "Section heading for user thoughts or suggestions"
+  },
   "bookDining": "Book Dining",
-  "@bookDining": {"description": "Button to book dining / table"},
-
+  "@bookDining": {
+    "description": "Button to book dining / table"
+  },
   "softDrinks": "Soft Drinks",
-  "@softDrinks": {"description": "Label for soft drinks"},
-
+  "@softDrinks": {
+    "description": "Label for soft drinks"
+  },
   "myCart": "My Cart",
   "@myCart": {},
-
   "cartCleared": "Cart has been cleared",
-  "@cartCleared": {}
+  "@cartCleared": {},
+  "get_started": "Get Started",
+  "pricing": "Pricing",
+  "how_it_works": "How it Works",
+  "build_user_experience": "Build the best search\\nexperience for your users.",
+  "join_thousands": "Join thousands of teams scaling their applications with our dashboard.",
+  "sign_in_to_dashboard": "Sign in to Dashboard",
+  "create_your_account": "Create your account",
+  "new_to_the_platform": "New to the platform?",
+  "already_have_an_account": "Already have an account?",
+  "sign_in": "Sign in",
+  "sign_up": "Sign up",
+  "log_in": "Log in",
+  "or": "OR",
+  "terms_of_service": "By continuing, you agree to the Terms of Service.",
+  "with_google": "with Google",
+  "ready_to_grow": "Ready to grow?",
+  "@ready_to_grow": {
+    "type": "text"
+  },
+  "join_restaurants": "Join restaurants already on Freequick.",
+  "@join_restaurants": {
+    "type": "text"
+  },
+  "register_now": "Register Now",
+  "@register_now": {
+    "type": "text"
+  },
+  "see_how_it_works": "See How it Works",
+  "@see_how_it_works": {
+    "type": "text"
+  },
+  "now_live_in": "Now live in Wrocław",
+  "@now_live_in": {
+    "type": "text"
+  },
+  "put_your_restaurant_on": "Put your restaurant on\\nWrocław\\'s screens.",
+  "@put_your_restaurant_on": {
+    "type": "text"
+  },
+  "manage_your_menu": "Manage your menu, upload custom banners, and track orders in real-time.",
+  "@manage_your_menu": {
+    "type": "text"
+  },
+  "register_your_restaurant": "Register Your Restaurant",
+  "@register_your_restaurant": {
+    "type": "text"
+  },
+  "orders_today": "Orders Today",
+  "@orders_today": {
+    "type": "text"
+  },
+  "total_orders": "Total Orders",
+  "@total_orders": {
+    "type": "text"
+  },
+  "restaurants": "Restaurants",
+  "@restaurants": {
+    "type": "text"
+  },
+  "menu_items": "Menu Items",
+  "@menu_items": {
+    "type": "text"
+  },
+  "restaurants_on_platform": "Restaurants on platform",
+  "@restaurants_on_platform": {
+    "type": "text"
+  },
+  "orders_placed": "Orders placed",
+  "@orders_placed": {
+    "type": "text"
+  },
+  "menus_published": "Menus published",
+  "@menus_published": {
+    "type": "text"
+  },
+  "items_available": "Items available",
+  "@items_available": {
+    "type": "text"
+  },
+  "live_platform_stats": "LIVE PLATFORM STATS",
+  "@live_platform_stats": {
+    "type": "text"
+  },
+  "trusted_by_restaurants": "TRUSTED BY RESTAURANTS",
+  "@trusted_by_restaurants": {
+    "type": "text"
+  },
+  "upper_features": "FEATURES",
+  "@upper_features": {
+    "type": "text"
+  },
+  "sales_analytics": "Sales Analytics",
+  "@sales_analytics": {
+    "type": "text"
+  },
+  "track_peak_hours": "Track peak hours.",
+  "@track_peak_hours": {
+    "type": "text"
+  },
+  "custom_banners": "Custom Banners",
+  "@custom_banners": {
+    "type": "text"
+  },
+  "full_creative_control": "Full creative control.",
+  "@full_creative_control": {
+    "type": "text"
+  },
+  "your_menu_goes_live_instantly": "Your menu goes live instantly.",
+  "@your_menu_goes_live_instantly": {
+    "type": "text"
+  },
+  "digital_menu": "Digital Menu",
+  "@digital_menu": {
+    "type": "text"
+  },
+  "error_no_user_record_found": "No user record found.",
+  "@error_no_user_record_found": {
+    "type": "text"
+  },
+  "permission_restaurant_accounts_only": "This app is for restaurant accounts only.",
+  "@permission_restaurant_accounts_only": {
+    "type": "text"
+  },
+  "error_no_restaurant_record_found": "No restaurant record found. Please contact support.",
+  "@error_no_restaurant_record_found": {
+    "type": "text"
+  },
+  "creating_partner_account": "Creating Partner Account...",
+  "@creating_partner_account": {
+    "type": "text"
+  },
+  "account_is_pending_approval": "Your account is pending approval. Please sign in once verified.",
+  "@account_is_pending_approval": {
+    "type": "text"
+  },
+  "business": "Business",
+  "@business": {
+    "type": "text"
+  },
+  "admin_profile": "Admin Profile",
+  "@admin_profile": {
+    "type": "text"
+  },
+  "business_name": "Business Name",
+  "@business_name": {
+    "type": "text"
+  },
+  "business_phone": "Business Phone",
+  "@business_phone": {
+    "type": "text"
+  },
+  "info_continue": "Continue",
+  "@continue": {
+    "type": "text"
+  },
+  "owner_s_full_name": "Owner's Full Name",
+  "@owner_s_full_name": {
+    "type": "text"
+  },
+  "owner_full_name": "Owner's Full Name",
+  "@owner_full_name": {
+    "type": "text"
+  },
+  "owner_phone": "Owner's Phone",
+  "@owner_phone": {
+    "type": "text"
+  },
+  "back": "Back",
+  "@back": {
+    "type": "text"
+  },
+  "admin_overview": "Overview",
+  "@overview": {
+    "type": "text"
+  },
+  "admin_join_requests": "Join Requests",
+  "@admin_join_requests": {
+    "type": "text"
+  },
+  "admin_users": "Users",
+  "@admin_users": {
+    "type": "text"
+  },
+  "admin_notifications": "Notifications",
+  "@admin_notifications": {
+    "type": "text"
+  },
+  "admin_panel": "Admin Panel",
+  "@dashboard_admin_panel": {
+    "type": "text"
+  },
+  "admin": "Admin",
+  "@dashboard_admin": {
+    "type": "text"
+  },
+  "administrator": "Administrator",
+  "@administrator": {
+    "type": "text"
+  },
+  "sign_out": "Sign Out",
+  "hiw_hero_badge": "Simple. Fast. Transparent.",
+  "hiw_hero_title": "From sign-up to\nfirst order in minutes.",
+  "hiw_hero_subtitle": "Freequick is built for restaurant owners who want to focus on cooking — not managing technology.",
+  "hiw_cta_title": "Ready to get started?",
+  "hiw_cta_subtitle": "Join restaurants already on Freequick.",
+  "hiw_cta_primary": "Register Your Restaurant",
+  "hiw_cta_secondary": "See Pricing",
+  "hiw_section_process": "THE PROCESS",
+  "hiw_section_features": "WHAT YOU GET",
+  "hiw_features_title": "Everything a restaurant needs.",
+  "hiw_step1_title": "Create your account",
+  "hiw_step1_desc": "Register with your restaurant details. Takes under 2 minutes. No credit card required.",
+  "hiw_step2_title": "Set up your profile",
+  "hiw_step2_desc": "Upload your logo, banner, and set your address. Your storefront goes live immediately.",
+  "hiw_step3_title": "Build your menu",
+  "hiw_step3_desc": "Add menus and items with photos, prices, and descriptions. Organise by category.",
+  "hiw_step4_title": "Receive orders",
+  "hiw_step4_desc": "Customers find you, place orders, and pay online. You see every order in real-time on your dashboard.",
+  "hiw_step5_title": "Get paid",
+  "hiw_step5_desc": "Revenue is settled to your registered bank account. You only pay a small commission per completed order.",
+  "hiw_feature1_title": "Real-time orders",
+  "hiw_feature1_desc": "Every order appears on your dashboard instantly. No refresh needed.",
+  "hiw_feature2_title": "Sales analytics",
+  "hiw_feature2_desc": "See revenue, popular items, and order trends across 7 or 30 days.",
+  "hiw_feature3_title": "Custom branding",
+  "hiw_feature3_desc": "Your logo, banner, and colours — your restaurant, your identity.",
+  "hiw_feature4_title": "Secure payments",
+  "hiw_feature4_desc": "All payments processed securely. You never handle card data.",
+  "hiw_feature5_title": "Works everywhere",
+  "hiw_feature5_desc": "Dashboard runs on desktop, tablet, and mobile. Manage from anywhere.",
+  "hiw_feature6_title": "Dedicated support",
+  "hiw_feature6_desc": "Real people available to help you get set up and stay running.",
+  "pricing_hero_badge": "No monthly fees. Ever.",
+  "pricing_hero_title": "Pay only when\nyou earn.",
+  "pricing_hero_subtitle": "Freequick charges a small commission on completed orders only. If you don't earn, you don't pay.",
+  "pricing_cta_title": "Start for free today.",
+  "pricing_cta_subtitle": "No fees until your first order.",
+  "pricing_cta_primary": "Register Your Restaurant",
+  "pricing_section_fee": "HOW THE FEE WORKS",
+  "pricing_section_calculator": "ESTIMATE YOUR EARNINGS",
+  "pricing_section_tiers": "COMMISSION TIERS",
+  "pricing_section_faq": "FREQUENTLY ASKED",
+  "pricing_calculator_title": "See what you keep.",
+  "pricing_tiers_title": "More orders, lower rate.",
+  "pricing_tiers_subtitle": "As your restaurant grows, your commission rate goes down automatically.",
+  "pricing_faq_title": "Common questions.",
+  "pricing_step1_title": "Customer places an order",
+  "pricing_step1_desc": "They browse your menu, add items, and pay through the app.",
+  "pricing_step2_title": "You prepare and deliver",
+  "pricing_step2_desc": "You confirm the order, prepare it, and mark it as delivered.",
+  "pricing_step3_title": "We take a small cut",
+  "pricing_step3_desc": "A commission is deducted from the order value. The rest goes to you.",
+  "pricing_slider_orders_label": "Orders per day",
+  "pricing_slider_orders_value": "{count} orders/day · {monthly}/month",
+  "@pricing_slider_orders_value": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "monthly": {
+        "type": "int"
+      }
+    }
+  },
+  "pricing_slider_avg_label": "Average order value",
+  "pricing_slider_avg_value": "{amount} PLN",
+  "@pricing_slider_avg_value": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pricing_tier_badge": "{tierName} tier — {rate} commission",
+  "@pricing_tier_badge": {
+    "placeholders": {
+      "tierName": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "pricing_tier_monthly": "{count} orders/month",
+  "@pricing_tier_monthly": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pricing_calc_revenue_label": "Daily revenue",
+  "pricing_calc_revenue_sub": "before commission",
+  "pricing_calc_fee_label": "Freequick fee ({rate})",
+  "@pricing_calc_fee_label": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "pricing_calc_fee_sub": "per day",
+  "pricing_calc_keep_label": "You keep",
+  "pricing_calc_disclaimer": "Commission is only charged on completed, delivered orders.",
+  "pricing_tier_starter_label": "Starter",
+  "pricing_tier_starter_range": "0 – 100 orders/month",
+  "pricing_tier_starter_desc": "Get started with no upfront cost.",
+  "pricing_tier_growing_label": "Growing",
+  "pricing_tier_growing_range": "101 – 500 orders/month",
+  "pricing_tier_growing_desc": "Lower rate as you build your customer base.",
+  "pricing_tier_established_label": "Established",
+  "pricing_tier_established_range": "501 – 1 500 orders/month",
+  "pricing_tier_established_desc": "Rewarding consistent high-volume restaurants.",
+  "pricing_tier_partner_label": "Partner",
+  "pricing_tier_partner_range": "1 500+ orders/month",
+  "pricing_tier_partner_desc": "Our best rate for our highest-volume partners.",
+  "pricing_faq1_q": "Are there any setup or monthly fees?",
+  "pricing_faq1_a": "No. Freequick charges zero setup fees and zero monthly fees. You only pay commission on completed orders.",
+  "pricing_faq2_q": "When does the commission get deducted?",
+  "pricing_faq2_a": "Commission is calculated at the time an order is marked as delivered. It is deducted from your payout balance automatically.",
+  "pricing_faq3_q": "How often do I get paid?",
+  "pricing_faq3_a": "Payouts are processed weekly to your registered IBAN bank account. You can track your balance in real-time on the dashboard.",
+  "pricing_faq4_q": "What happens if an order is cancelled?",
+  "pricing_faq4_a": "Cancelled orders are not charged commission. You only pay for successful, completed deliveries.",
+  "pricing_faq5_q": "Can I change my bank account details later?",
+  "pricing_faq5_a": "Yes. You can update your IBAN at any time in the Settings section of your dashboard.",
+  "pricing_tier_name_starter": "Starter",
+  "pricing_tier_name_growing": "Growing",
+  "pricing_tier_name_established": "Established",
+  "pricing_tier_name_partner": "Partner",
+  "admin_notifications_tab_send": "Send Notification",
+  "admin_notifications_tab_history": "History",
+  "admin_notifications_target_audience": "Target Audience",
+  "admin_notifications_audience_all": "All",
+  "admin_notifications_audience_restaurants": "Restaurants",
+  "admin_notifications_audience_specific": "Specific",
+  "admin_notifications_audience_label_all": "All Users",
+  "admin_notifications_audience_label_restaurants": "Restaurant Owners",
+  "admin_notifications_audience_label_specific": "Specific Users",
+  "admin_notifications_search_hint": "Search by name or email…",
+  "admin_notifications_search_hint_more": "Add more users…",
+  "admin_notifications_title_label": "Notification Title",
+  "admin_notifications_title_hint": "e.g. New feature available",
+  "admin_notifications_body_label": "Message",
+  "admin_notifications_body_hint": "Write the notification message…",
+  "admin_notifications_send_button": "Send Notification",
+  "admin_notifications_sending": "Sending…",
+  "admin_notifications_required": "Required",
+  "admin_notifications_select_user": "Please select at least one user.",
+  "admin_notifications_no_users": "No users found for this audience.",
+  "admin_notifications_sent_one": "Sent to 1 user",
+  "admin_notifications_sent_many": "Sent to {count} users",
+  "@admin_notifications_sent_many": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "admin_notifications_history_empty": "No notifications sent yet",
+  "admin_notifications_history_sent_badge": "Sent",
+  "admin_notifications_history_sent_count": "{count} sent",
+  "@admin_notifications_history_sent_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "admin_overview_platform_glance": "PLATFORM AT A GLANCE",
+  "admin_overview_revenue_30d": "REVENUE (LAST 30 DAYS)",
+  "admin_overview_pending_requests": "PENDING JOIN REQUESTS",
+  "admin_overview_view_all": "View all",
+  "admin_overview_order_status": "ORDER STATUS BREAKDOWN",
+  "admin_overview_top_restaurants": "TOP RESTAURANTS BY ORDERS",
+  "admin_overview_stat_restaurants": "Total Restaurants",
+  "admin_overview_stat_restaurants_sub": "{active} with orders",
+  "@admin_overview_stat_restaurants_sub": {
+    "placeholders": {
+      "active": {
+        "type": "int"
+      }
+    }
+  },
+  "admin_overview_stat_orders": "Total Orders",
+  "admin_overview_stat_orders_sub": "{count} today",
+  "@admin_overview_stat_orders_sub": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "admin_overview_stat_revenue": "Total Revenue",
+  "admin_overview_stat_revenue_sub": "{amount} PLN last 7d",
+  "@admin_overview_stat_revenue_sub": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "admin_overview_stat_avg": "Avg Order Value",
+  "admin_overview_stat_avg_sub": "{menus} menus · {items} items",
+  "@admin_overview_stat_avg_sub": {
+    "placeholders": {
+      "menus": {
+        "type": "int"
+      },
+      "items": {
+        "type": "int"
+      }
+    }
+  },
+  "admin_overview_loading": "—",
+  "admin_overview_revenue_no_data": "No revenue data yet",
+  "admin_overview_no_pending": "No pending requests",
+  "admin_overview_pending_nip": "NIP: {nip} · Submitted {date}",
+  "@admin_overview_pending_nip": {
+    "placeholders": {
+      "nip": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "admin_overview_review": "Review",
+  "admin_overview_no_orders": "No orders yet",
+  "admin_overview_no_order_data": "No order data yet",
+  "admin_overview_orders_count": "{count} orders",
+  "@admin_overview_orders_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "admin_overview_status_pending": "Pending",
+  "admin_overview_status_processing": "Processing",
+  "admin_overview_status_delivered": "Delivered",
+  "admin_overview_status_cancelled": "Cancelled",
+  "requests_tab_registrations": "Registrations",
+  "requests_tab_go_live": "Go Live Requests",
+  "requests_filter_pending": "Pending",
+  "requests_filter_approved": "Approved",
+  "requests_filter_active": "Active",
+  "requests_filter_rejected": "Rejected",
+  "requests_filter_suspended": "Suspended",
+  "requests_filter_all": "All",
+  "requests_empty_filtered": "No {filter} requests",
+  "@requests_empty_filtered": {
+    "placeholders": {
+      "filter": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_empty_all": "No restaurants yet",
+  "requests_go_live_empty": "No Go Live requests yet",
+  "requests_go_live_section_pending": "PENDING REVIEW",
+  "requests_go_live_section_reviewed": "REVIEWED",
+  "requests_go_live_requested": "Requested {timeAgo} · {date}",
+  "@requests_go_live_requested": {
+    "placeholders": {
+      "timeAgo": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_go_live_activated_on": "Activated on {date}",
+  "@requests_go_live_activated_on": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_go_live_declined_on": "Declined on {date}",
+  "@requests_go_live_declined_on": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_badge_activated": "Activated",
+  "requests_badge_declined": "Declined",
+  "requests_badge_pending_review": "Pending Review",
+  "requests_action_activate": "Activate",
+  "requests_action_decline": "Decline",
+  "requests_submitted": "Submitted {date}",
+  "@requests_submitted": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_status_approved": "Approved",
+  "requests_status_active": "Active",
+  "requests_status_rejected": "Rejected",
+  "requests_status_suspended": "Suspended",
+  "requests_status_pending": "Pending",
+  "requests_action_approve": "Approve",
+  "requests_action_reject": "Reject",
+  "requests_action_suspend": "Suspend",
+  "requests_action_reinstate": "Reinstate",
+  "requests_action_copy_id": "Copy restaurant ID",
+  "requests_copied": "Copied: {id}",
+  "@requests_copied": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_confirm_approve_title": "Approve",
+  "requests_confirm_approve_body": "This will approve the restaurant and give the owner access to their dashboard.",
+  "requests_confirm_reject_title": "Reject",
+  "requests_confirm_reject_body": "This will reject the restaurant. The owner will see a rejection message when they log in.",
+  "requests_confirm_suspend_title": "Suspend",
+  "requests_confirm_suspend_body": "This will suspend the restaurant. The owner will be locked out of their dashboard immediately.",
+  "requests_confirm_reinstate_title": "Reinstate",
+  "requests_confirm_reinstate_body": "This will reinstate the restaurant to active status.",
+  "requests_confirm_cancel": "Cancel",
+  "requests_error_failed": "Failed: {error}",
+  "@requests_error_failed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "requests_setup_progress": "Setup: {done}/{total} complete",
+  "@requests_setup_progress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "requests_check_logo": "Logo uploaded",
+  "requests_check_banner": "Banner uploaded",
+  "requests_check_address": "Address set",
+  "requests_check_iban": "IBAN set",
+  "requests_check_photo": "Profile photo",
+  "requests_check_menu": "At least one menu",
+  "users_search_hint": "Search by name or email…",
+  "users_filter_all": "All",
+  "users_filter_restaurant": "Restaurant",
+  "users_filter_admin": "Admin",
+  "users_filter_customer": "Customer",
+  "users_empty_filtered": "No users match your filter",
+  "users_empty_all": "No users yet",
+  "users_banned_badge": "Banned",
+  "users_joined": "Joined {date}",
+  "@users_joined": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "users_detail_title": "User Details",
+  "users_detail_id": "User ID",
+  "users_detail_phone": "Phone",
+  "users_detail_joined": "Joined",
+  "users_detail_role": "Role",
+  "users_action_ban": "Ban",
+  "users_action_unban": "Unban",
+  "users_action_delete": "Delete",
+  "users_confirm_cancel": "Cancel",
+  "users_ban_title": "Ban User?",
+  "users_unban_title": "Unban User?",
+  "users_ban_body": "This will prevent the user from accessing the platform.",
+  "users_unban_body": "This will restore the user's access.",
+  "users_delete_title": "Delete User?",
+  "users_delete_body": "This will permanently delete the user's Firestore document. Their Auth account will remain unless deleted separately from Firebase Console.",
+  "users_snack_banned": "User banned.",
+  "users_snack_unbanned": "User unbanned.",
+  "users_snack_deleted": "User deleted.",
+  "users_copied": "Copied to clipboard",
+  "users_role_admin": "Admin",
+  "users_role_restaurant": "Restaurant",
+  "users_role_customer": "Customer",
+  "analytics_section_glance": "AT A GLANCE",
+  "analytics_section_revenue": "REVENUE OVER TIME",
+  "analytics_section_status": "ORDER STATUS BREAKDOWN",
+  "analytics_section_popular": "MOST ORDERED ITEMS",
+  "analytics_stat_revenue": "Revenue ({days}d)",
+  "@analytics_stat_revenue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "analytics_stat_orders": "Orders ({days}d)",
+  "@analytics_stat_orders": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "analytics_stat_today": "Today's Sales",
+  "analytics_stat_avg": "Avg Order",
+  "analytics_no_revenue": "No revenue data for this period",
+  "analytics_no_orders": "No orders in this period",
+  "analytics_no_items": "No item data for this period",
+  "analytics_orders_count": "{count} orders",
+  "@analytics_orders_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "analytics_status_normal": "Normal",
+  "analytics_status_processing": "Processing",
+  "analytics_status_delivered": "Delivered",
+  "analytics_status_cancelled": "Cancelled",
+  "shell_nav_overview": "Overview",
+  "shell_nav_orders": "Orders",
+  "shell_nav_menus": "Menus",
+  "shell_nav_promotions": "Promotions",
+  "shell_nav_analytics": "Analytics",
+  "shell_nav_settings": "Settings",
+  "shell_restaurant_not_found": "Restaurant not found. Please contact support.",
+  "shell_finish_setup": "Finish setup",
+  "shell_my_account": "My Account",
+  "shell_live_go_offline": "Live · Go Offline",
+  "shell_go_live_pending": "Go Live pending review",
+  "shell_go_live_declined": "Declined · Reapply",
+  "shell_request_go_live": "Request Go Live",
+  "shell_already_pending": "You already have a pending Go Live request.",
+  "shell_go_live_submitted": "Go Live request submitted. We'll review it shortly.",
+  "shell_error": "Error: {error}",
+  "@shell_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "shell_go_offline_title": "Go Offline?",
+  "shell_go_offline_body": "Your restaurant will be hidden from customers. You can go live again at any time.",
+  "shell_confirm_cancel": "Cancel",
+  "shell_go_offline_confirm": "Go Offline",
+  "shell_menu_support": "Talk to Support",
+  "shell_menu_sales": "Talk to Sales",
+  "shell_menu_cookies": "Cookie Preferences",
+  "shell_menu_settings": "Settings",
+  "shell_menu_logout": "Log out",
+  "gate_pending_title": "Your account is under review",
+  "gate_pending_message": "We're reviewing your registration details. This usually takes 1-2 business days. We'll notify you by email once approved.",
+  "gate_rejected_title": "Application not approved",
+  "gate_rejected_message": "Unfortunately your registration was not approved. Please contact support for more information.",
+  "gate_suspended_title": "Account suspended",
+  "gate_suspended_message": "Your account has been suspended. Please contact support to resolve this.",
+  "gate_default_title": "Access unavailable",
+  "gate_default_message": "Please contact support.",
+  "gate_sign_out": "Sign out",
+  "overview_welcome": "Welcome back, {name} 👋",
+  "@overview_welcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "overview_subtitle": "Here's what's happening with your restaurant today.",
+  "overview_section_glance": "AT A GLANCE",
+  "overview_section_orders": "RECENT ORDERS",
+  "overview_setup_title": "Get your restaurant ready",
+  "overview_setup_progress": "{done} of {total} steps completed",
+  "@overview_setup_progress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "overview_task_done": "Done",
+  "overview_task_setup": "Set up",
+  "overview_task_logo_title": "Upload Restaurant Logo",
+  "overview_task_logo_desc": "Customers will see your logo across the app.",
+  "overview_task_banner_title": "Add a Banner Image",
+  "overview_task_banner_desc": "A banner makes your storefront visually appealing.",
+  "overview_task_address_title": "Set Restaurant Address",
+  "overview_task_address_desc": "Let customers know where to find you.",
+  "overview_task_photo_title": "Add a Profile Photo",
+  "overview_task_photo_desc": "Put a face to your restaurant owner account.",
+  "overview_task_menu_title": "Create a Menu & Add Items",
+  "overview_task_menu_desc": "Organise your offerings into menus with dishes and prices.",
+  "overview_task_iban_title": "Add Bank Account (IBAN)",
+  "overview_task_iban_desc": "Required to receive payouts from customer orders.",
+  "overview_stat_total_orders": "Total Orders",
+  "overview_stat_pending": "Pending",
+  "overview_stat_completed": "Completed",
+  "overview_stat_revenue": "Total Revenue",
+  "overview_no_orders": "No orders yet",
+  "overview_table_order_id": "ORDER ID",
+  "overview_table_customer": "CUSTOMER",
+  "overview_table_items": "ITEMS",
+  "overview_table_status": "STATUS",
+  "overview_table_total": "TOTAL",
+  "overview_items_count": "{count} item",
+  "@overview_items_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overview_items_count_plural": "{count} items",
+  "@overview_items_count_plural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overview_time_just_now": "Just now",
+  "overview_time_minutes": "{n}m ago",
+  "@overview_time_minutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "overview_time_hours": "{n}h ago",
+  "@overview_time_hours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "overview_chef_fallback": "Chef",
+  "items_app_bar_fallback": "Items",
+  "items_empty_title": "No items yet",
+  "items_empty_subtitle": "Tap + to add your first item",
+  "items_error": "Error: {error}",
+  "@items_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "items_fab": "Add Item",
+  "items_sheet_title": "Add Item",
+  "items_image_upload_label": "Upload Item Image",
+  "items_image_browse": "Click to browse",
+  "items_field_title_label": "Item Title",
+  "items_field_title_hint": "e.g. Pierogi Ruskie",
+  "items_field_title_required": "Title is required",
+  "items_field_info_label": "Short Info",
+  "items_field_info_hint": "e.g. Crispy and Tasty",
+  "items_field_info_required": "Info is required",
+  "items_field_desc_label": "Description",
+  "items_field_desc_hint": "Describe the item...",
+  "items_field_desc_required": "Description is required",
+  "items_field_price_label": "Price (PLN)",
+  "items_field_price_hint": "e.g. 24.99",
+  "items_field_price_required": "Price is required",
+  "items_field_price_invalid": "Enter a valid number",
+  "items_field_tags_label": "Tags",
+  "items_field_tags_hint": "e.g. Vegan",
+  "items_tag_error_empty": "Please enter a tag",
+  "items_tag_error_capitalize": "First letter must be capitalized",
+  "items_tag_error_letters": "Only letters are allowed",
+  "items_tag_error_duplicate": "Tag already exists",
+  "items_discount_toggle": "Apply Discount",
+  "items_discount_label": "Discount %",
+  "items_discount_required": "Enter a discount percentage",
+  "items_discount_invalid": "Enter a value between 1 and 100",
+  "items_no_image": "Please select an item image.",
+  "items_added": "Item added successfully",
+  "items_submit": "Add Item",
+  "menus_empty_title": "No menus yet",
+  "menus_empty_subtitle": "Tap + to add your first menu",
+  "menus_error": "Error: {error}",
+  "@menus_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "menus_fab": "Add Menu",
+  "menus_sheet_title": "Add Menu",
+  "menus_image_upload_label": "Upload Banner Image",
+  "menus_image_browse": "Click to browse",
+  "menus_field_title_label": "Menu Title",
+  "menus_field_title_hint": "e.g. Lunch Specials",
+  "menus_field_title_required": "Title is required",
+  "menus_field_desc_label": "Description",
+  "menus_field_desc_hint": "Briefly describe this menu...",
+  "menus_field_desc_required": "Description is required",
+  "menus_no_image": "Please select a banner image.",
+  "menus_created": "Menu created successfully",
+  "menus_submit": "Create Menu",
+  "orders_error": "Something went wrong",
+  "orders_empty_title": "No orders right now",
+  "orders_empty_subtitle": "When customers place orders they will appear here.",
+  "orders_table_order_id": "ORDER ID",
+  "orders_table_customer": "CUSTOMER",
+  "orders_table_items": "ITEMS",
+  "orders_table_status": "STATUS",
+  "orders_table_total": "TOTAL",
+  "orders_item_count": "{count} item",
+  "@orders_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orders_item_count_plural": "{count} items",
+  "@orders_item_count_plural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promo_not_authenticated": "Not authenticated",
+  "promo_empty_title": "No promotions yet",
+  "promo_empty_subtitle": "Tap + to create your first promotion banner",
+  "promo_fab": "New Promotion",
+  "promo_badge_live": "Live",
+  "promo_badge_inactive": "Inactive",
+  "promo_items_linked": "{count} item",
+  "@promo_items_linked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promo_items_linked_plural": "{count} items",
+  "@promo_items_linked_plural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promo_edit_button": "Edit",
+  "promo_sheet_add_title": "New Promotion",
+  "promo_sheet_edit_title": "Edit Promotion",
+  "promo_sheet_delete_button": "Delete",
+  "promo_image_change_hint": "Tap to change banner",
+  "promo_image_upload_hint": "Tap to upload banner image",
+  "promo_image_upload_label": "Upload Banner Image",
+  "promo_image_recommended": "Recommended: 1200×400px",
+  "promo_field_title_label": "Promotion Title",
+  "promo_field_title_hint": "e.g. Weekend Discount",
+  "promo_field_title_required": "Title is required",
+  "promo_field_desc_label": "Description",
+  "promo_field_desc_hint": "e.g. Up to 30% off all mains this weekend",
+  "promo_field_desc_required": "Description is required",
+  "promo_date_start": "Start Date",
+  "promo_date_end": "End Date",
+  "promo_date_pick": "Pick date",
+  "promo_active_toggle": "Promotion Active",
+  "promo_link_section_label": "Link Discounted Items",
+  "promo_link_section_hint": "Optional — select items this promotion applies to",
+  "promo_link_no_items": "No items found. Add items to your menus first.",
+  "promo_save_changes": "Save Changes",
+  "promo_create": "Create Promotion",
+  "promo_no_dates": "Please set both start and end dates.",
+  "promo_date_order_error": "End date must be after start date.",
+  "promo_no_image": "Please select a banner image.",
+  "promo_updated": "Promotion updated successfully",
+  "promo_created": "Promotion created successfully",
+  "promo_banner_cleanup_error": "Banner updated, but cleanup of old file failed.",
+  "promo_delete_title": "Delete Promotion?",
+  "promo_delete_body": "This will permanently delete the promotion and its banner. This cannot be undone.",
+  "promo_delete_cancel": "Cancel",
+  "promo_delete_confirm": "Delete",
+  "promo_deleted": "Promotion deleted.",
+  "promo_location_dialog_title": "Restaurant Location",
+  "promo_location_none": "No location selected yet",
+  "promo_location_open_map": "Open Map",
+  "promo_location_change_map": "Change on Map",
+  "promo_location_confirm": "Confirm Address",
+  "promo_location_no_pick": "Please pick a location on the map first.",
+  "settings_section_business": "Business",
+  "settings_section_business_sub": "Manage your restaurant profile and media",
+  "settings_section_profile": "User Profile",
+  "settings_section_profile_sub": "Update your personal account details",
+  "settings_section_danger": "Danger Zone",
+  "settings_section_danger_sub": "Irreversible actions for your account",
+  "settings_logo_title": "Restaurant Logo",
+  "settings_logo_status_staged": "New logo ready",
+  "settings_logo_status_exists": "Logo uploaded",
+  "settings_logo_status_none": "No logo yet",
+  "settings_logo_recommended": "Recommended: 512×512px, PNG or JPG",
+  "settings_logo_choose": "Choose",
+  "settings_logo_upload": "Upload",
+  "settings_logo_uploading": "Uploading…",
+  "settings_logo_success": "Logo updated",
+  "settings_banner_title": "Restaurant Banner",
+  "settings_banner_choose": "Click to choose banner",
+  "settings_banner_recommended": "Recommended: 1200×800px",
+  "settings_banner_upload": "Upload Banner",
+  "settings_banner_uploading": "Uploading…",
+  "settings_banner_success": "Banner updated",
+  "settings_business_title": "Business Info",
+  "settings_business_saved": "Business info saved",
+  "settings_address_set": "Set restaurant address",
+  "settings_address_change": "Change",
+  "settings_address_pick": "Pick on map",
+  "settings_profile_title": "Profile",
+  "settings_profile_photo_ready": "New photo ready — press Save to apply",
+  "settings_profile_saved": "Profile saved",
+  "settings_profile_name_hint": "Owner's Name",
+  "settings_profile_phone_label": "Phone Number",
+  "settings_danger_reset_title": "Change Password",
+  "settings_danger_reset_sub": "Send a password reset email to your account",
+  "settings_danger_reset_button": "Reset",
+  "settings_danger_reset_sent": "Password reset email sent",
+  "settings_danger_delete_title": "Delete Account",
+  "settings_danger_delete_sub": "Permanently delete your restaurant and all data",
+  "settings_danger_delete_button": "Delete",
+  "settings_danger_delete_dialog_title": "Delete Account",
+  "settings_danger_delete_dialog_body": "This will permanently delete your account and all restaurant data. This cannot be undone.",
+  "settings_cancel": "Cancel",
+  "settings_error": "Something went wrong",
+  "settings_save_changes": "Save Changes",
+  "settings_map_dialog_title": "Restaurant Location",
+  "settings_map_no_location": "No location selected yet",
+  "settings_map_open": "Open Map",
+  "settings_map_change": "Change on Map",
+  "settings_map_confirm": "Confirm Address",
+  "settings_map_no_pick": "Please pick a location on the map first.",
+  "tap_to_upload_image": "Tap to upload image",
+  "@tap_to_upload_image": {
+    "type": "text"
+  },
+  "ok": "OK",
+  "@ok": {
+    "type": "text"
+  },
+  "password_does_not_meet_requirements": "Password does not meet requirements",
+  "@password_does_not_meet_requirements": {
+    "type": "text"
+  },
+  "password_is_required": "Password is required",
+  "@password_is_required": {
+    "type": "text"
+  },
+  "snackbar_dismiss": "DISMISS",
+  "@snackbar_dismiss": {
+    "type": "text"
+  },
 
+  "field_error_required": "This field is required",
+  "field_error_invalid_format": "Invalid format",
+  "field_email_message": "Enter a valid email address",
+  "field_nip_message": "NIP must be exactly 10 digits",
+  "field_regon_message": "REGON must be 9 or 14 digits",
+  "field_postal_code_message": "Enter a valid postal code (XX-XXX)",
+  "field_hint_prefix": "Enter ",
+
+  "items_design_edit_button": "Edit Item",
+  "items_design_edit_sheet_title": "Edit Item",
+  "items_design_delete_button": "Delete Item",
+  "items_design_change_image_hint": "Tap to change image",
+  "items_design_field_title_label": "Item Title",
+  "items_design_field_info_label": "Short Info",
+  "items_design_field_info_hint": "e.g. Crispy and Tasty",
+  "items_design_field_desc_label": "Description",
+  "items_design_field_price_label": "Price (PLN)",
+  "items_design_field_price_required": "Price is required",
+  "items_design_field_price_invalid": "Enter a valid number",
+  "items_design_field_tags_label": "Tags",
+  "items_design_field_tags_hint": "e.g. Vegan",
+  "items_design_discount_label": "Discount %",
+  "items_design_discount_required": "Enter a discount percentage",
+  "items_design_discount_invalid": "Enter a value between 1 and 100",
+  "items_design_save_changes": "Save Changes",
+  "items_design_saved": "Item saved successfully",
+  "items_design_image_cleanup_error": "Image updated, but cleanup of old file failed.",
+  "items_design_delete_dialog_title": "Delete Item",
+  "items_design_delete_dialog_body": "Are you sure you want to delete this item? This cannot be undone.",
+  "items_design_delete_cancel": "Cancel",
+  "items_design_delete_confirm": "Delete",
+  "items_design_deleted": "Item deleted successfully",
+
+  "map_fetching_address": "Fetching address...",
+  "map_address_not_found": "Couldn't find the address",
+  "map_confirm_button": "CONFIRM ADDRESS",
+
+  "menus_design_view_items": "View Items",
+  "menus_design_edit_button": "Edit Menu",
+  "menus_design_edit_sheet_title": "Edit Menu",
+  "menus_design_delete_button": "Delete Menu",
+  "menus_design_change_image_hint": "Tap to change image",
+  "menus_design_field_title_label": "Menu Title",
+  "menus_design_field_desc_label": "Description",
+  "menus_design_field_title_required": "Title is required",
+  "menus_design_field_desc_required": "Description is required",
+  "menus_design_save_changes": "Save Changes",
+  "menus_design_saved": "Menu saved successfully",
+  "menus_design_banner_cleanup_error": "Banner updated, but cleanup of old file failed.",
+  "menus_design_delete_dialog_title": "Delete Menu",
+  "menus_design_delete_dialog_body": "Are you sure you want to delete this menu? This cannot be undone.",
+  "menus_design_delete_cancel": "Cancel",
+  "menus_design_delete_confirm": "Delete",
+  "menus_design_delete_missing_id": "Error: Missing Menu or Restaurant ID",
+  "menus_design_deleted": "Menu deleted successfully",
+
+  "notif_sheet_title": "Notifications",
+  "notif_unread_count": "{count} unread",
+  "@notif_unread_count": { "placeholders": { "count": { "type": "int" } } },
+  "notif_mark_all_read": "Mark all read",
+  "notif_empty_title": "No notifications yet",
+  "notif_empty_subtitle": "Admin messages will appear here",
+  "notif_time_just_now": "Just now",
+  "notif_time_minutes": "{n}m ago",
+  "@notif_time_minutes": { "placeholders": { "n": { "type": "int" } } },
+  "notif_time_hours": "{n}h ago",
+  "@notif_time_hours": { "placeholders": { "n": { "type": "int" } } },
+  "notif_time_yesterday": "Yesterday",
+  "notif_time_days": "{n}d ago",
+  "@notif_time_days": { "placeholders": { "n": { "type": "int" } } },
+
+  "addr_use_current_location": "Use Current Location",
+  "addr_label_fallback": "Address",
+  "addr_translating": "Translating...",
+  "addr_error_loading": "Error loading address",
+  "addr_building": "Building: {value}",
+  "@addr_building": { "placeholders": { "value": { "type": "String" } } },
+  "addr_flat": "Flat Number: {value}",
+  "@addr_flat": { "placeholders": { "value": { "type": "String" } } },
+  "addr_address": "Address: {value}",
+  "@addr_address": { "placeholders": { "value": { "type": "String" } } },
+  "addr_see_in_maps": "See in Maps",
+  "addr_delete": "Delete",
+  "addr_delete_dialog_title": "Remove Address",
+  "addr_delete_dialog_body": "Are you sure you want to remove {label}?",
+  "@addr_delete_dialog_body": { "placeholders": { "label": { "type": "String" } } },
+  "addr_delete_cancel": "Cancel",
+  "addr_delete_confirm": "Remove",
+  "addr_deleted": "Address deleted successfully",
+  "addr_delete_error": "Error: {error}",
+  "@addr_delete_error": { "placeholders": { "error": { "type": "String" } } }
 }

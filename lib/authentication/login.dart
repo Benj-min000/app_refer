@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => LoadingDialog(message: context.t.checkingCredentials),
+      builder: (_) => LoadingDialog(message: context.l10n.checkingCredentials),
     );
 
     User? currentUser;
@@ -42,18 +42,18 @@ class _LoginScreenState extends State<LoginScreen> {
       if (currentUser != null) {
         await readDataAndSetDataLocally(currentUser);
       }
-
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
-      Navigator.pop(context); 
+      Navigator.pop(context);
       showDialog(
         context: context,
-        builder: (_) => ErrorDialog(message: error.message ?? context.t.errorLoginFailed),
+        builder: (_) => ErrorDialog(
+            message: error.message ?? context.l10n.errorLoginFailed),
       );
     } catch (e) {
       if (!mounted) return;
       Navigator.pop(context);
-    }    
+    }
   }
 
   Future<void> formValidation() async {
@@ -62,23 +62,24 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       showDialog(
         context: context,
-        builder: (_) => ErrorDialog(message: context.t.errorEnterEmailOrPassword),
+        builder: (_) =>
+            ErrorDialog(message: context.l10n.errorEnterEmailOrPassword),
       );
     }
   }
 
   Future<void> readDataAndSetDataLocally(User currentUser) async {
     try {
-      final docRef = FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUser.uid);
+      final docRef =
+          FirebaseFirestore.instance.collection("users").doc(currentUser.uid);
 
-      final snapshot = await docRef.get(const GetOptions(source: Source.serverAndCache));
+      final snapshot =
+          await docRef.get(const GetOptions(source: Source.serverAndCache));
 
       if (!mounted) return;
       Navigator.pop(context);
 
-      if(!snapshot.exists) {
+      if (!snapshot.exists) {
         firebaseAuth.signOut();
         Navigator.pushReplacement(
           context,
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         showDialog(
           context: context,
-          builder: (_) => ErrorDialog(message: context.t.errorNoRecordFound),
+          builder: (_) => ErrorDialog(message: context.l10n.errorNoRecordFound),
         );
         return;
       }
@@ -94,9 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
       final data = snapshot.data()!;
       if (data["role"] != "customer" || data["status"] != "approved") {
         await firebaseAuth.signOut();
-        if(!mounted) return;
+        if (!mounted) return;
         Fluttertoast.showToast(
-          msg: context.t.blockedAccountMessage,
+          msg: context.l10n.blockedAccountMessage,
         );
         return;
       }
@@ -113,17 +114,17 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
-      
-    } on FirebaseException catch(e) {
+    } on FirebaseException catch (e) {
       if (!mounted) return;
       Navigator.pop(context);
 
       if (e.code == 'unavailable') {
-        Fluttertoast.showToast(msg: context.t.networkUnavailable);
+        Fluttertoast.showToast(msg: context.l10n.networkUnavailable);
       } else {
         showDialog(
           context: context,
-          builder: (_) => ErrorDialog(message: e.message ?? context.t.errorFetchingUserData),
+          builder: (_) => ErrorDialog(
+              message: e.message ?? context.l10n.errorFetchingUserData),
         );
       }
     }
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    
+
     super.dispose();
   }
 
@@ -156,50 +157,43 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 270,
                   ),
                 ),
-
                 Padding(
-                  padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
+                    padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(children: [
                         CustomTextField(
                           data: Icons.email,
                           controller: _emailController,
-                          hintText: context.t.hintEmail,
+                          hintText: context.l10n.hintEmail,
                           isObsecure: false,
                         ),
-
                         CustomPasswordField(
                           controller: _passwordController,
-                          label: context.t.hintPassword,
+                          label: context.l10n.hintPassword,
                           isRequired: true,
                           isConfirmation: true,
                         ),
-
                         const SizedBox(height: 10),
-
                         ElevatedButton(
                           onPressed: () async {
                             await formValidation();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pink.shade300,
-                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 20),
                           ),
                           child: Text(
-                            context.t.login,
+                            context.l10n.login,
                             style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white, 
-                              fontWeight: FontWeight.bold
-                            ),
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ]
-                    ),
-                  )
-                ),
+                      ]),
+                    )),
               ],
             ),
           ),

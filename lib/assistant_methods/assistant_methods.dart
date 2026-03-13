@@ -20,46 +20,52 @@ List<int> separateItemQuantities(List<dynamic> userCart) {
   }).toList();
 }
 
-Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID, BuildContext context, int itemCounter) async {
+Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID,
+    BuildContext context, int itemCounter) async {
   final String uid = firebaseAuth.currentUser!.uid;
-  final cartRef = FirebaseFirestore.instance.collection("users").doc(uid).collection("carts");
- 
+  final cartRef = FirebaseFirestore.instance
+      .collection("users")
+      .doc(uid)
+      .collection("carts");
+
   var existingCart = await cartRef.get();
   if (existingCart.docs.isNotEmpty) {
     String storeInCart = existingCart.docs.first.get("restaurantID");
     if (storeInCart != restaurantID) {
-      Fluttertoast.showToast(msg: "You can only order from one restuarant at a time.");
-      return; 
+      Fluttertoast.showToast(
+          msg: "You can only order from one restuarant at a time.");
+      return;
     }
   }
 
   await cartRef.doc(itemID).set({
-      "itemID": itemID,
-      "menuID": menuID,
-      "restaurantID": restaurantID,
-      "quantity": itemCounter,
-      "created": DateTime.now(),
-    }).then((value) {
-      List<String> tempCartList = getUserPref<List<String>>("userCart") ?? [];
-    
-      String cartItem = "$restaurantID:$menuID:$itemID:$itemCounter";
-      
-      tempCartList.removeWhere((item) => item.contains("$restaurantID:$menuID:$itemID:"));
-      
-      tempCartList.add(cartItem);
+    "itemID": itemID,
+    "menuID": menuID,
+    "restaurantID": restaurantID,
+    "quantity": itemCounter,
+    "createdAt": DateTime.now(),
+  }).then((value) {
+    List<String> tempCartList = getUserPref<List<String>>("userCart") ?? [];
 
-      saveUserPref<List<String>>("userCart", tempCartList);
+    String cartItem = "$restaurantID:$menuID:$itemID:$itemCounter";
 
-      Fluttertoast.showToast(msg: "Item Added Successfully.");
+    tempCartList
+        .removeWhere((item) => item.contains("$restaurantID:$menuID:$itemID:"));
 
-      Provider.of<CartItemCounter>(context, listen: false)
+    tempCartList.add(cartItem);
+
+    saveUserPref<List<String>>("userCart", tempCartList);
+
+    Fluttertoast.showToast(msg: "Item Added Successfully.");
+
+    Provider.of<CartItemCounter>(context, listen: false)
         .displayCartListItemsNumber();
   });
 }
 
 Future<void> clearCartNow(BuildContext context) async {
   final User? currentUser = firebaseAuth.currentUser;
-  
+
   if (currentUser == null) {
     Fluttertoast.showToast(msg: "User not logged in.");
     return;
@@ -79,7 +85,7 @@ Future<void> clearCartNow(BuildContext context) async {
     }
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    
+
     for (var doc in snapshot.docs) {
       batch.delete(doc.reference);
     }
@@ -88,7 +94,8 @@ Future<void> clearCartNow(BuildContext context) async {
     saveUserPref<List<String>>("userCart", []);
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+      Provider.of<CartItemCounter>(context, listen: false)
+          .displayCartListItemsNumber();
       Fluttertoast.showToast(msg: "Cart Cleared.");
     }
   } catch (e) {
@@ -98,14 +105,14 @@ Future<void> clearCartNow(BuildContext context) async {
 
 Future<void> removeItemFromCart(BuildContext context, String itemID) async {
   final User? currentUser = firebaseAuth.currentUser;
-  
+
   if (currentUser == null) {
     Fluttertoast.showToast(msg: "User not logged in.");
     return;
   }
-  
+
   final String uid = currentUser.uid;
-  
+
   try {
     var snapshot = await FirebaseFirestore.instance
         .collection("users")
@@ -118,17 +125,18 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
       Fluttertoast.showToast(msg: "Item not found in cart.");
       return;
     }
-    
+
     await snapshot.docs.first.reference.delete();
-    
+
     List<String>? userCart = getUserPref<List<String>>("userCart");
     if (userCart != null) {
       userCart.removeWhere((item) => item.startsWith("$itemID:"));
       saveUserPref<List<String>>("userCart", userCart);
     }
-    
+
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+      Provider.of<CartItemCounter>(context, listen: false)
+          .displayCartListItemsNumber();
       Fluttertoast.showToast(msg: "Item removed from cart.");
     }
   } catch (e) {
@@ -136,7 +144,8 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
   }
 }
 
-Future<void> incrementCartItemQuantity(BuildContext context, String itemID) async {
+Future<void> incrementCartItemQuantity(
+    BuildContext context, String itemID) async {
   final User? currentUser = firebaseAuth.currentUser;
   if (currentUser == null) return;
 
@@ -167,20 +176,23 @@ Future<void> incrementCartItemQuantity(BuildContext context, String itemID) asyn
     if (userCart != null) {
       final String restaurantID = doc.get("restaurantID");
       final String menuID = doc.get("menuID");
-      userCart.removeWhere((item) => item.contains("$restaurantID:$menuID:$itemID:"));
+      userCart.removeWhere(
+          (item) => item.contains("$restaurantID:$menuID:$itemID:"));
       userCart.add("$restaurantID:$menuID:$itemID:$newQuantity");
       saveUserPref<List<String>>("userCart", userCart);
     }
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+      Provider.of<CartItemCounter>(context, listen: false)
+          .displayCartListItemsNumber();
     }
   } catch (e) {
     Fluttertoast.showToast(msg: "Error updating quantity: $e");
   }
 }
 
-Future<void> decrementCartItemQuantity(BuildContext context, String itemID) async {
+Future<void> decrementCartItemQuantity(
+    BuildContext context, String itemID) async {
   final User? currentUser = firebaseAuth.currentUser;
   if (currentUser == null) return;
 
@@ -198,7 +210,9 @@ Future<void> decrementCartItemQuantity(BuildContext context, String itemID) asyn
     final doc = snapshot.docs.first;
     final int currentQuantity = doc.get("quantity") ?? 1;
 
-    if (currentQuantity <= 1) { return; }
+    if (currentQuantity <= 1) {
+      return;
+    }
 
     final int newQuantity = currentQuantity - 1;
     await doc.reference.update({"quantity": newQuantity});
@@ -208,13 +222,15 @@ Future<void> decrementCartItemQuantity(BuildContext context, String itemID) asyn
     if (userCart != null) {
       final String restaurantID = doc.get("restaurantID");
       final String menuID = doc.get("menuID");
-      userCart.removeWhere((item) => item.contains("$restaurantID:$menuID:$itemID:"));
+      userCart.removeWhere(
+          (item) => item.contains("$restaurantID:$menuID:$itemID:"));
       userCart.add("$restaurantID:$menuID:$itemID:$newQuantity");
       saveUserPref<List<String>>("userCart", userCart);
     }
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+      Provider.of<CartItemCounter>(context, listen: false)
+          .displayCartListItemsNumber();
     }
   } catch (e) {
     Fluttertoast.showToast(msg: "Error updating quantity: $e");

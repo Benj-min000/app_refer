@@ -32,9 +32,9 @@ class _DiningPagePageState extends State<Home> {
 
   int _selectedTabIndex = 0;
   bool _showAllCategories = false;
-  
+
   Locale? _lastLocale;
-  
+
   @override
   void initState() {
     super.initState();
@@ -67,11 +67,9 @@ class _DiningPagePageState extends State<Home> {
           backgroundColor: Colors.redAccent.shade100,
           child: Icon(item.icon, color: Colors.white),
         ),
-        
         const SizedBox(height: 8),
-
         Text(
-          item.label, 
+          item.label,
           textAlign: TextAlign.center,
           maxLines: 2,
           style: const TextStyle(
@@ -88,14 +86,13 @@ class _DiningPagePageState extends State<Home> {
     final tabs = getHomeTabs(context);
     final selectedTab = tabs[_selectedTabIndex];
     final hasMoreCategories = selectedTab.categories.length > 10;
-    final displayedCategories = _showAllCategories 
-      ? selectedTab.categories 
-      : selectedTab.categories.take(10).toList();
+    final displayedCategories = _showAllCategories
+        ? selectedTab.categories
+        : selectedTab.categories.take(10).toList();
 
     return DefaultTabController(
       length: tabs.length,
       initialIndex: 0,
-
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,168 +104,171 @@ class _DiningPagePageState extends State<Home> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const AddressHeader(),
-
                 const SizedBox(height: 16),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: context.t.hintSearch,
-                            hintStyle: TextStyle(fontSize: 13),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            prefixIcon: Icon(Icons.search),
+                Row(children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: context.l10n.hintSearch,
+                          hintStyle: TextStyle(fontSize: 13),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          onChanged: (value) async {
-                            await Navigator.of(context).push(
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) => SearchScreen(initialText: value),
-                                transitionDuration: const Duration(milliseconds: 400),
-                                reverseTransitionDuration: const Duration(milliseconds: 300),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  var curvedAnimation = CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeOutQuart, // Smooth expansion
-                                  );
-
-                                  return ScaleTransition(
-                                    scale: curvedAnimation,
-                                    alignment: Alignment.topCenter, // The expands from the top
-                                    child: FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                            
-                            _searchController.clear();
-                            if (!mounted) return;
-                            FocusScope.of(context).unfocus();
-                          },
+                          prefixIcon: Icon(Icons.search),
                         ),
+                        onChanged: (value) async {
+                          await Navigator.of(context).push(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      SearchScreen(initialText: value),
+                              transitionDuration:
+                                  const Duration(milliseconds: 400),
+                              reverseTransitionDuration:
+                                  const Duration(milliseconds: 300),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                var curvedAnimation = CurvedAnimation(
+                                  parent: animation,
+                                  curve:
+                                      Curves.easeOutQuart, // Smooth expansion
+                                );
+
+                                return ScaleTransition(
+                                  scale: curvedAnimation,
+                                  alignment: Alignment
+                                      .topCenter, // The expands from the top
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+
+                          _searchController.clear();
+                          if (!mounted) return;
+                          FocusScope.of(context).unfocus();
+                        },
                       ),
                     ),
-                  ]
-                ),
+                  ),
+                ]),
               ],
             ),
           ),
 
           Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TabBar(
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+              labelColor: Colors.blue.shade700,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
               ),
-            ],
-          ),
-          child: TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            labelPadding: const EdgeInsets.symmetric(horizontal: 16),
-            labelColor: Colors.blue.shade700,
-            labelStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
+              unselectedLabelColor: Colors.grey[600],
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+              indicatorColor: Colors.blue.shade700,
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorWeight: 3,
+              physics: const ClampingScrollPhysics(),
+              padding: EdgeInsets.zero,
+              tabs: tabs.map((tab) => Tab(text: tab.label)).toList(),
+              onTap: (index) {
+                setState(() {
+                  _selectedTabIndex = index;
+                  _showAllCategories = false;
+                });
+              },
             ),
-            unselectedLabelColor: Colors.grey[600],
-            unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-            ),
-            indicatorColor: Colors.blue.shade700,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorWeight: 3,
-            physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.zero,
-            tabs: tabs.map((tab) => Tab(text: tab.label)).toList(),
-            onTap: (index) {
-              setState(() {
-                _selectedTabIndex = index;
-                _showAllCategories = false;
-              });
-            },
           ),
-        ),
 
-        // Category Grid
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: GridView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              childAspectRatio: 0.65,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: displayedCategories.length,
-            itemBuilder: (context, index) {
-              final category = displayedCategories[index];
-              return _buildCategoryItem(category);
-            },
-          ),
-        ),
-
-        if (hasMoreCategories)
+          // Category Grid
           Container(
             color: Colors.white,
-            child: Column(
-              children: [
-                Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _showAllCategories = !_showAllCategories;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _showAllCategories 
-                              ? 'Show Less' 
-                              : context.t.seeMore(selectedTab.label),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: GridView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                childAspectRatio: 0.65,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: displayedCategories.length,
+              itemBuilder: (context, index) {
+                final category = displayedCategories[index];
+                return _buildCategoryItem(category);
+              },
+            ),
+          ),
+
+          if (hasMoreCategories)
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _showAllCategories = !_showAllCategories;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _showAllCategories
+                                ? 'Show Less'
+                                : context.l10n.seeMore(selectedTab.label),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            _showAllCategories
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            size: 18,
                             color: Colors.grey[700],
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          _showAllCategories 
-                              ? Icons.keyboard_arrow_up 
-                              : Icons.keyboard_arrow_down,
-                          size: 18,
-                          color: Colors.grey[700],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-              ],
+                  Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+                ],
+              ),
             ),
-          ),
 
           const SizedBox(height: 30),
 

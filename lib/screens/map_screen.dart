@@ -16,7 +16,11 @@ class MapScreen extends StatefulWidget {
   final double? initialLng;
   final bool isSightSeeing;
 
-  const MapScreen({super.key, this.initialLat, this.initialLng, this.isSightSeeing = false});
+  const MapScreen(
+      {super.key,
+      this.initialLat,
+      this.initialLng,
+      this.isSightSeeing = false});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -28,18 +32,16 @@ class _MapScreenState extends State<MapScreen> {
   String _currentAddress = "";
 
   late LatLng _pickedLocation;
-  
+
   // List of search suggestions
   List<dynamic> _suggestions = [];
 
   final String _googleMapsApiKey = LocationService.googleMapsApiKey;
 
   void _refreshCamera() {
-    _mapController.animateCamera(
-    CameraUpdate.newLatLng(
+    _mapController.animateCamera(CameraUpdate.newLatLng(
       LatLng(widget.initialLat ?? 0.0, widget.initialLng ?? 0.0),
-    )
-    );
+    ));
   }
 
   // Logic to fetch suggestions as user types
@@ -48,8 +50,9 @@ class _MapScreenState extends State<MapScreen> {
       setState(() => _suggestions = []);
       return;
     }
-    
-    final url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$_googleMapsApiKey";
+
+    final url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$_googleMapsApiKey";
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -61,7 +64,8 @@ class _MapScreenState extends State<MapScreen> {
 
   // Logic to handle clicking a suggestion
   void _handleSuggestionClick(String placeId) async {
-    final url = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_googleMapsApiKey";
+    final url =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_googleMapsApiKey";
     final response = await http.get(Uri.parse(url));
     final data = json.decode(response.body);
 
@@ -82,15 +86,16 @@ class _MapScreenState extends State<MapScreen> {
   void _reverseGeocode(LatLng location) async {
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final langCode = localeProvider.locale.languageCode;
-    
-    try {      
+
+    try {
       final result = await LocationService.getUserLocationAddressFromGoogle(
-        location.latitude, 
-        location.longitude, 
+        location.latitude,
+        location.longitude,
       );
 
-      final addressTrans = await TranslationService.formatAndTranslateAddress(result, langCode);
-      
+      final addressTrans =
+          await TranslationService.formatAndTranslateAddress(result, langCode);
+
       setState(() {
         _currentAddress = addressTrans;
       });
@@ -99,7 +104,7 @@ class _MapScreenState extends State<MapScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => LoadingDialog(message: context.t.errorReverseGeo(e)),
+        builder: (_) => LoadingDialog(message: context.l10n.errorReverseGeo(e)),
       );
     }
   }
@@ -110,10 +115,10 @@ class _MapScreenState extends State<MapScreen> {
     // Initialize with passed coordinates if available, otherwise use default
     _pickedLocation = LatLng(
       // Google HQ coords
-      widget.initialLat ?? 37.4220, 
+      widget.initialLat ?? 37.4220,
       widget.initialLng ?? -122.0841,
     );
-    
+
     // If we have coordinates, reverse geocoding immediately
     if (widget.initialLat != null && widget.initialLng != null) {
       _reverseGeocode(_pickedLocation);
@@ -123,25 +128,25 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Prevents map jumping when keyboard opens
+      resizeToAvoidBottomInset:
+          false, // Prevents map jumping when keyboard opens
       body: Stack(
         children: [
           GoogleMap(
-            initialCameraPosition: CameraPosition(target: _pickedLocation, zoom: 15),
+            initialCameraPosition:
+                CameraPosition(target: _pickedLocation, zoom: 15),
             onMapCreated: (controller) => _mapController = controller,
             onCameraMove: (position) => _pickedLocation = position.target,
             onCameraIdle: () => _reverseGeocode(_pickedLocation),
             myLocationEnabled: true,
             zoomControlsEnabled: false,
           ),
-
           const Center(
             child: Padding(
               padding: EdgeInsets.only(bottom: 35),
               child: Icon(Icons.location_on, size: 45, color: Colors.red),
             ),
           ),
-
           Positioned(
             top: 70,
             left: 15,
@@ -152,7 +157,7 @@ class _MapScreenState extends State<MapScreen> {
                   elevation: 4,
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: context.t.searchAddress,
+                      hintText: context.l10n.searchAddress,
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(15),
@@ -182,8 +187,8 @@ class _MapScreenState extends State<MapScreen> {
                         padding: EdgeInsets.zero,
                         itemCount: _suggestions.length,
                         separatorBuilder: (context, index) => Divider(
-                          height: 1, 
-                          indent: 50, 
+                          height: 1,
+                          indent: 50,
                           color: Colors.grey.shade200,
                         ),
                         itemBuilder: (context, index) {
@@ -191,7 +196,8 @@ class _MapScreenState extends State<MapScreen> {
                             leading: const CircleAvatar(
                               backgroundColor: Colors.blueGrey,
                               radius: 16,
-                              child: Icon(Icons.location_on, size: 16, color: Colors.white),
+                              child: Icon(Icons.location_on,
+                                  size: 16, color: Colors.white),
                             ),
                             title: Text(
                               _suggestions[index]['description'],
@@ -203,12 +209,16 @@ class _MapScreenState extends State<MapScreen> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                            subtitle: index == 0 
-                                ? Text(context.t.suggestedMatch, style: TextStyle(fontSize: 11, color: Colors.blue))
+                            subtitle: index == 0
+                                ? Text(context.l10n.suggestedMatch,
+                                    style: TextStyle(
+                                        fontSize: 11, color: Colors.blue))
                                 : null,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
                             hoverColor: Colors.blue.shade50,
-                            onTap: () => _handleSuggestionClick(_suggestions[index]['place_id']),
+                            onTap: () => _handleSuggestionClick(
+                                _suggestions[index]['place_id']),
                           );
                         },
                       ),
@@ -230,7 +240,9 @@ class _MapScreenState extends State<MapScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 10)
+                    ],
                   ),
                   child: Text(
                     _currentAddress,
@@ -238,9 +250,7 @@ class _MapScreenState extends State<MapScreen> {
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
-
                 const SizedBox(height: 15),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -254,56 +264,61 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.lightBlue,
-                          foregroundColor: Colors.white, 
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                           elevation: 2,
                         ),
                         onPressed: () => Navigator.pop(context),
-                        label: Text(context.t.goBack, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        label: Text(context.l10n.goBack,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    
                     if (widget.isSightSeeing == false) ...[
                       const SizedBox(width: 16),
                       Expanded(
                         child: SizedBox(
-                          height: 55, 
+                          height: 55,
                           child: ElevatedButton.icon(
                             icon: Icon(Icons.check, size: 24),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.redAccent,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               elevation: 2,
                             ),
                             onPressed: () async {
-                              final fullData = await LocationService.getUserLocationAddressFromGoogle(
-                                _pickedLocation.latitude, 
+                              final fullData = await LocationService
+                                  .getUserLocationAddressFromGoogle(
+                                _pickedLocation.latitude,
                                 _pickedLocation.longitude,
                               );
                               if (mounted) Navigator.pop(context, fullData);
                             },
                             label: FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Text(
-                                context.t.confirmContinue, 
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
-                              ),
+                              child: Text(context.l10n.confirmContinue,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ),
                       ),
-                    ] else...[
+                    ] else ...[
                       const SizedBox(width: 16),
                       Expanded(
                         child: SizedBox(
-                          height: 55, 
+                          height: 55,
                           child: ElevatedButton.icon(
                             icon: Icon(Icons.refresh, size: 24),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.redAccent,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               elevation: 2,
                             ),
                             onPressed: () async {
@@ -312,8 +327,9 @@ class _MapScreenState extends State<MapScreen> {
                             label: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                context.t.refreshLocation, 
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                context.l10n.refreshLocation,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

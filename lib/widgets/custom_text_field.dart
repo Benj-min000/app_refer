@@ -1,135 +1,219 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:user_app/extensions/brand_color_ext.dart';
+import 'package:user_app/extensions/extensions_import.dart';
+
+enum FieldValidator {
+  email,
+  nip,
+  regon,
+  postalCode,
+  required,
+  none,
+}
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final IconData? data;
   final String? hintText;
+  final String? labelText;
   final bool isObsecure;
   final bool enabled;
   final double fontSize;
   final ValueChanged<String>? onChanged;
+  final FieldValidator validator;
+  final String? customValidatorPattern;
+  final String? customValidatorMessage;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
+  final String? Function(String?)? customValidator;
 
   const CustomTextField({
     super.key,
     this.controller,
     this.data,
     this.hintText,
-    this.isObsecure = true,
+    this.labelText,
+    this.isObsecure = false,
     this.enabled = true,
-    this.fontSize = 16.0,
+    this.fontSize = 15.0,
     this.onChanged,
+    this.validator = FieldValidator.none,
+    this.customValidatorPattern,
+    this.customValidatorMessage,
+    this.keyboardType,
+    this.inputFormatters,
+    this.maxLines = 1,
+    this.customValidator,
   });
-  
+
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
   late FocusNode _focusNode;
-  bool _isFloating = false;
+  static const Color _textDark = Color(0xFF21243D);
+
+  static const Map<FieldValidator, _ValidatorConfig> _configs = {
+    FieldValidator.email: _ValidatorConfig(
+      pattern: r'^[\w\.\+\-]+@[\w\-]+\.[a-zA-Z]{2,}$',
+      keyboard: TextInputType.emailAddress,
+    ),
+    FieldValidator.nip: _ValidatorConfig(
+      pattern: r'^\d{10}$',
+      keyboard: TextInputType.number,
+    ),
+    FieldValidator.regon: _ValidatorConfig(
+      pattern: r'^\d{9}(\d{5})?$',
+      keyboard: TextInputType.number,
+    ),
+    FieldValidator.postalCode: _ValidatorConfig(
+      pattern: r'^\d{2}-\d{3}$',
+      keyboard: TextInputType.number,
+    ),
+    FieldValidator.required: _ValidatorConfig(
+      pattern: r'.+',
+      keyboard: TextInputType.text,
+    ),
+    FieldValidator.none: _ValidatorConfig(
+      pattern: null,
+      keyboard: TextInputType.text,
+    ),
+  };
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
-    _focusNode.addListener(_onFocusChange);
-    widget.controller?.addListener(_onTextChange);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateFloatingState();
-    });
-  }
-
-  void _updateFloatingState() {
-    final hasContent = widget.controller?.text.isNotEmpty ?? false;
-    final newFloating = _focusNode.hasFocus || hasContent;
-    
-    if (_isFloating != newFloating) {
-      setState(() {
-        _isFloating = newFloating;
-      });
-    }
-  }
-
-  void _onFocusChange() {
-    _updateFloatingState();
-  }
-
-  void _onTextChange() {
-    _updateFloatingState();
+    _focusNode.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    widget.controller?.removeListener(_onTextChange);
     _focusNode.dispose();
     super.dispose();
   }
 
+  String? _validate(String? value) {
+    if (widget.customValidator != null) {
+      return widget.customValidator!(value);
+    }
+
+    if (widget.customValidatorPattern != null) {
+      if (value == null || value.isEmpty) {
+        return widget.customValidatorMessage ??
+            context.l10n.field_error_required;
+      }
+      final regex = RegExp(widget.customValidatorPattern!);
+      if (!regex.hasMatch(value)) {
+        return widget.customValidatorMessage ??
+            context.l10n.field_error_invalid_format;
+      }
+      return null;
+    }
+
+    final config = _configs[widget.validator];
+    if (config == null || config.pattern == null) return null;
+
+    if (value == null || value.isEmpty) {
+      return _validatorMessage(widget.validator);
+    }
+    final regex = RegExp(config.pattern!);
+    if (!regex.hasMatch(value.trim())) {
+      return _validatorMessage(widget.validator);
+    }
+    return null;
+  }
+
+  String _validatorMessage(FieldValidator v) {
+    switch (v) {
+      case FieldValidator.email:
+        return context.l10n.field_email_message;
+      case FieldValidator.nip:
+        return context.l10n.field_nip_message;
+      case FieldValidator.regon:
+        return context.l10n.field_regon_message;
+      case FieldValidator.postalCode:
+        return context.l10n.field_postal_code_message;
+      case FieldValidator.required:
+        return context.l10n.field_error_required;
+      case FieldValidator.none:
+        return '';
+    }
+  }
+
+  TextInputType get _keyboardType {
+    if (widget.keyboardType != null) return widget.keyboardType!;
+    return _configs[widget.validator]?.keyboard ?? TextInputType.text;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final brand = Theme.of(context).extension<BrandColors>()!;
+
     return Container(
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         focusNode: _focusNode,
-        style: TextStyle(
-          fontSize: widget.fontSize, 
-          color: Colors.black87,
-        ),
-        textAlignVertical: TextAlignVertical.center,
-        enabled: widget.enabled,
         controller: widget.controller,
         obscureText: widget.isObsecure,
-        cursorColor: Theme.of(context).primaryColor,
+        enabled: widget.enabled,
         onChanged: widget.onChanged,
+        cursorColor: brand.navy,
+        keyboardType: _keyboardType,
+        inputFormatters: widget.inputFormatters,
+        maxLines: widget.maxLines,
+        validator: _validate,
+        style: TextStyle(fontSize: widget.fontSize, color: _textDark),
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(20),
-          prefixIcon: widget.data != null ? Icon(
-            widget.data,
-            color: Colors.grey,
-          ) : null,
-          focusColor: Theme.of(context).primaryColor,
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
-          floatingLabelStyle: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
-            backgroundColor: Colors.white,
-          ),
-          label: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: _isFloating ? BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: Theme.of(context).primaryColor,
-                width: 2,
-              ),
-            ) : null,
-            child: Text(
-              widget.hintText!,
-              style: TextStyle(
-                color: _isFloating ? Theme.of(context).primaryColor : Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
+          hintText: "Enter ${widget.hintText?.toLowerCase() ?? 'details'}",
+          labelText: widget.labelText,
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          filled: true,
+          fillColor: widget.enabled ? Colors.white : Colors.grey[50],
+          prefixIcon: widget.data != null
+              ? Icon(widget.data,
+                  size: 20,
+                  color: _focusNode.hasFocus ? brand.navy : Colors.grey)
+              : null,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade600),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.grey),
           ),
           focusedBorder: OutlineInputBorder(
-            gapPadding: 0,
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: brand.navy!, width: 1.5),
           ),
-          filled: true,
-          fillColor: Colors.white,
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade200),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide:
+                const BorderSide(color: Colors.redAccent, width: 1.5),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide:
+                const BorderSide(color: Colors.redAccent, width: 1.5),
+          ),
         ),
       ),
     );
   }
+}
+
+class _ValidatorConfig {
+  final String? pattern;
+  final TextInputType keyboard;
+
+  const _ValidatorConfig({
+    required this.pattern,
+    required this.keyboard,
+  });
 }
