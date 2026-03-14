@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/screens/place_order_screen.dart';
 
-import 'package:user_app/assistant_methods/total_amount.dart';
+import 'package:user_app/providers/amount_provider.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
-import 'package:user_app/assistant_methods/cart_item_counter.dart';
+import 'package:user_app/providers/cart_provider.dart';
 
 import 'package:user_app/widgets/cart_item_design.dart';
 import 'package:user_app/widgets/progress_bar.dart';
@@ -29,8 +29,8 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     super.initState();
 
-    Provider.of<CartItemCounter>(context, listen: false)
-        .displayCartListItemsNumber();
+    Provider.of<CartProvider>(context, listen: false)
+        .loadCart();
   }
 
   Future<void> _clearCart() async {
@@ -43,7 +43,7 @@ class _CartScreenState extends State<CartScreen> {
     await clearCartNow(context);
 
     if (!mounted) return;
-    Provider.of<TotalAmount>(context, listen: false).reset();
+    Provider.of<AmountProvider>(context, listen: false).reset();
     Navigator.pop(context);
     unifiedSnackBar(context.l10n.cartCleared);
   }
@@ -155,10 +155,11 @@ class _CartScreenState extends State<CartScreen> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: Consumer<TotalAmount>(
+          child: Consumer<AmountProvider>(
             builder: (context, amountProvider, _) {
-              if (amountProvider.totalAmount <= 0)
+              if (amountProvider.totalAmount <= 0) {
                 return const SizedBox.shrink();
+              }
 
               return Container(
                 padding: const EdgeInsets.all(20),
@@ -301,7 +302,7 @@ class _CartScreenState extends State<CartScreen> {
                 if (loadedCount == docs.length) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
-                      Provider.of<TotalAmount>(context, listen: false)
+                      Provider.of<AmountProvider>(context, listen: false)
                           .setAmounts(tempTotal, tempOriginal, tempSavings);
                     }
                   });

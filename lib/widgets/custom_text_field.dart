@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:user_app/extensions/brand_color_ext.dart';
 import 'package:user_app/extensions/extensions_import.dart';
 
 enum FieldValidator {
@@ -194,13 +193,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide:
-                const BorderSide(color: Colors.redAccent, width: 1.5),
+            borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide:
-                const BorderSide(color: Colors.redAccent, width: 1.5),
+            borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
           ),
         ),
       ),

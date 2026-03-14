@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/screens/save_address_screen.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/widgets/address_design.dart';
-import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/providers/address_provider.dart';
 
 import 'package:user_app/widgets/progress_bar.dart';
 
@@ -14,7 +14,7 @@ import 'package:user_app/global/global.dart';
 
 import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
@@ -54,7 +54,7 @@ class _AddressScreenState extends State<AddressScreen> {
     final localeProvider = Provider.of<LocaleProvider>(context);
 
     // Listening for chaning the address
-    final addressProvider = Provider.of<AddressChanger>(context);
+    final addressProvider = Provider.of<AddressProvider>(context);
 
     if (_lastLocale != localeProvider.locale ||
         _lastAddressIndex != addressProvider.count) {
@@ -85,8 +85,8 @@ class _AddressScreenState extends State<AddressScreen> {
         });
       }
     } catch (e) {
-      if (mounted)
-        setState(() => _gpsLocation = context.l10n.errorAddressNotFound);
+      if (!mounted) return;
+      setState(() => _gpsLocation = context.l10n.errorAddressNotFound);
     }
   }
 
@@ -132,7 +132,7 @@ class _AddressScreenState extends State<AddressScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 24),
-          Consumer<AddressChanger>(builder: (context, address, c) {
+          Consumer<AddressProvider>(builder: (context, address, c) {
             return Flexible(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance

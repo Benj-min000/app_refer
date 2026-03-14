@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 import 'package:user_app/authentication/auth_screen.dart';
+import 'package:user_app/providers/cart_provider.dart';
 import 'package:user_app/screens/home_screen.dart';
 
 import 'package:user_app/global/global.dart';
@@ -108,7 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       await sharedPreferences!.setString("uid", currentUser.uid);
-      cartItemCounter.displayCartListItemsNumber();
+      
+      if (!mounted) return;
+      Provider.of<CartProvider>(context).count;
+
       await saveUserPref<String>("email", data["email"]);
       await saveUserPref<String>("name", data["name"]);
       await saveUserPref<String>("phone", data["phone"]);

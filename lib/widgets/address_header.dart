@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import "package:user_app/services/location_service.dart";
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 
 import 'package:user_app/screens/address_screen.dart';
-import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/providers/address_provider.dart';
 import "package:user_app/services/translator_service.dart";
 
 class AddressHeader extends StatefulWidget {
@@ -30,7 +30,7 @@ class _AddressHeaderState extends State<AddressHeader> {
     super.didChangeDependencies();
 
     final localeProvider = Provider.of<LocaleProvider>(context);
-    final addressProvider = Provider.of<AddressChanger>(context);
+    final addressProvider = Provider.of<AddressProvider>(context);
 
     // This runs whenever the language (Locale) or Providers change
     if (_lastLocale != localeProvider.locale ||
@@ -57,7 +57,8 @@ class _AddressHeaderState extends State<AddressHeader> {
   }
 
   void _updateAddress() async {
-    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+    final addressProvider =
+        Provider.of<AddressProvider>(context, listen: false);
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final languageCode = localeProvider.locale.languageCode;
 
@@ -77,8 +78,8 @@ class _AddressHeaderState extends State<AddressHeader> {
           });
         }
       } catch (e) {
-        if (mounted)
-          setState(() => _location = context.l10n.errorAddressNotFound);
+        if (!mounted) return;
+        setState(() => _location = context.l10n.errorAddressNotFound);
       }
       return;
     }

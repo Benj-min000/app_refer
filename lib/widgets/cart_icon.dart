@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/cart_item_counter.dart';
+import 'package:user_app/providers/cart_provider.dart';
 import 'package:user_app/screens/cart_screen.dart';
 
 class CartIconWidget extends StatelessWidget {
@@ -8,7 +8,7 @@ class CartIconWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CartItemCounter>(
+    return Consumer<CartProvider>(
       builder: (context, counter, _) {
         return IconButton(
           onPressed: () => Navigator.push(

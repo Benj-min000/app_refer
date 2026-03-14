@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:user_app/services/location_service.dart';
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/widgets/loading_dialog.dart';

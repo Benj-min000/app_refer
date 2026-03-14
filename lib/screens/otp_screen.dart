@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/global/global.dart';
+import 'package:user_app/providers/cart_provider.dart';
 import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/widgets/error_dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
@@ -71,8 +73,12 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void dispose() {
-    for (final c in _controllers) c.dispose();
-    for (final f in _focusNodes) f.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final f in _focusNodes) {
+      f.dispose();
+    }
     _timer?.cancel();
     super.dispose();
   }
@@ -199,6 +205,8 @@ class _OtpScreenState extends State<OtpScreen> {
         'status': 'approved',
       });
 
+      if (!mounted) return;
+
       await userRef.collection('notifications').add({
         'userID': user.uid,
         'title': context.l10n.welcomeNotifTitle,
@@ -209,7 +217,10 @@ class _OtpScreenState extends State<OtpScreen> {
 
       // 5. Save locally
       await sharedPreferences!.setString('uid', user.uid);
-      cartItemCounter.displayCartListItemsNumber();
+      
+      if (!mounted) return;
+      Provider.of<CartProvider>(context).count;
+      
       await saveUserPref<String>('email', user.email.toString());
       await saveUserPref<String>('name', widget.args.name.trim());
       await saveUserPref<String>('photoUrl', photoUrl.trim());
@@ -226,7 +237,9 @@ class _OtpScreenState extends State<OtpScreen> {
       if (!mounted) return;
       Navigator.pop(context);
       // Wrong code — clear boxes and show error
-      for (final c in _controllers) c.clear();
+      for (final c in _controllers) {
+        c.clear();
+      }
       _focusNodes.first.requestFocus();
       setState(() => _errorMsg = e.message ?? 'Invalid code. Try again.');
     } catch (e) {

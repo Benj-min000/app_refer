@@ -15,7 +15,7 @@ import 'package:user_app/screens/orders_screen.dart';
 import 'package:user_app/screens/search_screen.dart';
 import "package:user_app/screens/favorites_screen.dart";
 import 'package:user_app/widgets/cart_icon.dart';
-import 'package:user_app/assistant_methods/cart_item_counter.dart';
+import 'package:user_app/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
 final List<String> _sliderImages = List.generate(28, (index) => "assets/images/slider/$index.jpg");
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<CartItemCounter>(context, listen: false).displayCartListItemsNumber();
+    Provider.of<CartProvider>(context, listen: false).loadCart();
   }
 
   @override

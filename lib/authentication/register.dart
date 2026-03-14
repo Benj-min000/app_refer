@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:user_app/providers/cart_provider.dart';
 
 import 'package:user_app/services/image_picker_service.dart';
 
@@ -145,7 +147,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     await sharedPreferences!.setString("uid", currentUser.uid);
-    cartItemCounter.displayCartListItemsNumber();
+
+    if (!mounted) return;
+    Provider.of<CartProvider>(context).count;
+
     await saveUserPref<String>("email", currentUser.email.toString());
     await saveUserPref<String>("name", _nameController.text.trim());
     await saveUserPref<String>("photoUrl", downloadUrl.trim());

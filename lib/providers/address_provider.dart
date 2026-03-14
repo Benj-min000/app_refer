@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:user_app/global/global.dart';
 
-class AddressChanger extends ChangeNotifier {
+class AddressProvider extends ChangeNotifier {
   int _counter = -1; // Default to -1 for "Current Location"
   Map<String, dynamic> _selectedAddress = {};
   int _totalSavedAddresses = 0;

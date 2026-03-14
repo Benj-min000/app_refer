@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:user_app/screens/notification_screen.dart';
+import 'package:user_app/screens/notifications_screen.dart';
 
 class NotificationIconWidget extends StatefulWidget {
   const NotificationIconWidget({super.key});
@@ -75,7 +75,7 @@ class _NotificationIconWidgetState extends State<NotificationIconWidget>
           child: IconButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const NotificationScreen()),
+              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
             ),
             icon: Badge(
               isLabelVisible: unreadCount > 0,

@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'package:user_app/l10n/app_localizations.dart';
-import 'package:user_app/models/language.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:user_app/assistant_methods/address_changer.dart';
-import 'package:user_app/assistant_methods/total_amount.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/providers/cart_provider.dart';
+import 'package:user_app/providers/theme_provider.dart';
+import 'package:user_app/providers/address_provider.dart';
+import 'package:user_app/providers/amount_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
 
 import 'package:user_app/global/global.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:user_app/l10n/app_localizations.dart';
+
+import 'package:user_app/models/language.dart';
+
 import 'package:user_app/screens/splash_screen.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
+
 import 'package:user_app/widgets/unified_snackbar.dart';
 
 import 'package:user_app/extensions/extensions_import.dart';
@@ -50,16 +56,23 @@ Future<void> main() async {
   LocaleProvider localeProvider = LocaleProvider();
   await localeProvider.loadLocale();
 
-  AddressChanger addressChanger = AddressChanger();
-  await addressChanger.loadSavedAddress();
+  AddressProvider addressProvider = AddressProvider();
+  await addressProvider.loadSavedAddress();
+
+  CartProvider cartProvider = CartProvider();
+  await cartProvider.loadCart();
+
+  ThemeProvider themeProvider = ThemeProvider();
+  await themeProvider.loadTheme();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: localeProvider),
-        ChangeNotifierProvider.value(value: addressChanger),
-        ChangeNotifierProvider.value(value: cartItemCounter),
-        ChangeNotifierProvider(create: (c) => TotalAmount()),
+        ChangeNotifierProvider.value(value: addressProvider),
+        ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: cartProvider),
+        ChangeNotifierProvider(create: (c) => AmountProvider()),
       ],
       child: const MyApp(),
     ),
@@ -72,6 +85,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
       title: 'User App',
@@ -79,7 +93,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: snackBarNavigatorKey,
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: themeProvider.themeMode,
 
       locale: localeProvider.locale,
 

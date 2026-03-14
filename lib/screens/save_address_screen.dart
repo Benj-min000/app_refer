@@ -11,7 +11,7 @@ import 'package:user_app/widgets/custom_text_field.dart';
 
 import "package:user_app/screens/map_screen.dart";
 import 'package:user_app/widgets/error_dialog.dart';
-import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/providers/address_provider.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/unified_snackbar.dart';
 
@@ -43,7 +43,7 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
   void initState() {
     super.initState();
     int totalAddressCount =
-        Provider.of<AddressChanger>(context, listen: false).totalSavedAddresses;
+        Provider.of<AddressProvider>(context, listen: false).totalSavedAddresses;
     _addressLabel.text = "Address ${totalAddressCount + 1}";
   }
 
@@ -181,116 +181,119 @@ class _SaveAddressScreenState extends State<SaveAddressScreen> {
           isObsecure: false),
     ];
 
-    return Scaffold(
-      appBar: UnifiedAppBar(
-        title: "Add New Address",
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 28,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: UnifiedAppBar(
+          title: "Add New Address",
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+              size: 28,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
-      ),
-      floatingActionButton: _isAddressFetched
-          ? FloatingActionButton.extended(
-              onPressed: isLoading ? null : () => formValidation(),
-              label: const Text("Save Now",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15)),
-              icon: const Icon(Icons.save, color: Colors.white),
-              backgroundColor: Colors.cyan,
-            )
-          : null,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            if (isLoading) const LinearProgressIndicator(color: Colors.cyan),
-            SizedBox(
-              width: double.infinity,
-              // We use constraints to ensure the Column can at least fill the screen
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  // Subtracting AppBar height (approx) and status bar to avoid overflow
-                  minHeight: MediaQuery.of(context).size.height - 120,
-                ),
-                child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // Vertically centers children
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Horizontally centers children
-                  children: [
-                    const SizedBox(height: 25),
-                    ElevatedButton.icon(
-                      onPressed: _handleMapResult,
-                      icon: const Icon(Icons.location_on,
-                          color: Colors.redAccent, size: 22),
-                      label: const Text(
-                        "Find your location on Google Maps",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.cyan,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+        floatingActionButton: _isAddressFetched
+            ? FloatingActionButton.extended(
+                onPressed: isLoading ? null : () => formValidation(),
+                label: const Text("Save Now",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                icon: const Icon(Icons.save, color: Colors.white),
+                backgroundColor: Colors.cyan,
+              )
+            : null,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              if (isLoading) const LinearProgressIndicator(color: Colors.cyan),
+              SizedBox(
+                width: double.infinity,
+                // We use constraints to ensure the Column can at least fill the screen
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    // Subtracting AppBar height (approx) and status bar to avoid overflow
+                    minHeight: MediaQuery.of(context).size.height - 120,
+                  ),
+                  child: Column(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // Vertically centers children
+                    crossAxisAlignment: CrossAxisAlignment
+                        .center, // Horizontally centers children
+                    children: [
+                      const SizedBox(height: 25),
+                      ElevatedButton.icon(
+                        onPressed: _handleMapResult,
+                        icon: const Icon(Icons.location_on,
+                            color: Colors.redAccent, size: 22),
+                        label: const Text(
+                          "Find your location on Google Maps",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
-                        elevation: 3,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    if (_isAddressFetched) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40.0),
-                        child: Divider(thickness: 1),
-                      ),
-                      Text(
-                        "Verify & Refine Details",
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontWeight: FontWeight.w600,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.cyan,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 3,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Form(
-                        key: formKey,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            children: addressFields
-                                .map((field) => Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 16.0),
-                                      child: field,
-                                    ))
-                                .toList(),
+                      const SizedBox(height: 10),
+                      if (_isAddressFetched) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40.0),
+                          child: Divider(thickness: 1),
+                        ),
+                        Text(
+                          "Verify & Refine Details",
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 100),
-                    ] else ...[
-                      const SizedBox(height: 40),
-                      const Icon(Icons.map_outlined,
-                          size: 120, color: Colors.grey),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Map selection is required to continue",
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
-                      ),
+                        const SizedBox(height: 20),
+                        Form(
+                          key: formKey,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                            child: Column(
+                              children: addressFields
+                                  .map((field) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 16.0),
+                                        child: field,
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 100),
+                      ] else ...[
+                        const SizedBox(height: 40),
+                        const Icon(Icons.map_outlined,
+                            size: 120, color: Colors.grey),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Map selection is required to continue",
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

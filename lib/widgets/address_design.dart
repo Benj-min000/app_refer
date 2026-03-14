@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/address_changer.dart';
+import 'package:user_app/providers/address_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/models/address.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/screens/map_screen.dart';
 import 'package:user_app/services/translator_service.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
 import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/widgets/unified_snackbar.dart';
 
@@ -31,7 +31,7 @@ class AddressDesign extends StatefulWidget {
 class _AddressDesignState extends State<AddressDesign> {
   late Future<String> _translationFuture;
 
-  void _selectAddress(AddressChanger addressProvider) {
+  void _selectAddress(AddressProvider addressProvider) {
     Map<String, dynamic> addressData = widget.model?.toJson() ?? {};
     if (widget.isCurrentLocationCard) {
       addressProvider.displayResult(widget.value!, address: addressData);
@@ -58,7 +58,7 @@ class _AddressDesignState extends State<AddressDesign> {
 
   @override
   Widget build(BuildContext context) {
-    final addressProvider = context.watch<AddressChanger>();
+    final addressProvider = context.watch<AddressProvider>();
     final isSelected = widget.value == addressProvider.count;
 
     return Container(
@@ -201,7 +201,7 @@ class _AddressDesignState extends State<AddressDesign> {
   }
 
   void _showDeleteConfirmation(BuildContext context) {
-    final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+    final addressProvider = Provider.of<AddressProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

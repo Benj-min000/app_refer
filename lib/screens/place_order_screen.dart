@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
-import 'package:user_app/assistant_methods/address_changer.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
-import 'package:user_app/assistant_methods/total_amount.dart';
+import 'package:user_app/providers/address_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
+import 'package:user_app/providers/amount_provider.dart';
 import 'package:user_app/assistant_methods/stripe_payment.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
 
@@ -18,8 +18,11 @@ import 'package:user_app/screens/home_screen.dart';
 
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/address_design.dart';
-import 'package:user_app/widgets/accepted_payment.dart';
 import 'package:user_app/widgets/unified_snackbar.dart';
+
+// ── Payment method ─────────────────────────────────────────────────────────────
+
+enum _PaymentMethod { cash, stripe }
 
 class PlaceOrderScreen extends StatefulWidget {
   const PlaceOrderScreen({super.key});
@@ -29,66 +32,68 @@ class PlaceOrderScreen extends StatefulWidget {
 }
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
-  String orderID = "";
-  String restaurantID = "";
-  String orderType = "delivery";
-  String? restaurantAddress;
-  String _selectedPayment = '';
-  bool isLoading = true;
-  bool _isProcessing = false;
-  List<Address> userAddresses = [];
+  final String _orderID =
+      FirebaseFirestore.instance.collection("orders").doc().id;
 
-  String _gpsLocation = "Finding location...";
-  Map<String, dynamic> _gpsMapData = {};
+  String _restaurantID = "";
+  String _orderType = "delivery";
+  String? _restaurantAddress;
+
+  _PaymentMethod? _selectedPayment;
+
+  bool _isLoading = true;
+  bool _isProcessing = false;
+
+  List<Address> _userAddresses = [];
+  String _gpsLabel = "Finding location...";
+  Map<String, dynamic> _gpsData = {};
+
+  // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   @override
   void initState() {
     super.initState();
-    orderID = FirebaseFirestore.instance.collection("orders").doc().id;
-    _initializeOrderScreen();
+    _init();
   }
 
-  Future<void> _initializeOrderScreen() async {
-    await _fetchCurrentLocation();
+  Future<void> _init() async {
+    await _fetchGps();
     await Future.wait([
-      _getRestaurantIDFromCart(),
+      _loadRestaurantFromCart(),
       _loadUserAddresses(),
     ]);
   }
 
-  Future<void> _fetchCurrentLocation() async {
+  Future<void> _fetchGps() async {
     try {
-      final localeProvider =
-          Provider.of<LocaleProvider>(context, listen: false);
-      final gpsData = await LocationService.fetchUserCurrentLocation(
-        langCode: localeProvider.locale.languageCode,
-      );
+      final lang = Provider.of<LocaleProvider>(context, listen: false)
+          .locale
+          .languageCode;
+      final data =
+          await LocationService.fetchUserCurrentLocation(langCode: lang);
       if (mounted) {
         setState(() {
-          _gpsMapData = gpsData;
-          _gpsLocation = gpsData['fullAddress'] ?? 'Location found';
+          _gpsData = data;
+          _gpsLabel = data['fullAddress'] ?? 'Location found';
         });
       }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _gpsLocation = "Error: Unable to get location");
+    } catch (_) {
+      if (mounted) setState(() => _gpsLabel = "Unable to get location");
     }
   }
 
-  Future<void> _getRestaurantIDFromCart() async {
+  Future<void> _loadRestaurantFromCart() async {
+    if (currentUid == null) return;
     try {
-      if (currentUid == null) return;
-
-      var cartSnapshot = await FirebaseFirestore.instance
+      final snap = await FirebaseFirestore.instance
           .collection("users")
           .doc(currentUid)
           .collection("carts")
           .limit(1)
           .get();
 
-      if (cartSnapshot.docs.isNotEmpty) {
-        setState(() =>
-            restaurantID = cartSnapshot.docs.first.data()['restaurantID']);
+      if (snap.docs.isNotEmpty) {
+        _restaurantID = snap.docs.first.data()['restaurantID'] ?? '';
         await _loadRestaurantAddress();
       }
     } catch (e) {
@@ -98,17 +103,16 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   Future<void> _loadRestaurantAddress() async {
     try {
-      var addressSnapshot = await FirebaseFirestore.instance
+      final snap = await FirebaseFirestore.instance
           .collection("restaurants")
-          .doc(restaurantID)
+          .doc(_restaurantID)
           .collection("addresses")
           .limit(1)
           .get();
 
-      if (addressSnapshot.docs.isNotEmpty) {
-        setState(() => restaurantAddress =
-            addressSnapshot.docs.first.data()['fullAddress'] ??
-                "Store address not available");
+      if (snap.docs.isNotEmpty) {
+        setState(() => _restaurantAddress =
+            snap.docs.first.data()['fullAddress'] ?? "Address not available");
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -116,93 +120,196 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   }
 
   Future<void> _loadUserAddresses() async {
+    if (currentUid == null) return;
     try {
-      if (currentUid == null) return;
-
-      var addressSnapshot = await FirebaseFirestore.instance
+      final snap = await FirebaseFirestore.instance
           .collection("users")
           .doc(currentUid)
           .collection("addresses")
           .get();
 
-      List<Address> addresses = [
+      final List<Address> list = [
+        // Index 0 — current GPS location (never saved to Firestore)
         Address(
           label: "Current Location",
-          fullAddress: _gpsLocation,
-          lat: _gpsMapData['lat']?.toString() ?? '0.0',
-          lng: _gpsMapData['lng']?.toString() ?? '0.0',
-          road: _gpsMapData['road'] ?? '',
-          houseNumber: _gpsMapData['houseNumber'] ?? '',
-          postalCode: _gpsMapData['postalCode'] ?? '',
-          city: _gpsMapData['city'] ?? '',
-          state: _gpsMapData['state'] ?? '',
-          country: _gpsMapData['country'] ?? '',
+          fullAddress: _gpsLabel,
+          lat: _gpsData['lat']?.toString() ?? '0.0',
+          lng: _gpsData['lng']?.toString() ?? '0.0',
+          road: _gpsData['road'] ?? '',
+          houseNumber: _gpsData['houseNumber'] ?? '',
+          postalCode: _gpsData['postalCode'] ?? '',
+          city: _gpsData['city'] ?? '',
+          state: _gpsData['state'] ?? '',
+          country: _gpsData['country'] ?? '',
         ),
       ];
 
-      for (var doc in addressSnapshot.docs) {
-        var addressData = doc.data();
-        addressData['addressID'] = doc.id;
-        addresses.add(Address.fromJson(addressData));
+      for (final doc in snap.docs) {
+        final data = doc.data();
+        data['addressID'] = doc.id;
+        list.add(Address.fromJson(data));
       }
 
       setState(() {
-        userAddresses = addresses;
-        isLoading = false;
+        _userAddresses = list;
+        _isLoading = false;
       });
     } catch (e) {
       debugPrint(e.toString());
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 
-  bool _validateOrder() {
-    if (orderType == "delivery") {
-      final addressProvider =
-          Provider.of<AddressChanger>(context, listen: false);
-      if (addressProvider.count < -1 ||
-          (addressProvider.count >= 0 &&
-              addressProvider.count >= userAddresses.length - 1)) {
+  // ── Validation & ordering ─────────────────────────────────────────────────────
+
+  bool _validate() {
+    if (_orderType == "delivery") {
+      final ap = Provider.of<AddressProvider>(context, listen: false);
+      final idx = ap.count;
+      // -1 = GPS selected, 0+ = saved address index
+      if (idx < -1 || (idx >= 0 && idx >= _userAddresses.length - 1)) {
         unifiedSnackBar("Please select a delivery address", error: true);
         return false;
       }
     }
-    if (_selectedPayment.isEmpty) {
+    if (_selectedPayment == null) {
       unifiedSnackBar("Please select a payment method", error: true);
       return false;
     }
     return true;
   }
 
-  Future<void> _writeOrder(Map<String, dynamic> orderData) async {
-    final orderID = orderData['orderID'];
+  /// Builds the address map that is embedded directly on the order document.
+  /// When the user picks GPS (index -1) we embed the live data without
+  /// saving it as a new address document.
+  Map<String, dynamic> _buildEmbeddedAddress() {
+    if (_orderType == "pickup") {
+      return {"type": "pickup", "address": _restaurantAddress ?? ""};
+    }
+
+    final ap = Provider.of<AddressProvider>(context, listen: false);
+    final idx = ap.count;
+
+    if (idx == -1) {
+      // GPS — embed raw, do NOT write to users/{uid}/addresses
+      return {
+        "type": "gps",
+        "label": "Current Location",
+        "fullAddress": _gpsLabel,
+        "road": _gpsData['road'] ?? '',
+        "houseNumber": _gpsData['houseNumber'] ?? '',
+        "flatNumber": _gpsData['flatNumber'] ?? _gpsData['subpremise'] ?? '',
+        "postalCode": _gpsData['postalCode'] ?? '',
+        "city": _gpsData['city'] ?? '',
+        "state": _gpsData['state'] ?? '',
+        "country": _gpsData['country'] ?? '',
+        "lat": _gpsData['lat']?.toString() ?? '0.0',
+        "lng": _gpsData['lng']?.toString() ?? '0.0',
+      };
+    }
+
+    // Saved address — embed a copy (addressID kept for reference)
+    final addr = _userAddresses[idx + 1];
+    return {
+      "type": "saved",
+      "addressID": addr.addressID ?? '',
+      "label": addr.label ?? '',
+      "fullAddress": addr.fullAddress ?? '',
+      "road": addr.road ?? '',
+      "houseNumber": addr.houseNumber ?? '',
+      "flatNumber": addr.flatNumber ?? '',
+      "postalCode": addr.postalCode ?? '',
+      "city": addr.city ?? '',
+      "state": addr.state ?? '',
+      "country": addr.country ?? '',
+      "lat": addr.lat ?? '0.0',
+      "lng": addr.lng ?? '0.0',
+    };
+  }
+
+  double _deliveryFee(double subtotal) {
+    if (_orderType != "delivery") return 0;
+    if (subtotal >= 200) return 0;
+    if (subtotal >= 100) return 9.99;
+    return 14.99;
+  }
+
+  Future<void> _placeOrder() async {
+    if (!_validate()) return;
+    setState(() => _isProcessing = true);
+
+    try {
+      final amountProvider = Provider.of<AmountProvider>(context, listen: false);
+      final subtotal = amountProvider.totalAmount;
+      final fee = _deliveryFee(subtotal);
+      final total = subtotal + fee;
+
+      final cartItems = getUserPref<List<String>>("userCart") ?? [];
+      final embeddedAddress = _buildEmbeddedAddress();
+      final paymentLabel =
+          _selectedPayment == _PaymentMethod.cash ? "cash" : "stripe";
+
+      final Map<String, dynamic> orderBase = {
+        "orderID": _orderID,
+        "userID": currentUid,
+        "restaurantID": _restaurantID,
+        "itemIDs": cartItems,
+        "riderID": "",
+        "orderType": _orderType,
+        "paymentMethod": paymentLabel,
+        "subtotal": subtotal.toStringAsFixed(2),
+        "originalAmount": amountProvider.originalAmount.toStringAsFixed(2),
+        "totalSavings": amountProvider.totalSavings.toStringAsFixed(2),
+        "deliveryFee": fee.toStringAsFixed(2),
+        "totalAmount": total.toStringAsFixed(2),
+        "address": embeddedAddress,
+        "orderTime": Timestamp.now(),
+        "status": "Pending",
+        "isSuccess": false,
+      };
+
+      if (_selectedPayment == _PaymentMethod.cash) {
+        await _finaliseOrder(orderBase, "cash");
+      } else {
+        final paymentType = await processStripePayment(total);
+        if (paymentType != null) {
+          await _finaliseOrder(
+              {...orderBase, "paymentMethod": paymentType}, paymentType);
+        }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      unifiedSnackBar("Error: ${e.toString()}", error: true);
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  Future<void> _finaliseOrder(
+      Map<String, dynamic> data, String paymentDetails) async {
+    final finalData = {
+      ...data,
+      "isSuccess": true,
+      "paymentDetails": paymentDetails,
+    };
+
+    // Write order to top-level collection + user sub-collection
     await Future.wait([
       FirebaseFirestore.instance
           .collection("orders")
-          .doc(orderID)
-          .set(orderData),
+          .doc(_orderID)
+          .set(finalData),
       FirebaseFirestore.instance
           .collection("users")
           .doc(currentUid)
           .collection("orders")
-          .doc(orderID)
-          .set(orderData),
+          .doc(_orderID)
+          .set(finalData),
     ]);
-  }
-
-  Future<void> _onOrderSuccess(
-      Map<String, dynamic> orderData, String paymentDetails) async {
-    final finalOrder = {
-      ...orderData,
-      'isSuccess': true,
-      'paymentDetails': paymentDetails,
-    };
-
-    await _writeOrder(finalOrder);
 
     if (mounted) {
       await clearCartNow(context);
-      Provider.of<TotalAmount>(context, listen: false).reset();
+      Provider.of<AmountProvider>(context, listen: false).reset();
     }
 
     if (!mounted) return;
@@ -214,358 +321,540 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     );
   }
 
-  Future<void> _placeOrder() async {
-    if (!_validateOrder()) return;
-
-    setState(() => _isProcessing = true);
-
-    try {
-      final addressProvider =
-          Provider.of<AddressChanger>(context, listen: false);
-      final amountProvider = Provider.of<TotalAmount>(context, listen: false);
-
-      String? addressID;
-
-      if (orderType == "delivery") {
-        int selectedIndex = addressProvider.count;
-
-        if (selectedIndex == -1) {
-          final tempRef = FirebaseFirestore.instance
-              .collection("users")
-              .doc(currentUid)
-              .collection("addresses")
-              .doc();
-
-          addressID = tempRef.id;
-
-          await tempRef.set({
-            'label':
-                'Last Order Location - ${DateTime.now().toString().substring(0, 16)}',
-            'road': _gpsMapData['road'] ?? '',
-            'houseNumber': _gpsMapData['houseNumber'] ?? '',
-            'flatNumber':
-                _gpsMapData['flatNumber'] ?? _gpsMapData['subpremise'],
-            'postalCode': _gpsMapData['postalCode'] ?? '',
-            'city': _gpsMapData['city'] ?? '',
-            'state': _gpsMapData['state'] ?? '',
-            'country': _gpsMapData['country'] ?? '',
-            'fullAddress': _gpsLocation,
-            'lat': _gpsMapData['lat']?.toString() ?? '0.0',
-            'lng': _gpsMapData['lng']?.toString() ?? '0.0',
-          });
-        } else if (selectedIndex >= 0) {
-          int addressIndex = selectedIndex + 1;
-          if (addressIndex < userAddresses.length) {
-            addressID = userAddresses[addressIndex].addressID;
-          }
-        }
-
-        if (addressID == null || addressID.isEmpty) {
-          throw Exception("Unable to determine delivery address");
-        }
-      } else {
-        addressID = "pickup";
-      }
-
-      final List<String> cartItems =
-          getUserPref<List<String>>("userCart") ?? [];
-      final double deliveryFee = orderType == "delivery"
-          ? _calculateDeliveryFee(amountProvider.totalAmount)
-          : 0.0;
-      final double totalWithDelivery = amountProvider.totalAmount + deliveryFee;
-
-      debugPrint("LOG: $_selectedPayment");
-      Map<String, dynamic> orderData = {
-        "orderID": orderID,
-        "userID": currentUid,
-        "addressID": addressID,
-        "restaurantID": restaurantID,
-        "itemIDs": cartItems,
-        "riderID": "",
-        "orderType": orderType,
-        "paymentMethod": _selectedPayment,
-        "totalAmount": amountProvider.totalAmount.toStringAsFixed(2),
-        "originalAmount": amountProvider.originalAmount.toStringAsFixed(2),
-        "totalSavings": amountProvider.totalSavings.toStringAsFixed(2),
-        "deliveryFee": deliveryFee.toStringAsFixed(2),
-        "orderTime": Timestamp.now(),
-        "isSuccess": false,
-        "status": "normal",
-      };
-
-      if (_selectedPayment.toLowerCase() == 'cash') {
-        await _onOrderSuccess(orderData, 'cash');
-      } else {
-        final paymentMethodType = await processStripePayment(totalWithDelivery);
-        if (paymentMethodType != null) {
-          final updatedOrderData = {
-            ...orderData,
-            'paymentMethod': paymentMethodType,
-          };
-          await _onOrderSuccess(updatedOrderData, paymentMethodType);
-        }
-      }
-    } catch (e) {
-      if (!mounted) return;
-      unifiedSnackBar("Error: ${e.toString()}", error: true);
-    } finally {
-      if (mounted) setState(() => _isProcessing = false);
-    }
-  }
-
-  double _calculateDeliveryFee(double orderTotal) {
-    if (orderTotal >= 200) return 0;
-    if (orderTotal >= 100) return 9.99;
-    return 14.99;
-  }
+  // ── Build ─────────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
-    final amountProvider = Provider.of<TotalAmount>(context);
-    final deliveryFee = orderType == "delivery"
-        ? _calculateDeliveryFee(amountProvider.totalAmount)
-        : 0.0;
+    final amountProvider = Provider.of<AmountProvider>(context);
+    final subtotal = amountProvider.totalAmount;
+    final fee = _deliveryFee(subtotal);
+    final total = subtotal + fee;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF6F6FB),
       appBar: UnifiedAppBar(
-        title: "Place Order!",
+        title: "Place Order",
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.white, size: 28),
+              color: Colors.white, size: 22),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: Colors.redAccent))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Order Summary
-                  Card(
-                    color: Colors.grey[50],
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Order Summary",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Subtotal:",
-                                  style: TextStyle(fontSize: 14)),
-                              Text(
-                                "${amountProvider.totalAmount.toStringAsFixed(2)}zł",
-                                style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.redAccent),
-                              ),
-                            ],
-                          ),
-                          if (deliveryFee > 0) ...[
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text("Delivery Fee:"),
-                                Text("${deliveryFee.toStringAsFixed(2)}zł"),
-                              ],
-                            ),
-                          ] else ...[
-                            const SizedBox(height: 4),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Delivery Fee:"),
-                                Text("Free",
-                                    style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                          ],
-                          const Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Total:",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              Text(
-                                "${(amountProvider.totalAmount + deliveryFee).toStringAsFixed(2)}zł",
-                                style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.redAccent),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-                  const Text("Order Type",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
-
-                  Card(
-                    color: Colors.grey[50],
-                    elevation: 2,
-                    child: Column(
-                      children: [
-                        RadioListTile<String>(
-                          title: const Text("Delivery"),
-                          subtitle:
-                              const Text("Get it delivered to your address"),
-                          value: "delivery",
-                          groupValue: orderType,
-                          onChanged: (value) =>
-                              setState(() => orderType = value!),
-                        ),
-                        RadioListTile<String>(
-                          title: const Text("Pickup"),
-                          subtitle: const Text("Collect from store"),
-                          value: "pickup",
-                          groupValue: orderType,
-                          onChanged: (value) =>
-                              setState(() => orderType = value!),
-                        ),
-                      ],
-                    ),
+                  // ── Order summary card ───────────────────────────────────
+                  _SectionLabel(label: "Order Summary"),
+                  const SizedBox(height: 10),
+                  _SummaryCard(
+                    subtotal: subtotal,
+                    fee: fee,
+                    total: total,
+                    orderType: _orderType,
                   ),
 
                   const SizedBox(height: 24),
 
-                  if (orderType == "delivery") ...[
-                    const Text("Select Delivery Address",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    if (userAddresses.isEmpty)
-                      Card(
-                        color: Colors.grey[50],
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text("Loading addresses...",
-                              style: TextStyle(color: Colors.grey[700])),
-                        ),
-                      )
+                  // ── Order type ───────────────────────────────────────────
+                  _SectionLabel(label: "Order Type"),
+                  const SizedBox(height: 10),
+                  _OrderTypeSelector(
+                    selected: _orderType,
+                    onChanged: (v) => setState(() => _orderType = v),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ── Address / pickup ─────────────────────────────────────
+                  if (_orderType == "delivery") ...[
+                    _SectionLabel(label: "Delivery Address"),
+                    const SizedBox(height: 10),
+                    if (_userAddresses.isEmpty)
+                      _InfoTile(
+                          icon: Icons.location_searching,
+                          text: "Loading addresses...")
                     else
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: userAddresses.length,
+                        itemCount: _userAddresses.length,
                         itemBuilder: (context, index) {
                           if (index == 0) {
                             return AddressDesign(
-                              model: userAddresses[0],
+                              model: _userAddresses[0],
                               value: -1,
                               isCurrentLocationCard: true,
                             );
                           }
                           return AddressDesign(
-                            model: userAddresses[index],
+                            model: _userAddresses[index],
                             value: index - 1,
-                            addressID: userAddresses[index].addressID,
+                            addressID: _userAddresses[index].addressID,
                           );
                         },
                       ),
-                    Center(
-                      child: Text(
-                        "or add new location...",
-                        style: TextStyle(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    const Divider(thickness: 2),
-                    ListTile(
-                      leading: const Icon(Icons.add_location_alt,
-                          color: Colors.blueAccent),
-                      title: const Text("Address Manager"),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => AddressScreen()),
-                        );
-                      },
-                    ),
+                    const SizedBox(height: 8),
+                    _AddAddressButton(onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => AddressScreen()),
+                      );
+                      await _loadUserAddresses();
+                    }),
                   ],
 
-                  if (orderType == "pickup" && restaurantAddress != null) ...[
-                    const Text("Pickup Location",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    Card(
-                      color: Colors.grey[50],
-                      elevation: 2,
-                      child: ListTile(
-                        leading: const Icon(Icons.restaurant,
-                            color: Colors.redAccent),
-                        title: const Text("Restaurant Address"),
-                        subtitle: Text(restaurantAddress!),
-                      ),
+                  if (_orderType == "pickup") ...[
+                    _SectionLabel(label: "Pickup Location"),
+                    const SizedBox(height: 10),
+                    _InfoTile(
+                      icon: Icons.storefront_rounded,
+                      text:
+                          _restaurantAddress ?? "Loading restaurant address...",
                     ),
                   ],
 
                   const SizedBox(height: 24),
 
-                  // Payment method selection
-                  const Text("Payment Method",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
-                  AcceptedPaymentsWidget(
-                    restaurantID: restaurantID,
-                    selectedPayment: _selectedPayment,
-                    onPaymentSelected: (value) =>
-                        setState(() => _selectedPayment = value),
+                  // ── Payment ──────────────────────────────────────────────
+                  _SectionLabel(label: "Payment Method"),
+                  const SizedBox(height: 10),
+                  _PaymentSelector(
+                    selected: _selectedPayment,
+                    onChanged: (v) => setState(() => _selectedPayment = v),
                   ),
 
                   const SizedBox(height: 32),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isProcessing ? null : _placeOrder,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: _isProcessing
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              _selectedPayment.toLowerCase() == 'cash'
-                                  ? "Place Order"
-                                  : "Pay ${(amountProvider.totalAmount + deliveryFee).toStringAsFixed(2)}zł",
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                    ),
+                  // ── Place order button ───────────────────────────────────
+                  _PlaceOrderButton(
+                    isProcessing: _isProcessing,
+                    selectedPayment: _selectedPayment,
+                    total: total,
+                    onPressed: _placeOrder,
                   ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
+    );
+  }
+}
+
+// ── Sub-widgets ───────────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  final String label;
+  const _SectionLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w800,
+        color: Colors.black87,
+        letterSpacing: 0.1,
+      ),
+    );
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  final double subtotal, fee, total;
+  final String orderType;
+
+  const _SummaryCard({
+    required this.subtotal,
+    required this.fee,
+    required this.total,
+    required this.orderType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+      ),
+      child: Column(
+        children: [
+          _Row(label: "Subtotal", value: "${subtotal.toStringAsFixed(2)} zł"),
+          const SizedBox(height: 8),
+          _Row(
+            label: "Delivery Fee",
+            value: orderType == "pickup"
+                ? "—"
+                : fee == 0
+                    ? "Free"
+                    : "${fee.toStringAsFixed(2)} zł",
+            valueColor: fee == 0 && orderType == "delivery"
+                ? const Color(0xFF00C48C)
+                : null,
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Divider(height: 1, color: Color(0xFFF0F0F0)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Total",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              Text(
+                "${total.toStringAsFixed(2)} zł",
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.redAccent),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Row extends StatelessWidget {
+  final String label, value;
+  final Color? valueColor;
+  const _Row({required this.label, required this.value, this.valueColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+        Text(value,
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: valueColor ?? Colors.black87)),
+      ],
+    );
+  }
+}
+
+class _OrderTypeSelector extends StatelessWidget {
+  final String selected;
+  final ValueChanged<String> onChanged;
+  const _OrderTypeSelector({required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+            child: _TypeTile(
+          icon: Icons.delivery_dining_rounded,
+          label: "Delivery",
+          value: "delivery",
+          selected: selected,
+          onTap: () => onChanged("delivery"),
+        )),
+        const SizedBox(width: 12),
+        Expanded(
+            child: _TypeTile(
+          icon: Icons.storefront_rounded,
+          label: "Pickup",
+          value: "pickup",
+          selected: selected,
+          onTap: () => onChanged("pickup"),
+        )),
+      ],
+    );
+  }
+}
+
+class _TypeTile extends StatelessWidget {
+  final IconData icon;
+  final String label, value, selected;
+  final VoidCallback onTap;
+
+  const _TypeTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool active = selected == value;
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color:
+              active ? Colors.redAccent.withValues(alpha: 0.08) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: active ? Colors.redAccent : const Color(0xFFEEEEEE),
+            width: active ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(icon,
+                size: 28, color: active ? Colors.redAccent : Colors.grey[400]),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: active ? Colors.redAccent : Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoTile extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const _InfoTile({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.redAccent, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child:
+                Text(text, style: const TextStyle(fontSize: 13, height: 1.4)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddAddressButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _AddAddressButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+              color: Colors.redAccent.withValues(alpha: 0.4),
+              style: BorderStyle.solid),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_location_alt_rounded,
+                color: Colors.redAccent, size: 18),
+            const SizedBox(width: 8),
+            const Text(
+              "Add or manage addresses",
+              style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.redAccent),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentSelector extends StatelessWidget {
+  final _PaymentMethod? selected;
+  final ValueChanged<_PaymentMethod> onChanged;
+  const _PaymentSelector({required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _PaymentTile(
+          icon: Icons.payments_rounded,
+          label: "Cash on Delivery",
+          subtitle: "Pay when your order arrives",
+          value: _PaymentMethod.cash,
+          selected: selected,
+          onTap: () => onChanged(_PaymentMethod.cash),
+        ),
+        const SizedBox(height: 10),
+        _PaymentTile(
+          icon: Icons.credit_card_rounded,
+          label: "Pay by Card",
+          subtitle: "Secure payment via Stripe",
+          value: _PaymentMethod.stripe,
+          selected: selected,
+          onTap: () => onChanged(_PaymentMethod.stripe),
+        ),
+      ],
+    );
+  }
+}
+
+class _PaymentTile extends StatelessWidget {
+  final IconData icon;
+  final String label, subtitle;
+  final _PaymentMethod value;
+  final _PaymentMethod? selected;
+  final VoidCallback onTap;
+
+  const _PaymentTile({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.value,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool active = selected == value;
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color:
+              active ? Colors.redAccent.withValues(alpha: 0.06) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: active ? Colors.redAccent : const Color(0xFFEEEEEE),
+            width: active ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: active
+                    ? Colors.redAccent.withValues(alpha: 0.12)
+                    : const Color(0xFFF6F6FB),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon,
+                  color: active ? Colors.redAccent : Colors.grey[400],
+                  size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: active ? Colors.redAccent : Colors.black87)),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                ],
+              ),
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: active ? Colors.redAccent : Colors.grey.shade300,
+                    width: 2),
+                color: active ? Colors.redAccent : Colors.transparent,
+              ),
+              child: active
+                  ? const Icon(Icons.check_rounded,
+                      size: 12, color: Colors.white)
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlaceOrderButton extends StatelessWidget {
+  final bool isProcessing;
+  final _PaymentMethod? selectedPayment;
+  final double total;
+  final VoidCallback onPressed;
+
+  const _PlaceOrderButton({
+    required this.isProcessing,
+    required this.selectedPayment,
+    required this.total,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final label = selectedPayment == _PaymentMethod.cash
+        ? "Place Order"
+        : selectedPayment == _PaymentMethod.stripe
+            ? "Pay ${total.toStringAsFixed(2)} zł"
+            : "Select Payment Method";
+
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        onPressed: isProcessing ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: Colors.redAccent.withValues(alpha: 0.5),
+          elevation: 0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        child: isProcessing
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2.5, color: Colors.white),
+              )
+            : Text(
+                label,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+      ),
     );
   }
 }

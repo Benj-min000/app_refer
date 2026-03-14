@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/cart_item_counter.dart';
+import 'package:user_app/providers/cart_provider.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:user_app/widgets/unified_snackbar.dart';
@@ -58,8 +58,8 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID,
 
     unifiedSnackBar("Item Added Successfully.");
 
-    Provider.of<CartItemCounter>(context, listen: false)
-        .displayCartListItemsNumber();
+    Provider.of<CartProvider>(context, listen: false)
+        .loadCart();
   });
 }
 
@@ -94,8 +94,7 @@ Future<void> clearCartNow(BuildContext context) async {
     saveUserPref<List<String>>("userCart", []);
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false)
-          .displayCartListItemsNumber();
+      Provider.of<CartProvider>(context, listen: false).loadCart();
       unifiedSnackBar("Cart Cleared.");
     }
   } catch (e) {
@@ -135,8 +134,7 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
     }
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false)
-          .displayCartListItemsNumber();
+      Provider.of<CartProvider>(context, listen: false).loadCart();
       unifiedSnackBar("Item removed from cart.");
     }
   } catch (e) {
@@ -183,8 +181,8 @@ Future<void> incrementCartItemQuantity(
     }
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false)
-          .displayCartListItemsNumber();
+      Provider.of<CartProvider>(context, listen: false)
+          .loadCart();
     }
   } catch (e) {
     unifiedSnackBar("Error updating quantity: $e");
@@ -229,8 +227,8 @@ Future<void> decrementCartItemQuantity(
     }
 
     if (context.mounted) {
-      Provider.of<CartItemCounter>(context, listen: false)
-          .displayCartListItemsNumber();
+      Provider.of<CartProvider>(context, listen: false)
+          .loadCart();
     }
   } catch (e) {
     unifiedSnackBar("Error updating quantity: $e", error: true);

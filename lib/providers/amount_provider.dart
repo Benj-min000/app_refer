@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TotalAmount extends ChangeNotifier {
+class AmountProvider extends ChangeNotifier {
   double _totalAmount = 0;    // Final price after discounts
   double _originalAmount = 0; // Price before discounts
   double _totalSavings = 0;   // How much was saved

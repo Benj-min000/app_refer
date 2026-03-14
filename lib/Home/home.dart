@@ -8,7 +8,7 @@ import 'package:user_app/Home/HomeLargeItems.dart';
 import 'package:user_app/Home/HomePageItems.dart';
 
 import 'package:provider/provider.dart';
-import 'package:user_app/assistant_methods/locale_provider.dart';
+import 'package:user_app/providers/locale_provider.dart';
 
 import 'package:user_app/extensions/context_translate_ext.dart';
 
