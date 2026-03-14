@@ -2223,4 +2223,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String addr_delete_error(String error) {
     return '오류: $error';
   }
+
+  @override
+  String get hintPhone => '전화 번호';
+
+  @override
+  String get welcomeNotifTitle => '환영!';
+
+  @override
+  String welcomeNotifBody(String name) {
+    return '$name님, 저희 앱에 가입해주셔서 감사합니다!';
+  }
 }

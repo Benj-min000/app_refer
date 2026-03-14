@@ -2295,4 +2295,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String addr_delete_error(String error) {
     return 'Błąd: $error';
   }
+
+  @override
+  String get hintPhone => 'Numer telefonu';
+
+  @override
+  String get welcomeNotifTitle => 'Powitanie!';
+
+  @override
+  String welcomeNotifBody(String name) {
+    return 'Dziękujemy za dołączenie do naszej aplikacji, $name!';
+  }
 }

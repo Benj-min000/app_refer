@@ -297,18 +297,14 @@ class _AddressDesignState extends State<AddressDesign> {
 
                                 addressProvider.displayResult(-1, address: {});
 
-                                if (mounted) {
-                                  unifiedSnackBar(
-                                      context, context.l10n.addr_deleted);
-                                }
+                                if (!mounted) return;
+                                unifiedSnackBar(context.l10n.addr_deleted);
                               } catch (e) {
-                                if (mounted) {
-                                  unifiedSnackBar(
-                                      context,
-                                      context.l10n
-                                          .addr_delete_error(e.toString()),
-                                      error: true);
-                                }
+                                if (!mounted) return;
+                                unifiedSnackBar(
+                                    context.l10n
+                                        .addr_delete_error(e.toString()),
+                                    error: true);
                               }
                             },
                             style: ElevatedButton.styleFrom(

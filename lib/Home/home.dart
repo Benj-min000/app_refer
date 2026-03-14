@@ -36,17 +36,9 @@ class _DiningPagePageState extends State<Home> {
   Locale? _lastLocale;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Listening for changing the language
     final localeProvider = Provider.of<LocaleProvider>(context);
-
-    // Updating the address
     if (_lastLocale != localeProvider.locale) {
       _lastLocale = localeProvider.locale;
     }
@@ -56,29 +48,6 @@ class _DiningPagePageState extends State<Home> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  Widget categoryBox(HomeCategoryItem item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: Colors.redAccent.shade100,
-          child: Icon(item.icon, color: Colors.white),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          item.label,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          style: const TextStyle(
-            fontSize: 12,
-            height: 1.2,
-          ),
-        ),
-      ],
-    );
   }
 
   @override
@@ -97,197 +66,45 @@ class _DiningPagePageState extends State<Home> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.redAccent,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const AddressHeader(),
-                const SizedBox(height: 16),
-                Row(children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: context.l10n.hintSearch,
-                          hintStyle: TextStyle(fontSize: 13),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                        onChanged: (value) async {
-                          await Navigator.of(context).push(
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      SearchScreen(initialText: value),
-                              transitionDuration:
-                                  const Duration(milliseconds: 400),
-                              reverseTransitionDuration:
-                                  const Duration(milliseconds: 300),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                var curvedAnimation = CurvedAnimation(
-                                  parent: animation,
-                                  curve:
-                                      Curves.easeOutQuart, // Smooth expansion
-                                );
+          // -- Header ------------------------------------------------------
+          _buildHeader(context),
 
-                                return ScaleTransition(
-                                  scale: curvedAnimation,
-                                  alignment: Alignment
-                                      .topCenter, // The expands from the top
-                                  child: FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  ),
-                                );
-                              },
-                            ),
-                          );
+          // -- Tab bar -----------------------------------------------------
+          _buildTabBar(context, tabs),
 
-                          _searchController.clear();
-                          if (!mounted) return;
-                          FocusScope.of(context).unfocus();
-                        },
-                      ),
-                    ),
-                  ),
-                ]),
-              ],
-            ),
-          ),
+          // -- Category grid -----------------------------------------------
+          _buildCategoryGrid(
+              context, displayedCategories, hasMoreCategories, selectedTab),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TabBar(
-              isScrollable: true,
-              tabAlignment: TabAlignment.start,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 16),
-              labelColor: Colors.blue.shade700,
-              labelStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-              unselectedLabelColor: Colors.grey[600],
-              unselectedLabelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-              indicatorColor: Colors.blue.shade700,
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorWeight: 3,
-              physics: const ClampingScrollPhysics(),
-              padding: EdgeInsets.zero,
-              tabs: tabs.map((tab) => Tab(text: tab.label)).toList(),
-              onTap: (index) {
-                setState(() {
-                  _selectedTabIndex = index;
-                  _showAllCategories = false;
-                });
-              },
-            ),
-          ),
+          const SizedBox(height: 8),
 
-          // Category Grid
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: GridView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: displayedCategories.length,
-              itemBuilder: (context, index) {
-                final category = displayedCategories[index];
-                return _buildCategoryItem(category);
-              },
-            ),
-          ),
-
-          if (hasMoreCategories)
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showAllCategories = !_showAllCategories;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _showAllCategories
-                                ? 'Show Less'
-                                : context.l10n.seeMore(selectedTab.label),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            _showAllCategories
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            size: 18,
-                            color: Colors.grey[700],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-                ],
-              ),
-            ),
-
-          const SizedBox(height: 30),
-
+          // -- Featured carousel -------------------------------------------
+          _buildSectionHeader(
+              context, 'Featured', Icons.local_fire_department_rounded,
+              color: Colors.deepOrange),
           const SizedBox(
-            height: 250,
+            height: 220,
             width: double.infinity,
             child: HomeLargeItems(),
           ),
 
-          _buildSectionHeader('EXPLORE'),
+          const SizedBox(height: 8),
 
+          // -- Explore carousel --------------------------------------------
+          _buildSectionHeader(context, 'Explore', Icons.explore_rounded,
+              color: Colors.pink),
           const SizedBox(
-            height: 180,
+            height: 170,
             width: double.infinity,
             child: HomeMediumItems(),
           ),
 
-          _buildSectionHeader('WHAT\'S ON YOUR MIND?'),
+          const SizedBox(height: 8),
 
+          // -- What's on your mind -----------------------------------------
+          _buildSectionHeader(
+              context, "What's on your mind?", Icons.restaurant_menu_rounded,
+              color: Colors.redAccent),
           ...List.generate(
             homePageItemsLenght(),
             (index) => SizedBox(
@@ -297,48 +114,197 @@ class _DiningPagePageState extends State<Home> {
             ),
           ),
 
-          _buildSectionHeader('IN THE SPOTLIGHT'),
+          const SizedBox(height: 8),
 
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("restaurants")
-                .where("status", isEqualTo: "Active")
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const SizedBox(
-                  height: 300,
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
+          // -- Spotlight restaurants ---------------------------------------
+          _buildSectionHeader(context, 'In the Spotlight', Icons.stars_rounded,
+              color: Colors.amber.shade700),
+          _buildRestaurantList(),
 
-              if (snapshot.data!.docs.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    'No restaurants available',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              }
+          // -- Features ----------------------------------------------------
+          _buildSectionHeader(
+              context, 'Features', Icons.featured_play_list_rounded,
+              color: Colors.teal),
 
-              return Column(
-                children: snapshot.data!.docs.map((doc) {
-                  var restData = doc.data() as Map<String, dynamic>;
-                  return SizedBox(
-                    height: 300,
-                    width: double.infinity,
-                    child: RestaurantCard(
-                      restaurantID: doc.id,
-                      restaurantName: restData['name'] ?? 'Unknown Store',
-                    ),
-                  );
-                }).toList(),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  // -- Header -----------------------------------------------------------------
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(color: Colors.red),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const AddressHeader(),
+          const SizedBox(height: 14),
+          // Search bar
+          GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const SearchScreen(initialText: ''),
+                  transitionDuration: const Duration(milliseconds: 400),
+                  reverseTransitionDuration: const Duration(milliseconds: 300),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return ScaleTransition(
+                      scale: CurvedAnimation(
+                          parent: animation, curve: Curves.easeOutQuart),
+                      alignment: Alignment.topCenter,
+                      child: FadeTransition(opacity: animation, child: child),
+                    );
+                  },
+                ),
               );
+              _searchController.clear();
+              if (!mounted) return;
+              FocusScope.of(context).unfocus();
+            },
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: Row(
+                children: [
+                  const Icon(Icons.search_rounded,
+                      color: Colors.redAccent, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    context.l10n.hintSearch,
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                        fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -- Tab bar ----------------------------------------------------------------
+
+  Widget _buildTabBar(BuildContext context, List tabs) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TabBar(
+        isScrollable: true,
+        tabAlignment: TabAlignment.start,
+        labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+        labelColor: Colors.redAccent,
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 14,
+        ),
+        unselectedLabelColor: Colors.grey[500],
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+        indicatorColor: Colors.redAccent,
+        indicatorSize: TabBarIndicatorSize.label,
+        indicatorWeight: 3,
+        physics: const ClampingScrollPhysics(),
+        padding: EdgeInsets.zero,
+        tabs: tabs.map((tab) => Tab(text: tab.label)).toList(),
+        onTap: (index) {
+          setState(() {
+            _selectedTabIndex = index;
+            _showAllCategories = false;
+          });
+        },
+      ),
+    );
+  }
+
+  // -- Category grid ----------------------------------------------------------
+
+  Widget _buildCategoryGrid(BuildContext context, List displayedCategories,
+      bool hasMoreCategories, selectedTab) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        children: [
+          GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              childAspectRatio: 0.72,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: displayedCategories.length,
+            itemBuilder: (context, index) {
+              return _buildCategoryItem(displayedCategories[index]);
             },
           ),
-
-          _buildSectionHeader('FEATURES'),
+          if (hasMoreCategories) ...[
+            const SizedBox(height: 8),
+            Divider(height: 1, color: Colors.grey[100]),
+            InkWell(
+              onTap: () =>
+                  setState(() => _showAllCategories = !_showAllCategories),
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _showAllCategories
+                          ? 'Show Less'
+                          : context.l10n.seeMore(selectedTab.label),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      _showAllCategories
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                      size: 18,
+                      color: Colors.redAccent,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -347,29 +313,45 @@ class _DiningPagePageState extends State<Home> {
   Widget _buildCategoryItem(HomeCategoryItem category) {
     return InkWell(
       onTap: () {
-        // Handle category tap
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => SearchScreen(
+                initialText: '',
+                categoryFilter: category.label, // e.g. 'Pizza', 'Sushi'
+                initialTabIndex: 2, // go straight to Items tab
+              ),
+            ));
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.redAccent.withValues(alpha: 0.15),
+                  Colors.pink.shade50,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Center(
               child: Icon(
                 category.icon,
-                size: 28,
-                color: Colors.blue.shade700,
+                size: 26,
+                color: Colors.redAccent,
               ),
             ),
           ),
+          const SizedBox(height: 6),
           SizedBox(
-            height: 32,
+            height: 28,
             child: Center(
               child: Text(
                 category.label,
@@ -377,9 +359,10 @@ class _DiningPagePageState extends State<Home> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w500,
                   height: 1.2,
+                  color: Colors.black87,
                 ),
               ),
             ),
@@ -389,19 +372,124 @@ class _DiningPagePageState extends State<Home> {
     );
   }
 
-  // Helper method for section headers
-  Widget _buildSectionHeader(String title) {
+  // -- Section header ---------------------------------------------------------
+
+  Widget _buildSectionHeader(
+    BuildContext context,
+    String title,
+    IconData icon, {
+    Color color = Colors.redAccent,
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey[700],
-          letterSpacing: 0.5,
-        ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 16, color: color),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Colors.black87,
+              letterSpacing: 0.1,
+            ),
+          ),
+          const Spacer(),
+          if (actionLabel != null && onAction != null)
+            GestureDetector(
+              onTap: onAction,
+              child: Text(
+                actionLabel,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ),
+        ],
       ),
+    );
+  }
+
+  // -- Restaurant list --------------------------------------------------------
+
+  Widget _buildRestaurantList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection("restaurants")
+          .where("status", isEqualTo: "Active")
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox(
+            height: 200,
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.redAccent),
+            ),
+          );
+        }
+
+        if (snapshot.data!.docs.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                children: [
+                  Icon(Icons.storefront_outlined,
+                      size: 40, color: Colors.grey[300]),
+                  const SizedBox(height: 8),
+                  Text(
+                    'No restaurants available',
+                    style: TextStyle(
+                        color: Colors.grey[500], fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: snapshot.data!.docs.map((doc) {
+              final restData = doc.data() as Map<String, dynamic>;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(
+                    height: 280,
+                    width: double.infinity,
+                    child: RestaurantCard(
+                      restaurantID: doc.id,
+                      restaurantName: restData['name'] ?? 'Unknown Store',
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

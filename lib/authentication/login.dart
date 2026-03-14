@@ -1,15 +1,22 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:user_app/authentication/auth_screen.dart';
+import 'package:user_app/screens/home_screen.dart';
+
 import 'package:user_app/global/global.dart';
+import 'package:user_app/widgets/auth_button.dart';
+
 import 'package:user_app/widgets/error_dialog.dart';
 import 'package:user_app/widgets/loading_dialog.dart';
-import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/widgets/custom_text_field.dart';
-import 'package:user_app/extensions/context_translate_ext.dart';
 import 'package:user_app/widgets/custom_password_field.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
+
+import 'package:user_app/extensions/context_translate_ext.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -96,9 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (data["role"] != "customer" || data["status"] != "approved") {
         await firebaseAuth.signOut();
         if (!mounted) return;
-        Fluttertoast.showToast(
-          msg: context.l10n.blockedAccountMessage,
-        );
+        unifiedSnackBar(context.l10n.blockedAccountMessage, error: true);
         return;
       }
 
@@ -119,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pop(context);
 
       if (e.code == 'unavailable') {
-        Fluttertoast.showToast(msg: context.l10n.networkUnavailable);
+        unifiedSnackBar(context.l10n.networkUnavailable, error: true);
       } else {
         showDialog(
           context: context,
@@ -140,61 +145,57 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: const EdgeInsets.all(15),
-                  child: Image.asset(
-                    'assets/images/login.png',
-                    height: 270,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.all(15),
+                    child: Image.asset(
+                      'assets/images/login.png',
+                      height: 270,
+                    ),
                   ),
-                ),
-                Padding(
-                    padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  Padding(
+                    padding: const EdgeInsetsGeometry.symmetric(horizontal: 32),
                     child: Form(
                       key: _formKey,
-                      child: Column(children: [
-                        CustomTextField(
-                          data: Icons.email,
-                          controller: _emailController,
-                          hintText: context.l10n.hintEmail,
-                          isObsecure: false,
-                        ),
-                        CustomPasswordField(
-                          controller: _passwordController,
-                          label: context.l10n.hintPassword,
-                          isRequired: true,
-                          isConfirmation: true,
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await formValidation();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pink.shade300,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 20),
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            data: Icons.email,
+                            controller: _emailController,
+                            hintText: context.l10n.hintEmail,
+                            isObsecure: false,
                           ),
-                          child: Text(
-                            context.l10n.login,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                          CustomPasswordField(
+                            controller: _passwordController,
+                            label: context.l10n.hintPassword,
+                            isRequired: true,
+                            isConfirmation: true,
                           ),
-                        ),
-                      ]),
-                    )),
-              ],
+                          const SizedBox(height: 10),
+                          AuthButton(
+                            label: context.l10n.login,
+                            onPressed: () async {
+                              await formValidation();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

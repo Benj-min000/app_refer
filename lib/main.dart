@@ -16,8 +16,11 @@ import 'package:user_app/assistant_methods/total_amount.dart';
 import 'package:user_app/assistant_methods/locale_provider.dart';
 
 import 'package:user_app/global/global.dart';
-import 'package:user_app/splashScreen/splash_screen.dart';
-import 'package:flutter_stripe/flutter_stripe.dart'; 
+import 'package:user_app/screens/splash_screen.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
+
+import 'package:user_app/extensions/extensions_import.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,10 +34,11 @@ Future<void> main() async {
   sharedPreferences = await SharedPreferences.getInstance();
 
   // Initialize Stripe
-  Stripe.publishableKey = const String.fromEnvironment("STRIPE_PUBLISHABLE_KEY");
+  Stripe.publishableKey =
+      const String.fromEnvironment("STRIPE_PUBLISHABLE_KEY");
   await Stripe.instance.applySettings();
 
-  // This needs to be here so that the user can login 
+  // This needs to be here so that the user can login
   // After release change it to AndroidProvider.playIntegrity
   // MarcinDebugToken: 3770756b-47ff-40fc-b3ab-5dd0d0608ea6
   await FirebaseAppCheck.instance.activate(
@@ -72,11 +76,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'User App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-        primarySwatch: Colors.lightBlue,
-        bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.white),
-      ),
+      navigatorKey: snackBarNavigatorKey,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.light,
 
       locale: localeProvider.locale,
 
@@ -85,13 +88,13 @@ class MyApp extends StatelessWidget {
         return Locale(lang.code, lang.countryCode);
       }).toList(),
 
-      localizationsDelegates: const[
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      
+
       localeResolutionCallback: (locale, supportedLocales) {
         if (locale == null) return supportedLocales.first;
         for (var supportedLocale in supportedLocales) {

@@ -4273,6 +4273,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: {error}'**
   String addr_delete_error(String error);
+
+  /// No description provided for @hintPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get hintPhone;
+
+  /// No description provided for @welcomeNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome!'**
+  String get welcomeNotifTitle;
+
+  /// No description provided for @welcomeNotifBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for joining our app, {name}!'**
+  String welcomeNotifBody(String name);
 }
 
 class _AppLocalizationsDelegate

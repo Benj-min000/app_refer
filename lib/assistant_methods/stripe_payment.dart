@@ -1,7 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
 
 Future<String?> processStripePayment(double amount) async {
   try {
@@ -40,26 +40,25 @@ Future<String?> processStripePayment(double amount) async {
 
     await Stripe.instance.presentPaymentSheet();
 
-    final paymentIntent = await Stripe.instance.retrievePaymentIntent(clientSecret);
+    final paymentIntent =
+        await Stripe.instance.retrievePaymentIntent(clientSecret);
 
     if (paymentIntent.status == PaymentIntentsStatus.Succeeded) {
-      final methodResult = await FirebaseFunctions.instanceFor(region: 'europe-west1')
-          .httpsCallable('getPaymentMethodType')
-          .call({'paymentIntentId': paymentIntentId});
+      final methodResult =
+          await FirebaseFunctions.instanceFor(region: 'europe-west1')
+              .httpsCallable('getPaymentMethodType')
+              .call({'paymentIntentId': paymentIntentId});
 
       return methodResult.data['paymentMethodType'] as String? ?? '';
     }
 
-    Fluttertoast.showToast(msg: "Payment was not completed", backgroundColor: Colors.orange);
+    unifiedSnackBar("Payment was not completed", error: true);
     return null;
   } on StripeException catch (e) {
-    Fluttertoast.showToast(
-      msg: e.error.message ?? "Payment cancelled",
-      backgroundColor: Colors.red,
-    );
+    unifiedSnackBar(e.error.message ?? "Payment cancelled", error: true);
     return null;
   } catch (e) {
-    Fluttertoast.showToast(msg: "Payment failed: $e", backgroundColor: Colors.red);
+    unifiedSnackBar("Payment failed: $e", error: true);
     return null;
   }
 }

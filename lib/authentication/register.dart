@@ -2,10 +2,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:image_picker/image_picker.dart';
+import 'package:user_app/services/image_picker_service.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart' as fStorage;
+import 'package:firebase_storage/firebase_storage.dart' as firestorage;
+import 'package:user_app/widgets/auth_button.dart';
 
 import 'package:user_app/widgets/custom_text_field.dart';
 import 'package:user_app/widgets/error_dialog.dart';
@@ -34,23 +35,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       TextEditingController();
   late final PhoneController _phoneController;
 
-  XFile? imageXFile;
-  final ImagePicker _picker = ImagePicker();
+  File? _croppedImage;
   String downloadUrl = "";
-
-  Future<void> _getImage() async {
-    XFile? selectedImage = await _picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1080,
-      imageQuality: 85,
-    );
-
-    if (selectedImage != null) {
-      setState(() {
-        imageXFile = selectedImage;
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -60,17 +46,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  Future<void> _getImage() async {
+    final file = await ImagePickerService.pickAndCrop(context);
+    if (file != null) setState(() => _croppedImage = file);
+  }
+
   Future<void> formValidation() async {
-    if (imageXFile == null) {
+    if (_croppedImage == null) {
       showDialog(
           context: context,
           builder: (_) => ErrorDialog(message: context.l10n.errorSelectImage));
       return;
     }
 
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmePasswordController.text) {
       showDialog(
@@ -98,15 +87,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         User? currentUser = auth.user;
 
         if (currentUser != null) {
-          String fileName = currentUser.uid;
-          fStorage.Reference reference = fStorage.FirebaseStorage.instance
+          firestorage.Reference reference = firestorage.FirebaseStorage.instance
               .ref()
               .child('users')
-              .child(fileName);
+              .child(currentUser.uid);
 
-          fStorage.UploadTask uploadTask =
-              reference.putFile(File(imageXFile!.path));
-          fStorage.TaskSnapshot taskSnapshot = await uploadTask;
+          firestorage.UploadTask uploadTask = reference.putFile(_croppedImage!);
+          firestorage.TaskSnapshot taskSnapshot = await uploadTask;
 
           downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
@@ -147,16 +134,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "status": "approved",
     });
 
-    // Initializing notifications
+    if (!mounted) return;
+
     await userRef.collection('notifications').add({
       "userID": currentUser.uid,
-      "title": "Welcome!",
-      "body": "Thanks for joining our app, ${_nameController.text.trim()}!",
+      "title": context.l10n.welcomeNotifTitle,
+      "body": context.l10n.welcomeNotifBody(_nameController.text.trim()),
       "createdAt": DateTime.now(),
       "isRead": false,
     });
 
-    // Save data localy
     await sharedPreferences!.setString("uid", currentUser.uid);
     cartItemCounter.displayCartListItemsNumber();
     await saveUserPref<String>("email", currentUser.email.toString());
@@ -177,92 +164,105 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          InkWell(
-            onTap: () async {
-              await _getImage();
-            },
-            child: CircleAvatar(
-                radius: MediaQuery.of(context).size.width * 0.20,
-                backgroundColor: Colors.white,
-                backgroundImage: imageXFile == null
-                    ? null
-                    : FileImage(
-                        File(imageXFile!.path),
-                      ),
-                child: imageXFile == null
-                    ? Icon(
-                        Icons.add_photo_alternate,
-                        size: MediaQuery.of(context).size.width * 0.20,
-                        color: Colors.grey,
-                      )
-                    : null),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Form(
-            key: _formKey,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.max,
               children: [
-                CustomTextField(
-                  data: Icons.person,
-                  controller: _nameController,
-                  hintText: context.l10n.hintName,
-                  isObsecure: false,
+                const SizedBox(height: 16),
+
+                // Avatar picker
+                GestureDetector(
+                  onTap: _getImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: MediaQuery.of(context).size.width * 0.20,
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: _croppedImage != null
+                            ? FileImage(_croppedImage!)
+                            : null,
+                        child: _croppedImage == null
+                            ? Icon(
+                                Icons.add_photo_alternate_rounded,
+                                size: MediaQuery.of(context).size.width * 0.18,
+                                color: Colors.grey[400],
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.pink.shade300,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(Icons.edit_rounded,
+                              size: 24, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                CustomPhoneField(
-                  controller: _phoneController,
-                  label: "Phone Number",
+
+                const SizedBox(height: 10),
+
+                Padding(
+                  padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        CustomTextField(
+                          data: Icons.person,
+                          controller: _nameController,
+                          hintText: context.l10n.hintName,
+                          isObsecure: false,
+                        ),
+                        CustomPhoneField(
+                          controller: _phoneController,
+                          label: context.l10n.hintPhone,
+                        ),
+                        CustomTextField(
+                          data: Icons.email,
+                          controller: _emailController,
+                          hintText: context.l10n.hintEmail,
+                          isObsecure: false,
+                        ),
+                        CustomPasswordField(
+                          controller: _passwordController,
+                          label: context.l10n.hintPassword,
+                          isRequired: true,
+                          isConfirmation: false,
+                        ),
+                        CustomPasswordField(
+                          controller: _confirmePasswordController,
+                          label: context.l10n.hintConfPassword,
+                          isRequired: true,
+                          isConfirmation: true,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                CustomTextField(
-                  data: Icons.email,
-                  controller: _emailController,
-                  hintText: context.l10n.hintEmail,
-                  isObsecure: false,
+
+                const SizedBox(height: 10),
+                AuthButton(
+                  label: context.l10n.signUp,
+                  onPressed: () async => await formValidation(),
                 ),
-                CustomPasswordField(
-                  controller: _passwordController,
-                  label: context.l10n.hintPassword,
-                  isRequired: true,
-                  isConfirmation: false,
-                ),
-                CustomPasswordField(
-                  controller: _confirmePasswordController,
-                  label: context.l10n.hintConfPassword,
-                  isRequired: true,
-                  isConfirmation: true,
-                ),
+                const SizedBox(height: 30),
               ],
             ),
           ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () async => {
-              await formValidation(),
-            },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink.shade300,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
-            child: Text(
-              context.l10n.signUp,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          )
-        ],
+        ),
       ),
     );
   }

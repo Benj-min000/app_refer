@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/extensions/extensions_import.dart';
 
-void unifiedSnackBar(BuildContext context, String msg, {bool error = false}) {
-  final brandColors = Theme.of(context).extension<BrandColors>();
-  final colorScheme = Theme.of(context).colorScheme;
-  final overlay = Overlay.of(context);
+/// Global navigator key — wire this into [MaterialApp.navigatorKey] in main.dart:
+///
+///   MaterialApp(
+///     navigatorKey: snackBarNavigatorKey,
+///     ...
+///   )
+final GlobalKey<NavigatorState> snackBarNavigatorKey =
+    GlobalKey<NavigatorState>();
 
-  final Color bgColor = error
-      ? Colors.redAccent.shade700
-      : (brandColors?.navy ?? colorScheme.primary);
+/// Show a snackbar from anywhere — no BuildContext required.
+///
+///   unifiedSnackBar('Item saved');
+///   unifiedSnackBar('Something went wrong', error: true);
+void unifiedSnackBar(String msg, {bool error = false, Color? bgColor}) {
+  final overlay = snackBarNavigatorKey.currentState?.overlay;
+  if (overlay == null) return;
+
+  final Color resolvedColor =
+      bgColor ?? (error ? Colors.redAccent.shade700 : const Color(0xFF1E293B));
 
   late OverlayEntry overlayEntry;
 
@@ -16,7 +27,7 @@ void unifiedSnackBar(BuildContext context, String msg, {bool error = false}) {
     builder: (context) => _SnackBarToast(
       msg: msg,
       error: error,
-      bgColor: bgColor,
+      bgColor: resolvedColor,
       onDismiss: () => overlayEntry.remove(),
     ),
   );
@@ -48,7 +59,6 @@ class _SnackBarToastState extends State<_SnackBarToast>
   @override
   void initState() {
     super.initState();
-    // 3 second duration as requested
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -56,7 +66,6 @@ class _SnackBarToastState extends State<_SnackBarToast>
 
     _controller.forward();
 
-    // Auto-dismiss when the progress bar finishes
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         widget.onDismiss();
@@ -74,18 +83,21 @@ class _SnackBarToastState extends State<_SnackBarToast>
   Widget build(BuildContext context) {
     return Positioned(
       bottom: 24,
-      left: 16, // Aligned to the right
+      left: 16,
+      right: 16,
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: double.infinity, // Shorter/fixed width
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: widget.bgColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: const [
               BoxShadow(
-                  color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))
+                color: Colors.black26,
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
             ],
           ),
           child: Column(
@@ -108,30 +120,33 @@ class _SnackBarToastState extends State<_SnackBarToast>
                       child: Text(
                         widget.msg,
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500),
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     TextButton(
                       onPressed: widget.onDismiss,
-                      child: Text(context.l10n.snackbar_dismiss,
-                          style:
-                              TextStyle(color: Colors.white70, fontSize: 12)),
+                      child: Text(
+                        context.l10n.snackbar_dismiss,
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 12),
+                      ),
                     ),
                   ],
                 ),
               ),
-              // Progress Bar
               AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
                   return LinearProgressIndicator(
-                    value: 1.0 - _controller.value, // Shrinks as time passes
+                    value: 1.0 - _controller.value,
                     minHeight: 3,
                     backgroundColor: Colors.transparent,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white.withValues(alpha: 0.5)),
+                      Colors.white.withValues(alpha: 0.5),
+                    ),
                   );
                 },
               ),

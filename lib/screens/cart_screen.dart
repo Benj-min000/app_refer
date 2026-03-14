@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,6 +15,7 @@ import 'package:user_app/widgets/unified_app_bar.dart';
 
 import 'package:user_app/global/global.dart';
 import 'package:user_app/extensions/context_translate_ext.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -45,7 +45,7 @@ class _CartScreenState extends State<CartScreen> {
     if (!mounted) return;
     Provider.of<TotalAmount>(context, listen: false).reset();
     Navigator.pop(context);
-    Fluttertoast.showToast(msg: context.l10n.cartCleared);
+    unifiedSnackBar(context.l10n.cartCleared);
   }
 
   void _proceedToCheckout() {

@@ -2299,4 +2299,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String addr_delete_error(String error) {
     return 'Помилка: $error';
   }
+
+  @override
+  String get hintPhone => 'Номер телефону';
+
+  @override
+  String get welcomeNotifTitle => 'Ласкаво просимо!';
+
+  @override
+  String welcomeNotifBody(String name) {
+    return 'Дякуємо, що приєдналися до нашого застосунку, $name!';
+  }
 }

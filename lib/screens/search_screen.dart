@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:algoliasearch/algoliasearch_lite.dart';
 
 import 'package:user_app/widgets/search_tabs.dart';
@@ -16,10 +15,24 @@ import 'package:user_app/screens/item_details_screen.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/models/restaurants.dart';
 import 'package:user_app/widgets/cart_icon.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
 
 class SearchScreen extends StatefulWidget {
   final String initialText;
-  const SearchScreen({super.key, required this.initialText});
+
+  /// Pre-select a category tag filter (e.g. 'Pizza', 'Burgers').
+  /// Shown as an active chip and applied immediately on load.
+  final String? categoryFilter;
+
+  /// 0 = All, 1 = Restaurants, 2 = Items
+  final int initialTabIndex;
+
+  const SearchScreen({
+    super.key,
+    required this.initialText,
+    this.categoryFilter,
+    this.initialTabIndex = 0,
+  });
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -27,21 +40,31 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   static const String _algoliaAppId = String.fromEnvironment("ALGOLIA_APP_ID");
-  static const String _algoliaApiKey = String.fromEnvironment("ALGOLIA_API_KEY");
-  static const String _algoliaRestaurantIndex = String.fromEnvironment("ALGOLIA_RESTAURANT_INDEX");
-  static const String _algoliaItemIndex = String.fromEnvironment("ALGOLIA_ITEM_INDEX");
+  static const String _algoliaApiKey =
+      String.fromEnvironment("ALGOLIA_API_KEY");
+  static const String _algoliaRestaurantIndex =
+      String.fromEnvironment("ALGOLIA_RESTAURANT_INDEX");
+  static const String _algoliaItemIndex =
+      String.fromEnvironment("ALGOLIA_ITEM_INDEX");
 
-  String get appId => _algoliaAppId.isNotEmpty ? _algoliaAppId : throw Exception("ALGOLIA_APP_ID is not defined.");
-  String get apiKey => _algoliaApiKey.isNotEmpty ? _algoliaApiKey : throw Exception("ALGOLIA_API_KEY is not defined.");
-  String get restaurantIndex => _algoliaRestaurantIndex.isNotEmpty ? _algoliaRestaurantIndex : throw Exception("ALGOLIA_RESTAURANT_INDEX is not defined.");
-  String get itemIndex => _algoliaItemIndex.isNotEmpty ? _algoliaItemIndex : throw Exception("ALGOLIA_ITEM_INDEX is not defined.");
+  String get appId => _algoliaAppId.isNotEmpty
+      ? _algoliaAppId
+      : throw Exception("ALGOLIA_APP_ID is not defined.");
+  String get apiKey => _algoliaApiKey.isNotEmpty
+      ? _algoliaApiKey
+      : throw Exception("ALGOLIA_API_KEY is not defined.");
+  String get restaurantIndex => _algoliaRestaurantIndex.isNotEmpty
+      ? _algoliaRestaurantIndex
+      : throw Exception("ALGOLIA_RESTAURANT_INDEX is not defined.");
+  String get itemIndex => _algoliaItemIndex.isNotEmpty
+      ? _algoliaItemIndex
+      : throw Exception("ALGOLIA_ITEM_INDEX is not defined.");
 
   int _currentPageIndex = 2;
   late TextEditingController _searchController;
   late final SearchClient _client;
 
-  // 0 = All, 1 = Restaurants, 2 = Items
-  int _selectedTabIndex = 0;
+  late int _selectedTabIndex;
 
   List<Map<String, dynamic>> _results = [];
   bool _isLoading = false;
@@ -58,26 +81,43 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedTabIndex = widget.initialTabIndex;
     _searchController = TextEditingController(text: widget.initialText);
     _searchController.selection = TextSelection.fromPosition(
       TextPosition(offset: _searchController.text.length),
     );
     _client = SearchClient(appId: appId, apiKey: apiKey);
+
+    // Pre-apply category filter if provided
+    if (widget.categoryFilter != null && widget.categoryFilter!.isNotEmpty) {
+      _selectedCategories.add(widget.categoryFilter!);
+    }
+
     _performSearch(widget.initialText);
   }
 
   String _buildItemFilterString() {
     List<String> filters = [];
-
     filters.add('restaurantStatus:active');
 
-    final itemTags = _selectedCategories.where((c) => _availableItemCategories.contains(c)).toList();
-    
-    
-    if (itemTags.isNotEmpty) {
+    final itemTags = _selectedCategories
+        .where((c) => _availableItemCategories.contains(c))
+        .toList();
+
+    // If we have a pre-set category filter not yet in available list
+    // (first load), apply it directly
+    final presetTag = widget.categoryFilter;
+    if (itemTags.isEmpty &&
+        presetTag != null &&
+        presetTag.isNotEmpty &&
+        _selectedCategories.contains(presetTag)) {
+      filters.add('tags:"$presetTag"');
+    } else if (itemTags.isNotEmpty) {
       filters.add('(${itemTags.map((c) => 'tags:"$c"').join(' OR ')})');
     }
-    filters.add('price:${_currentPriceRange.start.round()} TO ${_currentPriceRange.end.round()}');
+
+    filters.add(
+        'price:${_currentPriceRange.start.round()} TO ${_currentPriceRange.end.round()}');
     return filters.join(' AND ');
   }
 
@@ -85,8 +125,10 @@ class _SearchScreenState extends State<SearchScreen> {
     List<String> filters = [];
     filters.add('status:Active');
 
-    final restaurantNames = _selectedCategories.where((c) => _availableRestaurantCategories.contains(c)).toList();
-    
+    final restaurantNames = _selectedCategories
+        .where((c) => _availableRestaurantCategories.contains(c))
+        .toList();
+
     if (restaurantNames.isNotEmpty) {
       filters.add('(${restaurantNames.map((c) => 'name:"$c"').join(' OR ')})');
     }
@@ -115,7 +157,6 @@ class _SearchScreenState extends State<SearchScreen> {
       int processingTime = 0;
 
       if (_selectedTabIndex == 0 || _selectedTabIndex == 2) {
-        // Search items index
         final itemResponse = await _client.searchIndex(
           request: SearchForHits(
             indexName: itemIndex,
@@ -126,21 +167,17 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         );
         for (final hit in itemResponse.hits) {
-          combined.add({
-            ...hit, 
-            '_type': 'item',
-            'objectID': hit.objectID,
-          });
+          combined.add({...hit, '_type': 'item', 'objectID': hit.objectID});
         }
         totalHits += itemResponse.nbHits ?? 0;
         processingTime = itemResponse.processingTimeMS ?? 0;
         if (itemResponse.facets?['tags'] != null) {
-          _availableItemCategories = itemResponse.facets!['tags']!.keys.toList();
+          _availableItemCategories =
+              itemResponse.facets!['tags']!.keys.toList();
         }
       }
 
       if (_selectedTabIndex == 0 || _selectedTabIndex == 1) {
-        // Search restaurants index
         final restaurantResponse = await _client.searchIndex(
           request: SearchForHits(
             indexName: restaurantIndex,
@@ -158,9 +195,12 @@ class _SearchScreenState extends State<SearchScreen> {
           });
         }
         totalHits += restaurantResponse.nbHits ?? 0;
-        if (processingTime == 0) processingTime = restaurantResponse.processingTimeMS ?? 0;
+        if (processingTime == 0) {
+          processingTime = restaurantResponse.processingTimeMS ?? 0;
+        }
         if (restaurantResponse.facets?['name'] != null) {
-          _availableRestaurantCategories = restaurantResponse.facets!['name']!.keys.toList();
+          _availableRestaurantCategories =
+              restaurantResponse.facets!['name']!.keys.toList();
         }
       }
 
@@ -169,9 +209,11 @@ class _SearchScreenState extends State<SearchScreen> {
         _totalHits = totalHits;
         _processingTime = processingTime;
         _isLoading = false;
-        // Merge both for All tab
         if (_selectedTabIndex == 0) {
-          _availableCategories = {..._availableItemCategories, ..._availableRestaurantCategories}.toList();
+          _availableCategories = {
+            ..._availableItemCategories,
+            ..._availableRestaurantCategories
+          }.toList();
         } else if (_selectedTabIndex == 1) {
           _availableCategories = _availableRestaurantCategories;
         } else {
@@ -192,28 +234,22 @@ class _SearchScreenState extends State<SearchScreen> {
     if (type == 'item') {
       final item = Items.fromJson(result);
       final itemID = (result['objectID'] ?? result['itemID'] ?? '') as String;
-
       if (itemID.isEmpty) {
-        Fluttertoast.showToast(msg: "Item ID missing");
+        unifiedSnackBar("Item ID missing", error: true);
         return;
       }
-
-      item.itemID  = itemID;
-
+      item.itemID = itemID;
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => ItemDetailsScreen(model: item),
-        ),
+        MaterialPageRoute(builder: (_) => ItemDetailsScreen(model: item)),
       );
     } else if (type == 'restaurant') {
-      final restaurantID = (result['objectID'] ?? result['restaurantID'] ?? '') as String;
-        
+      final restaurantID =
+          (result['objectID'] ?? result['restaurantID'] ?? '') as String;
       if (restaurantID.isEmpty) {
-        Fluttertoast.showToast(msg: "Restaurant ID missing");
+        unifiedSnackBar("Restaurant ID missing", error: true);
         return;
       }
-
       final restaurant = Restaurants(
         restaurantID: restaurantID,
         name: result['name'] ?? '',
@@ -224,9 +260,7 @@ class _SearchScreenState extends State<SearchScreen> {
       );
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => MenusScreen(model: restaurant),
-        ),
+        MaterialPageRoute(builder: (_) => MenusScreen(model: restaurant)),
       );
     }
   }
@@ -240,7 +274,8 @@ class _SearchScreenState extends State<SearchScreen> {
       3: const FavoritesScreen(),
     };
     if (routes.containsKey(index)) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => routes[index]!));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => routes[index]!));
     }
   }
 
@@ -257,10 +292,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return DefaultTabController(
       length: searchTabs.length,
+      initialIndex: _selectedTabIndex,
       child: Listener(
         onPointerDown: (_) {
           FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
             currentFocus.unfocus();
           }
         },
@@ -274,14 +311,17 @@ class _SearchScreenState extends State<SearchScreen> {
                   Icons.menu_open,
                   color: Colors.white,
                   size: 28,
-                  shadows: [Shadow(color: Colors.black.withValues(alpha: 0.3), offset: const Offset(2, 2), blurRadius: 6)],
+                  shadows: [
+                    Shadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        offset: const Offset(2, 2),
+                        blurRadius: 6)
+                  ],
                 ),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
             ),
-            actions: [
-              const CartIconWidget(),
-            ],
+            actions: [const CartIconWidget()],
           ),
           drawer: MyDrawer(),
           bottomNavigationBar: UnifiedBottomNavigationBar(
@@ -291,18 +331,22 @@ class _SearchScreenState extends State<SearchScreen> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // -- Search bar -----------------------------------------------
               Row(
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4, top: 16, right: 16, left: 16),
+                      padding: const EdgeInsets.only(
+                          bottom: 4, top: 16, right: 16, left: 16),
                       child: TextField(
-                        autofocus: true,
+                        autofocus: widget.initialText.isEmpty &&
+                            widget.categoryFilter == null,
                         controller: _searchController,
                         decoration: InputDecoration(
                           hintText: 'Search restaurants or items...',
                           prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12)),
                           suffixIcon: _searchController.text.isNotEmpty
                               ? IconButton(
                                   icon: const Icon(Icons.clear),
@@ -315,7 +359,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                         onChanged: (value) {
                           Future.delayed(const Duration(milliseconds: 500), () {
-                            if (_searchController.text == value) _performSearch(value);
+                            if (_searchController.text == value) {
+                              _performSearch(value);
+                            }
                           });
                         },
                       ),
@@ -325,11 +371,42 @@ class _SearchScreenState extends State<SearchScreen> {
                     padding: const EdgeInsets.only(top: 12, right: 8),
                     child: IconButton(
                       onPressed: _showFilterBottomSheet,
-                      icon: const Icon(Icons.tune, color: Colors.black, size: 32),
+                      icon:
+                          const Icon(Icons.tune, color: Colors.black, size: 32),
                     ),
                   ),
                 ],
               ),
+
+              // -- Active category chip -------------------------------------
+              if (_selectedCategories.isNotEmpty)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Wrap(
+                    spacing: 8,
+                    children: _selectedCategories.map((cat) {
+                      return Chip(
+                        label: Text(cat,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.redAccent)),
+                        backgroundColor: Colors.red.shade50,
+                        side: const BorderSide(color: Colors.redAccent),
+                        deleteIcon: const Icon(Icons.close_rounded,
+                            size: 14, color: Colors.redAccent),
+                        onDeleted: () {
+                          setState(() => _selectedCategories.remove(cat));
+                          _performSearch(_searchController.text);
+                        },
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
+              // -- Tab bar --------------------------------------------------
               TabBar(
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
@@ -347,16 +424,24 @@ class _SearchScreenState extends State<SearchScreen> {
                   _performSearch(_searchController.text);
                 },
               ),
+
               const SizedBox(height: 16),
+
+              // -- Result count ---------------------------------------------
               if (!_isLoading && _error == null)
                 Padding(
                   padding: const EdgeInsets.only(left: 24),
                   child: Text(
                     '$_totalHits results (${_processingTime}ms)',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, wordSpacing: 4),
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        wordSpacing: 4),
                   ),
                 ),
+
               const SizedBox(height: 8),
+
               Expanded(child: _buildContent()),
             ],
           ),
@@ -370,7 +455,11 @@ class _SearchScreenState extends State<SearchScreen> {
       return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [CircularProgressIndicator(), SizedBox(height: 16), Text('Searching...')],
+          children: [
+            CircularProgressIndicator(color: Colors.redAccent),
+            SizedBox(height: 16),
+            Text('Searching...'),
+          ],
         ),
       );
     }
@@ -384,17 +473,27 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 16),
             Text('Error: $_error'),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: () => _performSearch(_searchController.text), child: const Text('Retry')),
+            ElevatedButton(
+                onPressed: () => _performSearch(_searchController.text),
+                child: const Text('Retry')),
           ],
         ),
       );
     }
 
     if (_results.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Icon(Icons.search_off, size: 64, color: Colors.grey), SizedBox(height: 16), Text('No results found')],
+          children: [
+            Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text('No results found',
+                style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500)),
+          ],
         ),
       );
     }
@@ -402,22 +501,22 @@ class _SearchScreenState extends State<SearchScreen> {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _results.length,
-      separatorBuilder: (_, __) => const Divider(),
+      separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey[100]),
       itemBuilder: (context, index) {
         final result = _results[index];
         final type = result['_type'] as String;
-        final imageUrl = (result['logoUrl'] ?? result['imageUrl'] as String?) ?? '';
+        final imageUrl =
+            (result['logoUrl'] ?? result['imageUrl'] as String?) ?? '';
         final title = (result['title'] ?? result['name'] ?? '') as String;
-        final subtitle = type == 'item'
-            ? (result['description'] ?? '') as String
-            : (result['description'] ?? '') as String;
+        final subtitle = (result['description'] ?? '') as String;
         final price = result['price'];
 
         return GestureDetector(
           onTap: () => _onResultTap(result),
           child: Card(
             margin: const EdgeInsets.symmetric(vertical: 4),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             color: Colors.grey[50],
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -430,83 +529,110 @@ class _SearchScreenState extends State<SearchScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: imageUrl.isNotEmpty
-                          ? Image.network(
-                              imageUrl,
-                              width: 90,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            )
-                          : _imageFallback(),
+                            ? Image.network(imageUrl,
+                                width: 90, height: 100, fit: BoxFit.cover)
+                            : _imageFallback(),
                       ),
                       if ((result['discount'] ?? 0) > 0)
                         Positioned(
                           top: 4,
                           left: 4,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.red,
+                              color: Colors.redAccent,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               '${(result['discount'] as num).toInt()}% OFF',
-                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                     ],
                   ),
                   const SizedBox(width: 12),
+
                   // Content
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // title + badge row
                         Row(
                           children: [
                             Expanded(
                               child: Text(title,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: type == 'item' ? Colors.orange[50] : Colors.green[50],
+                                color: type == 'item'
+                                    ? Colors.orange[50]
+                                    : Colors.green[50],
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: type == 'item' ? Colors.orange : Colors.green),
+                                border: Border.all(
+                                    color: type == 'item'
+                                        ? Colors.orange
+                                        : Colors.green),
                               ),
                               child: Text(
                                 type == 'item' ? 'Item' : 'Restaurant',
-                                style: TextStyle(fontSize: 10, color: type == 'item' ? Colors.orange[800] : Colors.green[800]),
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: type == 'item'
+                                        ? Colors.orange[800]
+                                        : Colors.green[800]),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text(subtitle.toUpperCase(),
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+                        if (subtitle.isNotEmpty)
+                          Text(subtitle,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[500],
+                                  fontWeight: FontWeight.w400),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis),
                         if (price != null) ...[
-                          const SizedBox(height: 4),
-                          Text('\$${(price as num).toStringAsFixed(2)}',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                          const SizedBox(height: 6),
+                          Text('${(price as num).toStringAsFixed(2)} PLN',
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.redAccent)),
                         ],
                         if (result['tags'] != null) ...[
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Wrap(
                             spacing: 4,
                             runSpacing: 4,
-                            children: (result['tags'] as List).take(3).map((tag) {
+                            children:
+                                (result['tags'] as List).take(3).map((tag) {
                               return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue[50],
+                                  color: Colors.red.shade50,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.blue[200]!),
+                                  border: Border.all(
+                                      color: Colors.redAccent
+                                          .withValues(alpha: 0.3)),
                                 ),
-                                child: Text(tag.toString(), style: TextStyle(fontSize: 10, color: Colors.blue[700])),
+                                child: Text(tag.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 10, color: Colors.redAccent)),
                               );
                             }).toList(),
                           ),
@@ -524,17 +650,19 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _imageFallback() => Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
-        child: const Icon(Icons.image_not_supported),
+        width: 90,
+        height: 100,
+        decoration: BoxDecoration(
+            color: Colors.grey[100], borderRadius: BorderRadius.circular(8)),
+        child: Icon(Icons.image_not_supported_rounded, color: Colors.grey[300]),
       );
 
   void _showFilterBottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Padding(
           padding: const EdgeInsets.all(20),
@@ -545,64 +673,91 @@ class _SearchScreenState extends State<SearchScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Filters", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  const Text("Filters",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   ElevatedButton.icon(
                     onPressed: () {
                       setModalState(() {
                         _selectedCategories.clear();
                         _currentPriceRange = const RangeValues(0, 500);
                       });
-                      _clearAllFilters(onComplete: () {
-                        setModalState(() {});
-                      });
+                      _clearAllFilters(onComplete: () => setModalState(() {}));
                     },
-                    icon: const Icon(Icons.refresh, size: 18, color: Colors.redAccent),
-                    label: const Text("Reset All", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                    icon: const Icon(Icons.refresh,
+                        size: 18, color: Colors.redAccent),
+                    label: const Text("Reset All",
+                        style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[50],
                       elevation: 0,
                       side: const BorderSide(color: Colors.redAccent),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Text(
-                _selectedTabIndex == 1 ? "Names" : "Categories",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(_selectedTabIndex == 1 ? "Names" : "Categories",
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
+                runSpacing: 4,
                 children: _availableCategories.map((cat) {
                   final isSelected = _selectedCategories.contains(cat);
                   return FilterChip(
                     label: Text(cat),
                     selected: isSelected,
+                    selectedColor: Colors.red.shade50,
+                    checkmarkColor: Colors.redAccent,
+                    side: BorderSide(
+                        color: isSelected
+                            ? Colors.redAccent
+                            : Colors.grey.shade300),
                     onSelected: (val) {
-                      setModalState(() => val ? _selectedCategories.add(cat) : _selectedCategories.remove(cat));
+                      setModalState(() => val
+                          ? _selectedCategories.add(cat)
+                          : _selectedCategories.remove(cat));
                     },
                   );
                 }).toList(),
               ),
               if (_selectedTabIndex != 1) ...[
                 const SizedBox(height: 20),
-                Text("Price Range: \$${_currentPriceRange.start.round()} - \$${_currentPriceRange.end.round()}",
+                Text(
+                    "Price Range: ${_currentPriceRange.start.round()} - ${_currentPriceRange.end.round()} PLN",
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 RangeSlider(
                   values: _currentPriceRange,
                   min: 0,
                   max: 500,
                   divisions: 10,
-                  onChanged: (values) => setModalState(() => _currentPriceRange = values),
+                  activeColor: Colors.redAccent,
+                  onChanged: (values) =>
+                      setModalState(() => _currentPriceRange = values),
                 ),
               ],
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
-                  onPressed: () { Navigator.pop(context); _performSearch(_searchController.text); },
-                  child: const Text("Apply Filters", style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _performSearch(_searchController.text);
+                  },
+                  child: const Text("Apply Filters",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 10),

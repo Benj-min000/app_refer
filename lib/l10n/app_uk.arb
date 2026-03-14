@@ -694,5 +694,8 @@
     "addr_delete_cancel": "Скасувати",
     "addr_delete_confirm": "Видалити",
     "addr_deleted": "Адресу успішно видалено",
-    "addr_delete_error": "Помилка: {error}"
+    "addr_delete_error": "Помилка: {error}",
+    "hintPhone": "Номер телефону",
+    "welcomeNotifTitle": "Ласкаво просимо!",
+    "welcomeNotifBody": "Дякуємо, що приєдналися до нашого застосунку, {name}!"
 }

@@ -694,5 +694,8 @@
     "addr_delete_cancel": "취소",
     "addr_delete_confirm": "제거하다",
     "addr_deleted": "주소가 성공적으로 삭제되었습니다.",
-    "addr_delete_error": "오류: {error}"
+    "addr_delete_error": "오류: {error}",
+    "hintPhone": "전화 번호",
+    "welcomeNotifTitle": "환영!",
+    "welcomeNotifBody": "{name}님, 저희 앱에 가입해주셔서 감사합니다!"
 }

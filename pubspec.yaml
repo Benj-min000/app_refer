@@ -49,6 +49,7 @@ dependencies:
   fancy_password_field: ^2.0.8
   firebase_app_check: ^0.4.1+4
   cloud_functions: ^6.0.6
+  image_cropper: ^11.0.0
 
 dev_dependencies:
   flutter_test:

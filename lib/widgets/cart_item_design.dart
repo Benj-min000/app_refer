@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/models/items.dart';
 import 'package:user_app/assistant_methods/assistant_methods.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
 
 class CartItemDesign extends StatefulWidget {
   final Items? model;
@@ -21,53 +21,50 @@ class CartItemDesign extends StatefulWidget {
 
 class _CartItemDesignState extends State<CartItemDesign> {
   @override
-Widget build(BuildContext context) {
-  if (widget.model == null) return const SizedBox.shrink();
+  Widget build(BuildContext context) {
+    if (widget.model == null) return const SizedBox.shrink();
 
-  return Card(
-    color: Colors.grey[100],
-    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    elevation: 4,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row( 
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _buildItemImage(),
-          const SizedBox(width: 12),
-          
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildItemDetails()),
-                    _buildDeleteButton(),
-                  ],
-                ),
-                
-                const SizedBox(height: 12),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buildQuantityBadge(),
-                    const SizedBox(width: 8),
-                    _buildPriceTag(),
-                  ],
-                ),
-              ],
+    return Card(
+      color: Colors.grey[100],
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildItemImage(),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _buildItemDetails()),
+                      _buildDeleteButton(),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _buildQuantityBadge(),
+                      const SizedBox(width: 8),
+                      _buildPriceTag(),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildItemImage() {
     return Stack(
@@ -78,8 +75,8 @@ Widget build(BuildContext context) {
             width: 120,
             height: 120,
             color: Colors.grey[200],
-            child: widget.model!.imageUrl != null && 
-                   widget.model!.imageUrl!.isNotEmpty
+            child: widget.model!.imageUrl != null &&
+                    widget.model!.imageUrl!.isNotEmpty
                 ? Image.network(
                     widget.model!.imageUrl!,
                     width: 120,
@@ -111,7 +108,7 @@ Widget build(BuildContext context) {
                   ),
           ),
         ),
-        
+
         // Discount badge on image
         if (widget.model!.hasDiscount)
           Positioned(
@@ -153,14 +150,15 @@ Widget build(BuildContext context) {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
-        
+
         // Tags
         if (widget.model!.tags != null && widget.model!.tags!.isNotEmpty)
           Wrap(
             spacing: 4,
             children: widget.model!.tags!.take(2).map((tag) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.green.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(20),
@@ -168,7 +166,8 @@ Widget build(BuildContext context) {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.local_offer, color: Colors.white, size: 13),
+                    const Icon(Icons.local_offer,
+                        color: Colors.white, size: 13),
                     const SizedBox(width: 4),
                     Text(
                       tag,
@@ -183,10 +182,11 @@ Widget build(BuildContext context) {
               );
             }).toList(),
           ),
-        
+
         const SizedBox(height: 8),
-        
-        if (widget.model!.shortInfo != null && widget.model!.shortInfo!.isNotEmpty)
+
+        if (widget.model!.shortInfo != null &&
+            widget.model!.shortInfo!.isNotEmpty)
           Text(
             widget.model!.shortInfo!,
             style: TextStyle(
@@ -195,7 +195,7 @@ Widget build(BuildContext context) {
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-          ),  
+          ),
       ],
     );
   }
@@ -210,11 +210,14 @@ Widget build(BuildContext context) {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            onPressed: () => decrementCartItemQuantity(context, widget.model!.itemID!),
+            onPressed: () =>
+                decrementCartItemQuantity(context, widget.model!.itemID!),
             icon: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: (widget.quanNumber ?? 1) > 1 ? Colors.blue : Colors.grey[400],
+                color: (widget.quanNumber ?? 1) > 1
+                    ? Colors.blue
+                    : Colors.grey[400],
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.remove, color: Colors.white, size: 14),
@@ -225,7 +228,8 @@ Widget build(BuildContext context) {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           IconButton(
-            onPressed: () => incrementCartItemQuantity(context, widget.model!.itemID!),
+            onPressed: () =>
+                incrementCartItemQuantity(context, widget.model!.itemID!),
             icon: Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
@@ -241,56 +245,62 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildPriceTag() {
-  final pricePerItem = widget.model!.hasDiscount
-      ? widget.model!.discountedPrice
-      : (widget.model!.price ?? 0);
-  final originalPerItem = widget.model!.price ?? 0;
-  final savedAmount = originalPerItem - pricePerItem;
+    final pricePerItem = widget.model!.hasDiscount
+        ? widget.model!.discountedPrice
+        : (widget.model!.price ?? 0);
+    final originalPerItem = widget.model!.price ?? 0;
+    final savedAmount = originalPerItem - pricePerItem;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      if (widget.model!.hasDiscount)
-        Text(
-          '${originalPerItem.toStringAsFixed(2)} zł',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            decoration: TextDecoration.lineThrough,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (widget.model!.hasDiscount)
+          Text(
+            '${originalPerItem.toStringAsFixed(2)} zł',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+              decoration: TextDecoration.lineThrough,
+            ),
+          ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: widget.model!.hasDiscount
+                ? Colors.red.shade50
+                : Colors.green.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: widget.model!.hasDiscount
+                  ? Colors.red.shade300
+                  : Colors.green.shade300,
+            ),
+          ),
+          child: Text(
+            '${pricePerItem.toStringAsFixed(2)} zł',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: widget.model!.hasDiscount
+                  ? Colors.red.shade700
+                  : Colors.green.shade700,
+            ),
           ),
         ),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: widget.model!.hasDiscount ? Colors.red.shade50 : Colors.green.shade50,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: widget.model!.hasDiscount ? Colors.red.shade300 : Colors.green.shade300,
+        if (widget.model!.hasDiscount) ...[
+          const SizedBox(height: 4),
+          Text(
+            'Save ${savedAmount.toStringAsFixed(2)} zł',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.green.shade700,
+            ),
           ),
-        ),
-        child: Text(
-          '${pricePerItem.toStringAsFixed(2)} zł',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: widget.model!.hasDiscount ? Colors.red.shade700 : Colors.green.shade700,
-          ),
-        ),
-      ),
-      if (widget.model!.hasDiscount) ...[
-        const SizedBox(height: 4),
-        Text(
-          'Save ${savedAmount.toStringAsFixed(2)} zł',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: Colors.green.shade700,
-          ),
-        ),
+        ],
       ],
-    ],
-  );
-}
+    );
+  }
 
   Widget _buildDeleteButton() {
     return IconButton(
@@ -307,10 +317,10 @@ Widget build(BuildContext context) {
 
   void _showDeleteConfirmation() {
     if (widget.model?.itemID == null) {
-      Fluttertoast.showToast(msg: "Cannot remove item: Invalid item ID");
+      unifiedSnackBar("Cannot remove item: Invalid item ID", error: true);
       return;
     }
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -362,12 +372,13 @@ Widget build(BuildContext context) {
                     child: Text(
                       'Are you sure you want to remove ${widget.model!.title ?? 'this item'} from your cart?',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 15, color: Colors.black87, height: 1.5),
+                      style: const TextStyle(
+                          fontSize: 15, color: Colors.black87, height: 1.5),
                     ),
                   ),
-
-                  const SizedBox(height: 40,),
-
+                  const SizedBox(
+                    height: 40,
+                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                     child: Row(
@@ -378,11 +389,14 @@ Widget build(BuildContext context) {
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               side: BorderSide(color: Colors.grey.shade400),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
                             ),
                             child: Text(
                               'Cancel',
-                              style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.w600),
                             ),
                           ),
                         ),
@@ -391,18 +405,22 @@ Widget build(BuildContext context) {
                           child: ElevatedButton(
                             onPressed: () async {
                               Navigator.pop(context);
-                              await removeItemFromCart(context, widget.model!.itemID!);
-                              Fluttertoast.showToast(msg: "Item removed from cart");
+                              await removeItemFromCart(
+                                  context, widget.model!.itemID!);
+                              unifiedSnackBar("Item removed from cart");
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 0,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
                             ),
                             child: const Text(
                               'Remove',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),

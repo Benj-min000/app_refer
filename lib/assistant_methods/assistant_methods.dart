@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:provider/provider.dart';
 import 'package:user_app/assistant_methods/cart_item_counter.dart';
 import 'package:user_app/global/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
 
 List<String> separateItemIDs(List<dynamic> userCart) {
   return userCart.map((item) {
@@ -32,8 +33,7 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID,
   if (existingCart.docs.isNotEmpty) {
     String storeInCart = existingCart.docs.first.get("restaurantID");
     if (storeInCart != restaurantID) {
-      Fluttertoast.showToast(
-          msg: "You can only order from one restuarant at a time.");
+      unifiedSnackBar("You can only order from one restuarant at a time.");
       return;
     }
   }
@@ -56,7 +56,7 @@ Future<void> addItemToCart(String? itemID, String? menuID, String? restaurantID,
 
     saveUserPref<List<String>>("userCart", tempCartList);
 
-    Fluttertoast.showToast(msg: "Item Added Successfully.");
+    unifiedSnackBar("Item Added Successfully.");
 
     Provider.of<CartItemCounter>(context, listen: false)
         .displayCartListItemsNumber();
@@ -67,7 +67,7 @@ Future<void> clearCartNow(BuildContext context) async {
   final User? currentUser = firebaseAuth.currentUser;
 
   if (currentUser == null) {
-    Fluttertoast.showToast(msg: "User not logged in.");
+    unifiedSnackBar("User not logged in.");
     return;
   }
 
@@ -80,7 +80,7 @@ Future<void> clearCartNow(BuildContext context) async {
         .collection("carts")
         .get();
     if (snapshot.docs.isEmpty) {
-      Fluttertoast.showToast(msg: "Cart is already empty.");
+      unifiedSnackBar("Cart is already empty.");
       return;
     }
 
@@ -96,10 +96,10 @@ Future<void> clearCartNow(BuildContext context) async {
     if (context.mounted) {
       Provider.of<CartItemCounter>(context, listen: false)
           .displayCartListItemsNumber();
-      Fluttertoast.showToast(msg: "Cart Cleared.");
+      unifiedSnackBar("Cart Cleared.");
     }
   } catch (e) {
-    Fluttertoast.showToast(msg: "Error clearing cart: $e");
+    unifiedSnackBar("Error clearing cart: $e", error: true);
   }
 }
 
@@ -107,7 +107,7 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
   final User? currentUser = firebaseAuth.currentUser;
 
   if (currentUser == null) {
-    Fluttertoast.showToast(msg: "User not logged in.");
+    unifiedSnackBar("User not logged in.");
     return;
   }
 
@@ -122,7 +122,7 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
         .limit(1)
         .get();
     if (snapshot.docs.isEmpty) {
-      Fluttertoast.showToast(msg: "Item not found in cart.");
+      unifiedSnackBar("Item not found in cart.");
       return;
     }
 
@@ -137,10 +137,10 @@ Future<void> removeItemFromCart(BuildContext context, String itemID) async {
     if (context.mounted) {
       Provider.of<CartItemCounter>(context, listen: false)
           .displayCartListItemsNumber();
-      Fluttertoast.showToast(msg: "Item removed from cart.");
+      unifiedSnackBar("Item removed from cart.");
     }
   } catch (e) {
-    Fluttertoast.showToast(msg: "Error removing item: $e");
+    unifiedSnackBar("Error removing item: $e");
   }
 }
 
@@ -164,7 +164,7 @@ Future<void> incrementCartItemQuantity(
     final int currentQuantity = doc.get("quantity") ?? 1;
 
     if (currentQuantity >= 9) {
-      Fluttertoast.showToast(msg: "Maximum quantity reached");
+      unifiedSnackBar("Maximum quantity reached");
       return;
     }
 
@@ -187,7 +187,7 @@ Future<void> incrementCartItemQuantity(
           .displayCartListItemsNumber();
     }
   } catch (e) {
-    Fluttertoast.showToast(msg: "Error updating quantity: $e");
+    unifiedSnackBar("Error updating quantity: $e");
   }
 }
 
@@ -233,6 +233,6 @@ Future<void> decrementCartItemQuantity(
           .displayCartListItemsNumber();
     }
   } catch (e) {
-    Fluttertoast.showToast(msg: "Error updating quantity: $e");
+    unifiedSnackBar("Error updating quantity: $e", error: true);
   }
 }

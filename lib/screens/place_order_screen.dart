@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import 'package:user_app/assistant_methods/address_changer.dart';
@@ -20,6 +19,7 @@ import 'package:user_app/screens/home_screen.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/widgets/accepted_payment.dart';
+import 'package:user_app/widgets/unified_snackbar.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
   const PlaceOrderScreen({super.key});
@@ -58,7 +58,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   Future<void> _fetchCurrentLocation() async {
     try {
-      final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+      final localeProvider =
+          Provider.of<LocaleProvider>(context, listen: false);
       final gpsData = await LocationService.fetchUserCurrentLocation(
         langCode: localeProvider.locale.languageCode,
       );
@@ -69,7 +70,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _gpsLocation = "Error: Unable to get location");
+      if (!mounted) return;
+      setState(() => _gpsLocation = "Error: Unable to get location");
     }
   }
 
@@ -85,7 +87,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           .get();
 
       if (cartSnapshot.docs.isNotEmpty) {
-        setState(() => restaurantID = cartSnapshot.docs.first.data()['restaurantID']);
+        setState(() =>
+            restaurantID = cartSnapshot.docs.first.data()['restaurantID']);
         await _loadRestaurantAddress();
       }
     } catch (e) {
@@ -104,7 +107,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
       if (addressSnapshot.docs.isNotEmpty) {
         setState(() => restaurantAddress =
-            addressSnapshot.docs.first.data()['fullAddress'] ?? "Store address not available");
+            addressSnapshot.docs.first.data()['fullAddress'] ??
+                "Store address not available");
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -154,15 +158,17 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   bool _validateOrder() {
     if (orderType == "delivery") {
-      final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+      final addressProvider =
+          Provider.of<AddressChanger>(context, listen: false);
       if (addressProvider.count < -1 ||
-          (addressProvider.count >= 0 && addressProvider.count >= userAddresses.length - 1)) {
-        Fluttertoast.showToast(msg: "Please select a delivery address");
+          (addressProvider.count >= 0 &&
+              addressProvider.count >= userAddresses.length - 1)) {
+        unifiedSnackBar("Please select a delivery address", error: true);
         return false;
       }
     }
     if (_selectedPayment.isEmpty) {
-      Fluttertoast.showToast(msg: "Please select a payment method");
+      unifiedSnackBar("Please select a payment method", error: true);
       return false;
     }
     return true;
@@ -171,7 +177,10 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   Future<void> _writeOrder(Map<String, dynamic> orderData) async {
     final orderID = orderData['orderID'];
     await Future.wait([
-      FirebaseFirestore.instance.collection("orders").doc(orderID).set(orderData),
+      FirebaseFirestore.instance
+          .collection("orders")
+          .doc(orderID)
+          .set(orderData),
       FirebaseFirestore.instance
           .collection("users")
           .doc(currentUid)
@@ -181,7 +190,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     ]);
   }
 
-  Future<void> _onOrderSuccess(Map<String, dynamic> orderData, String paymentDetails) async {
+  Future<void> _onOrderSuccess(
+      Map<String, dynamic> orderData, String paymentDetails) async {
     final finalOrder = {
       ...orderData,
       'isSuccess': true,
@@ -190,12 +200,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
     await _writeOrder(finalOrder);
 
-    if (!mounted) return;
-    await clearCartNow(context);
-    Provider.of<TotalAmount>(context, listen: false).reset();
+    if (mounted) {
+      await clearCartNow(context);
+      Provider.of<TotalAmount>(context, listen: false).reset();
+    }
 
     if (!mounted) return;
-    Fluttertoast.showToast(msg: "Order placed successfully!", backgroundColor: Colors.green);
+    unifiedSnackBar("Order placed successfully!");
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -209,7 +220,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      final addressProvider = Provider.of<AddressChanger>(context, listen: false);
+      final addressProvider =
+          Provider.of<AddressChanger>(context, listen: false);
       final amountProvider = Provider.of<TotalAmount>(context, listen: false);
 
       String? addressID;
@@ -227,10 +239,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           addressID = tempRef.id;
 
           await tempRef.set({
-            'label': 'Last Order Location - ${DateTime.now().toString().substring(0, 16)}',
+            'label':
+                'Last Order Location - ${DateTime.now().toString().substring(0, 16)}',
             'road': _gpsMapData['road'] ?? '',
             'houseNumber': _gpsMapData['houseNumber'] ?? '',
-            'flatNumber': _gpsMapData['flatNumber'] ?? _gpsMapData['subpremise'],
+            'flatNumber':
+                _gpsMapData['flatNumber'] ?? _gpsMapData['subpremise'],
             'postalCode': _gpsMapData['postalCode'] ?? '',
             'city': _gpsMapData['city'] ?? '',
             'state': _gpsMapData['state'] ?? '',
@@ -253,9 +267,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         addressID = "pickup";
       }
 
-      final List<String> cartItems = getUserPref<List<String>>("userCart") ?? [];
-      final double deliveryFee =
-          orderType == "delivery" ? _calculateDeliveryFee(amountProvider.totalAmount) : 0.0;
+      final List<String> cartItems =
+          getUserPref<List<String>>("userCart") ?? [];
+      final double deliveryFee = orderType == "delivery"
+          ? _calculateDeliveryFee(amountProvider.totalAmount)
+          : 0.0;
       final double totalWithDelivery = amountProvider.totalAmount + deliveryFee;
 
       debugPrint("LOG: $_selectedPayment");
@@ -290,8 +306,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
-      Fluttertoast.showToast(msg: "Error: ${e.toString()}");
+      if (!mounted) return;
+      unifiedSnackBar("Error: ${e.toString()}", error: true);
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }
@@ -315,7 +331,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       appBar: UnifiedAppBar(
         title: "Place Order!",
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 28),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -336,12 +353,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text("Order Summary",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 12),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Subtotal:", style: TextStyle(fontSize: 14)),
+                              const Text("Subtotal:",
+                                  style: TextStyle(fontSize: 14)),
                               Text(
                                 "${amountProvider.totalAmount.toStringAsFixed(2)}zł",
                                 style: const TextStyle(
@@ -368,7 +387,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 Text("Delivery Fee:"),
                                 Text("Free",
                                     style: TextStyle(
-                                        color: Colors.green, fontWeight: FontWeight.bold)),
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ],
@@ -377,7 +397,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text("Total:",
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               Text(
                                 "${(amountProvider.totalAmount + deliveryFee).toStringAsFixed(2)}zł",
                                 style: const TextStyle(
@@ -394,7 +415,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   const SizedBox(height: 24),
                   const Text("Order Type",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
 
                   Card(
@@ -404,17 +426,20 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       children: [
                         RadioListTile<String>(
                           title: const Text("Delivery"),
-                          subtitle: const Text("Get it delivered to your address"),
+                          subtitle:
+                              const Text("Get it delivered to your address"),
                           value: "delivery",
                           groupValue: orderType,
-                          onChanged: (value) => setState(() => orderType = value!),
+                          onChanged: (value) =>
+                              setState(() => orderType = value!),
                         ),
                         RadioListTile<String>(
                           title: const Text("Pickup"),
                           subtitle: const Text("Collect from store"),
                           value: "pickup",
                           groupValue: orderType,
-                          onChanged: (value) => setState(() => orderType = value!),
+                          onChanged: (value) =>
+                              setState(() => orderType = value!),
                         ),
                       ],
                     ),
@@ -424,7 +449,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   if (orderType == "delivery") ...[
                     const Text("Select Delivery Address",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     if (userAddresses.isEmpty)
                       Card(
@@ -459,12 +485,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     Center(
                       child: Text(
                         "or add new location...",
-                        style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     const Divider(thickness: 2),
                     ListTile(
-                      leading: const Icon(Icons.add_location_alt, color: Colors.blueAccent),
+                      leading: const Icon(Icons.add_location_alt,
+                          color: Colors.blueAccent),
                       title: const Text("Address Manager"),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
@@ -478,13 +507,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   if (orderType == "pickup" && restaurantAddress != null) ...[
                     const Text("Pickup Location",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     Card(
                       color: Colors.grey[50],
                       elevation: 2,
                       child: ListTile(
-                        leading: const Icon(Icons.restaurant, color: Colors.redAccent),
+                        leading: const Icon(Icons.restaurant,
+                            color: Colors.redAccent),
                         title: const Text("Restaurant Address"),
                         subtitle: Text(restaurantAddress!),
                       ),
@@ -495,12 +526,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   // Payment method selection
                   const Text("Payment Method",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   AcceptedPaymentsWidget(
                     restaurantID: restaurantID,
                     selectedPayment: _selectedPayment,
-                    onPaymentSelected: (value) => setState(() => _selectedPayment = value),
+                    onPaymentSelected: (value) =>
+                        setState(() => _selectedPayment = value),
                   ),
 
                   const SizedBox(height: 32),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/models/address.dart';
-import 'package:user_app/splashScreen/splash_screen.dart';
+import 'package:user_app/screens/splash_screen.dart';
 
 class ShipmentAddressDesign extends StatelessWidget {
   final Address? model;

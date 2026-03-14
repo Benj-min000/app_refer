@@ -2273,4 +2273,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String addr_delete_error(String error) {
     return 'Error: $error';
   }
+
+  @override
+  String get hintPhone => 'Phone Number';
+
+  @override
+  String get welcomeNotifTitle => 'Welcome!';
+
+  @override
+  String welcomeNotifBody(String name) {
+    return 'Thanks for joining our app, $name!';
+  }
 }

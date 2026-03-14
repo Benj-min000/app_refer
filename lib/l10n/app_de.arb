@@ -694,5 +694,8 @@
     "addr_delete_cancel": "Stornieren",
     "addr_delete_confirm": "Entfernen",
     "addr_deleted": "Adresse erfolgreich gelöscht",
-    "addr_delete_error": "Fehler: {error}"
+    "addr_delete_error": "Fehler: {error}",
+    "hintPhone": "Telefonnummer",
+    "welcomeNotifTitle": "Willkommen!",
+    "welcomeNotifBody": "Vielen Dank, dass Sie unserer App beigetreten sind, {name}!"
 }
