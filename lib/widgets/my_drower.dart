@@ -27,11 +27,10 @@ class MyDrawer extends StatelessWidget {
       backgroundColor: Colors.white,
       child: Column(
         children: [
-          // ── Header ─────────────────────────────────────────────────────
-          _DrawerHeader(
-              name: name, email: email, photoUrl: photoUrl),
+          //  Header
+          _DrawerHeader(name: name, email: email, photoUrl: photoUrl),
 
-          // ── Menu items ─────────────────────────────────────────────────
+          //  Menu items
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -42,38 +41,32 @@ class MyDrawer extends StatelessWidget {
                   _DrawerTile(
                     icon: Icons.manage_accounts_rounded,
                     label: "Profile Settings",
-                    onTap: () => _push(
-                        context, const ProfileSettingsScreen()),
+                    onTap: () => _push(context, const ProfileSettingsScreen()),
                   ),
                   _DrawerTile(
                     icon: Icons.receipt_long_rounded,
                     label: "My Orders",
-                    onTap: () =>
-                        _push(context, const OrdersScreen()),
+                    onTap: () => _push(context, const OrdersScreen()),
                   ),
                   _DrawerTile(
                     icon: Icons.favorite_rounded,
                     label: "Favourites",
-                    onTap: () =>
-                        _push(context, const FavoritesScreen()),
+                    onTap: () => _push(context, const FavoritesScreen()),
                   ),
                   _DrawerTile(
                     icon: Icons.location_on_rounded,
                     label: "Address Manager",
-                    onTap: () =>
-                        _push(context, AddressScreen()),
+                    onTap: () => _push(context, AddressScreen()),
                   ),
                   _DrawerTile(
                     icon: Icons.language_rounded,
                     label: "Language",
-                    onTap: () => _push(
-                        context, const LanguageSelectionScreen()),
+                    onTap: () =>
+                        _push(context, const LanguageSelectionScreen()),
                   ),
-
                   const SizedBox(height: 8),
                   _Divider(),
                   _SectionLabel("Support"),
-
                   _DrawerTile(
                     icon: Icons.help_outline_rounded,
                     label: "Help & FAQ",
@@ -84,11 +77,9 @@ class MyDrawer extends StatelessWidget {
                     label: "Contact Us",
                     onTap: () => _showComingSoon(context),
                   ),
-
                   const SizedBox(height: 8),
                   _Divider(),
                   _SectionLabel("Legal"),
-
                   _DrawerTile(
                     icon: Icons.privacy_tip_outlined,
                     label: "Privacy Policy",
@@ -116,14 +107,13 @@ class MyDrawer extends StatelessWidget {
                       icon: Icons.cookie_outlined,
                     ),
                   ),
-
                   const SizedBox(height: 8),
                 ],
               ),
             ),
           ),
 
-          // ── Sign out ───────────────────────────────────────────────────
+          //  Sign out
           _SignOutButton(
             onTap: () => _signOut(context),
           ),
@@ -136,8 +126,7 @@ class MyDrawer extends StatelessWidget {
 
   void _push(BuildContext context, Widget screen) {
     Navigator.pop(context);
-    Navigator.push(
-        context, MaterialPageRoute(builder: (_) => screen));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
   }
 
   void _showComingSoon(BuildContext context) {
@@ -175,14 +164,12 @@ class MyDrawer extends StatelessWidget {
   }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
+//  Header
 
 class _DrawerHeader extends StatelessWidget {
   final String name, email, photoUrl;
   const _DrawerHeader(
-      {required this.name,
-      required this.email,
-      required this.photoUrl});
+      {required this.name, required this.email, required this.photoUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +237,7 @@ class _DrawerHeader extends StatelessWidget {
   }
 }
 
-// ── Section label ─────────────────────────────────────────────────────────────
+//  Section label
 
 class _SectionLabel extends StatelessWidget {
   final String label;
@@ -273,7 +260,7 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-// ── Drawer tile ───────────────────────────────────────────────────────────────
+//  Drawer tile
 
 class _DrawerTile extends StatelessWidget {
   final IconData icon;
@@ -293,11 +280,9 @@ class _DrawerTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -334,7 +319,7 @@ class _DrawerTile extends StatelessWidget {
   }
 }
 
-// ── Divider ───────────────────────────────────────────────────────────────────
+//  Divider
 
 class _Divider extends StatelessWidget {
   const _Divider();
@@ -348,7 +333,7 @@ class _Divider extends StatelessWidget {
   }
 }
 
-// ── Sign out button ───────────────────────────────────────────────────────────
+//  Sign out button
 
 class _SignOutButton extends StatelessWidget {
   final VoidCallback onTap;
@@ -366,14 +351,12 @@ class _SignOutButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.red.shade50,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: Colors.redAccent.withValues(alpha: 0.3)),
+            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              Icon(Icons.logout_rounded,
-                  color: Colors.redAccent, size: 18),
+              Icon(Icons.logout_rounded, color: Colors.redAccent, size: 18),
               SizedBox(width: 8),
               Text(
                 "Sign Out",
@@ -391,7 +374,7 @@ class _SignOutButton extends StatelessWidget {
   }
 }
 
-// ── Policy bottom sheet ───────────────────────────────────────────────────────
+//  Policy bottom sheet
 
 class _PolicySheet extends StatelessWidget {
   final String title;
@@ -429,8 +412,7 @@ class _PolicySheet extends StatelessWidget {
                     color: Colors.redAccent.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon,
-                      color: Colors.redAccent, size: 20),
+                  child: Icon(icon, color: Colors.redAccent, size: 20),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -442,8 +424,7 @@ class _PolicySheet extends StatelessWidget {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: Icon(Icons.close_rounded,
-                      color: Colors.grey.shade400),
+                  icon: Icon(Icons.close_rounded, color: Colors.grey.shade400),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -504,14 +485,12 @@ class _PolicySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: const TextStyle(
-                  fontSize: 14, fontWeight: FontWeight.w700)),
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
           Text(body,
               style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade600,
-                  height: 1.6)),
+                  fontSize: 13, color: Colors.grey.shade600, height: 1.6)),
         ],
       ),
     );

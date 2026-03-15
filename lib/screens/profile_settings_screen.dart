@@ -18,8 +18,7 @@ class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({super.key});
 
   @override
-  State<ProfileSettingsScreen> createState() =>
-      _ProfileSettingsScreenState();
+  State<ProfileSettingsScreen> createState() => _ProfileSettingsScreenState();
 }
 
 class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
@@ -31,13 +30,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   File? _newPhoto;
   String? _currentPhotoUrl;
 
-  // ── Notification prefs ─────────────────────────────────────────────────────
+  //  Notification prefs
   bool _notifOrderStatus = true;
   bool _notifPromotions = true;
   bool _notifNearby = true;
   bool _notifAppNews = true;
 
-  // ── App prefs ──────────────────────────────────────────────────────────────
+  //  App prefs
   bool _darkMode = false;
 
   @override
@@ -74,7 +73,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     setState(() => _isLoading = false);
   }
 
-  // ── Profile save ───────────────────────────────────────────────────────────
+  //  Profile save
 
   Future<void> _saveProfile() async {
     final oldName = getUserPref<String>("name") ?? "";
@@ -122,8 +121,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
       if (isPhoneChanged) {
         updateData["phone"] = _phoneController?.value.toString();
-        await saveUserPref<String>(
-            "phone", _phoneController!.value.toString());
+        await saveUserPref<String>("phone", _phoneController!.value.toString());
       }
 
       await FirebaseFirestore.instance
@@ -140,12 +138,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       if (!mounted) return;
       Navigator.pop(context);
       showDialog(
-          context: context,
-          builder: (_) => ErrorDialog(message: e.toString()));
+          context: context, builder: (_) => ErrorDialog(message: e.toString()));
     }
   }
 
-  // ── Notification prefs ─────────────────────────────────────────────────────
+  //  Notification prefs
   // Saves to SharedPreferences locally and mirrors to Firestore under
   // users/{uid}.prefs so the notification bell widget can filter by source.
   //
@@ -166,7 +163,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     }
   }
 
-  // ── Dark mode ──────────────────────────────────────────────────────────────
+  //  Dark mode
 
   Future<void> _toggleDarkMode(bool value) async {
     setState(() => _darkMode = value);
@@ -176,7 +173,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         .setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
   }
 
-  // ── Build ──────────────────────────────────────────────────────────────────
+  //  Build
 
   @override
   Widget build(BuildContext context) {
@@ -200,11 +197,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Avatar ───────────────────────────────────────────
+                    //  Avatar
                     _buildAvatar(),
                     const SizedBox(height: 28),
 
-                    // ── Personal info ────────────────────────────────────
+                    //  Personal info
                     _SectionLabel("Personal Information"),
                     const SizedBox(height: 12),
                     _Card(
@@ -245,20 +242,19 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                                     strokeWidth: 2, color: Colors.white))
                             : const Text("Save Changes",
                                 style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700)),
+                                    fontSize: 15, fontWeight: FontWeight.w700)),
                       ),
                     ),
 
                     const SizedBox(height: 28),
 
-                    // ── Notifications ────────────────────────────────────
+                    //  Notifications
                     _SectionLabel("Notifications"),
                     const SizedBox(height: 4),
                     Text(
                       "Choose which notifications you receive",
-                      style: TextStyle(
-                          fontSize: 12, color: Colors.grey.shade500),
+                      style:
+                          TextStyle(fontSize: 12, color: Colors.grey.shade500),
                     ),
                     const SizedBox(height: 12),
                     _Card(
@@ -267,26 +263,22 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           _NotifTile(
                             icon: Icons.local_shipping_rounded,
                             label: "Order Status Updates",
-                            subtitle:
-                                "Notified when your order status changes",
+                            subtitle: "Notified when your order status changes",
                             value: _notifOrderStatus,
                             onChanged: (v) async {
                               setState(() => _notifOrderStatus = v);
-                              await _saveNotifPref(
-                                  "notif_order_status", v);
+                              await _saveNotifPref("notif_order_status", v);
                             },
                           ),
                           _Divider(),
                           _NotifTile(
                             icon: Icons.local_offer_rounded,
                             label: "Promotions & Offers",
-                            subtitle:
-                                "Discounts and deals from restaurants",
+                            subtitle: "Discounts and deals from restaurants",
                             value: _notifPromotions,
                             onChanged: (v) async {
                               setState(() => _notifPromotions = v);
-                              await _saveNotifPref(
-                                  "notif_promotions", v);
+                              await _saveNotifPref("notif_promotions", v);
                             },
                           ),
                           _Divider(),
@@ -305,13 +297,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           _NotifTile(
                             icon: Icons.campaign_rounded,
                             label: "App News & Updates",
-                            subtitle:
-                                "Feature announcements and app news",
+                            subtitle: "Feature announcements and app news",
                             value: _notifAppNews,
                             onChanged: (v) async {
                               setState(() => _notifAppNews = v);
-                              await _saveNotifPref(
-                                  "notif_app_news", v);
+                              await _saveNotifPref("notif_app_news", v);
                             },
                           ),
                         ],
@@ -320,7 +310,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
                     const SizedBox(height: 28),
 
-                    // ── Appearance ───────────────────────────────────────
+                    //  Appearance
                     _SectionLabel("Appearance"),
                     const SizedBox(height: 12),
                     _Card(
@@ -338,7 +328,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
                     const SizedBox(height: 28),
 
-                    // ── Account ──────────────────────────────────────────
+                    //  Account
                     _SectionLabel("Account"),
                     const SizedBox(height: 12),
                     _Card(
@@ -348,8 +338,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             icon: Icons.security_rounded,
                             label: "Account Security",
                             subtitle: "Change password, 2FA settings",
-                            onTap: () =>
-                                _showComingSoon("Account Security"),
+                            onTap: () => _showComingSoon("Account Security"),
                           ),
                           _Divider(),
                           _PrefTile(
@@ -371,7 +360,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  // ── Avatar ─────────────────────────────────────────────────────────────────
+  //  Avatar
 
   Widget _buildAvatar() {
     return Center(
@@ -393,13 +382,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               backgroundColor: Colors.grey.shade200,
               backgroundImage: _newPhoto != null
                   ? FileImage(_newPhoto!) as ImageProvider
-                  : (_currentPhotoUrl != null &&
-                          _currentPhotoUrl!.isNotEmpty
+                  : (_currentPhotoUrl != null && _currentPhotoUrl!.isNotEmpty
                       ? NetworkImage(_currentPhotoUrl!)
                       : null),
               child: (_newPhoto == null &&
-                      (_currentPhotoUrl == null ||
-                          _currentPhotoUrl!.isEmpty))
+                      (_currentPhotoUrl == null || _currentPhotoUrl!.isEmpty))
                   ? const Icon(Icons.person_rounded,
                       size: 56, color: Colors.white)
                   : null,
@@ -410,8 +397,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             right: 2,
             child: GestureDetector(
               onTap: () async {
-                final file =
-                    await ImagePickerService.pickAndCrop(context);
+                final file = await ImagePickerService.pickAndCrop(context);
                 if (file != null) setState(() => _newPhoto = file);
               },
               child: Container(
@@ -439,7 +425,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  //  Helpers
 
   void _showComingSoon(String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -451,11 +437,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text("Delete Account",
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.w700)),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
         content: const Text(
             "This will permanently delete your account and all your data. This cannot be undone.",
             style: TextStyle(fontSize: 13)),
@@ -466,8 +450,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Delete",
-                style: TextStyle(color: Colors.redAccent)),
+            child:
+                const Text("Delete", style: TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -475,7 +459,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 }
 
-// ── Shared sub-widgets ────────────────────────────────────────────────────────
+//  Shared sub-widgets
 
 class _SectionLabel extends StatelessWidget {
   final String label;
@@ -485,9 +469,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(label,
         style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
-            color: Colors.black87));
+            fontSize: 15, fontWeight: FontWeight.w800, color: Colors.black87));
   }
 }
 
@@ -499,8 +481,7 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -550,8 +531,7 @@ class _NotifTile extends StatelessWidget {
             ),
             child: Icon(icon,
                 size: 18,
-                color:
-                    value ? Colors.redAccent : Colors.grey.shade400),
+                color: value ? Colors.redAccent : Colors.grey.shade400),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -562,9 +542,7 @@ class _NotifTile extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: value
-                            ? Colors.black87
-                            : Colors.grey.shade500)),
+                        color: value ? Colors.black87 : Colors.grey.shade500)),
                 const SizedBox(height: 2),
                 Text(subtitle,
                     style: TextStyle(
@@ -617,13 +595,10 @@ class _PrefTile extends StatelessWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: (iconColor ?? Colors.redAccent)
-                    .withValues(alpha: 0.08),
+                color: (iconColor ?? Colors.redAccent).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon,
-                  size: 18,
-                  color: iconColor ?? Colors.redAccent),
+              child: Icon(icon, size: 18, color: iconColor ?? Colors.redAccent),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -637,9 +612,8 @@ class _PrefTile extends StatelessWidget {
                           color: labelColor ?? Colors.black87)),
                   const SizedBox(height: 2),
                   Text(subtitle,
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey.shade400)),
+                      style:
+                          TextStyle(fontSize: 11, color: Colors.grey.shade400)),
                 ],
               ),
             ),

@@ -6,10 +6,40 @@ import 'package:user_app/widgets/progress_bar.dart';
 import 'package:user_app/widgets/shipment_address_design.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/global/global.dart';
+import 'package:user_app/widgets/rate_order_sheet.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends StatefulWidget {
   final String? orderID;
   const OrderDetailsScreen({super.key, this.orderID});
+
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  // Ensures the rating sheet is only shown once per screen session
+  bool _ratingPrompted = false;
+
+  void _maybeShowRatingPrompt(Map<String, dynamic> data) {
+    if (_ratingPrompted) return;
+    final status = data['status']?.toString() ?? '';
+    final bool isDelivered = status == 'Delivered';
+    final bool alreadyRated = data['rating'] != null;
+    if (!isDelivered || alreadyRated) return;
+
+    _ratingPrompted = true;
+
+    // Delay slightly so the screen finishes building first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showRateOrderSheet(
+        context,
+        orderID: widget.orderID ?? '',
+        restaurantID: data['restaurantID']?.toString() ?? '',
+        restaurantName: data['restaurantName']?.toString() ?? 'Restaurant',
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +53,24 @@ class OrderDetailsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
             .collection("users")
             .doc(currentUid)
             .collection("orders")
-            .doc(orderID)
-            .get(),
+            .doc(widget.orderID)
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: circularProgress());
           }
 
-          final data = snapshot.data!.data()! as Map<String, dynamic>;
+          final data =
+              snapshot.data!.data()! as Map<String, dynamic>;
           final status = data["status"]?.toString() ?? "Pending";
+
+          // Check if we should prompt for rating
+          _maybeShowRatingPrompt(data);
 
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
@@ -51,9 +85,20 @@ class OrderDetailsScreen extends StatelessWidget {
                 // ── Summary ──────────────────────────────────────────
                 _SectionLabel("Order Summary"),
                 const SizedBox(height: 10),
-                _SummaryCard(data: data, orderID: orderID),
+                _SummaryCard(data: data, orderID: widget.orderID),
 
                 const SizedBox(height: 20),
+
+                // ── Rating badge if already rated ────────────────────
+                if (data['rating'] != null)
+                  _RatedBadge(
+                    foodRating: (data['rating'] as num).toInt(),
+                    driverRating:
+                        (data['driverRating'] as num?)?.toInt() ?? 0,
+                  ),
+
+                if (data['rating'] != null)
+                  const SizedBox(height: 20),
 
                 // ── Address / pickup ─────────────────────────────────
                 if (data["orderType"] != "pickup") ...[
@@ -147,7 +192,8 @@ class _OrderProgressCard extends StatelessWidget {
               const SizedBox(width: 10),
               const Text(
                 "Order Status",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                style: TextStyle(
+                    fontSize: 15, fontWeight: FontWeight.w800),
               ),
               const Spacer(),
               _StatusBadge(status: status),
@@ -201,8 +247,9 @@ class _TimelineRow extends StatelessWidget {
     final Color doneColor = const Color(0xFF00C48C);
     final Color pendingColor = Colors.grey.shade200;
 
-    final Color dotColor =
-        isDone ? (isActive ? activeColor : doneColor) : pendingColor;
+    final Color dotColor = isDone
+        ? (isActive ? activeColor : doneColor)
+        : pendingColor;
     final Color lineColor = isDone && !isActive ? doneColor : pendingColor;
 
     return Row(
@@ -248,7 +295,8 @@ class _TimelineRow extends StatelessWidget {
         // ── Label ──────────────────────────────────────────────────
         Expanded(
           child: Padding(
-            padding: EdgeInsets.only(top: 6, bottom: isLast ? 0 : 36),
+            padding: EdgeInsets.only(
+                top: 6, bottom: isLast ? 0 : 36),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -256,7 +304,9 @@ class _TimelineRow extends StatelessWidget {
                   step.label,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                    fontWeight: isActive
+                        ? FontWeight.w800
+                        : FontWeight.w600,
                     color: isActive
                         ? Colors.black87
                         : isDone
@@ -269,8 +319,9 @@ class _TimelineRow extends StatelessWidget {
                   step.sublabel,
                   style: TextStyle(
                     fontSize: 12,
-                    color:
-                        isActive ? Colors.grey.shade600 : Colors.grey.shade400,
+                    color: isActive
+                        ? Colors.grey.shade600
+                        : Colors.grey.shade400,
                   ),
                 ),
               ],
@@ -297,12 +348,18 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (Color bg, Color fg) = switch (status) {
-      'Pending' => (const Color(0xFFFEF3C7), const Color(0xFFD97706)),
+      'Pending' => (
+          const Color(0xFFFEF3C7),
+          const Color(0xFFD97706)
+        ),
       'In Progress' => (
           Colors.redAccent.withValues(alpha: 0.1),
           Colors.redAccent
         ),
-      'Ready' => (Colors.blue.shade50, Colors.blue.shade700),
+      'Ready' => (
+          Colors.blue.shade50,
+          Colors.blue.shade700
+        ),
       'Delivered' => (
           const Color(0xFF00C48C).withValues(alpha: 0.1),
           const Color(0xFF00C48C)
@@ -318,7 +375,8 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status,
-        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: fg),
+        style: TextStyle(
+            fontSize: 11, fontWeight: FontWeight.w700, color: fg),
       ),
     );
   }
@@ -348,7 +406,8 @@ class _SummaryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("Total",
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade500)),
+                  style: TextStyle(
+                      fontSize: 13, color: Colors.grey.shade500)),
               Text(
                 "${data["totalAmount"] ?? '0.00'} zł",
                 style: const TextStyle(
@@ -364,8 +423,8 @@ class _SummaryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Delivery Fee",
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                    style: TextStyle(
+                        fontSize: 12, color: Colors.grey.shade500)),
                 Text("${data["deliveryFee"]} zł",
                     style: const TextStyle(fontSize: 12)),
               ],
@@ -419,9 +478,7 @@ class _SummaryCard extends StatelessWidget {
     final s = p.toString();
     if (s == "cash") return "Cash on Delivery";
     if (s.toLowerCase().contains("stripe") ||
-        s.toLowerCase().contains("card")) {
-      return "Card (Stripe)";
-    }
+        s.toLowerCase().contains("card")) return "Card (Stripe)";
     return s;
   }
 }
@@ -443,7 +500,8 @@ class _InfoRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+                  style: TextStyle(
+                      fontSize: 11, color: Colors.grey.shade500)),
               const SizedBox(height: 1),
               Text(value,
                   style: const TextStyle(
@@ -466,8 +524,8 @@ class _AddressSection extends StatelessWidget {
   Widget build(BuildContext context) {
     // New model — address embedded directly on the order
     if (data["address"] is Map) {
-      final addr =
-          Address.fromJson(Map<String, dynamic>.from(data["address"] as Map));
+      final addr = Address.fromJson(
+          Map<String, dynamic>.from(data["address"] as Map));
       return ShipmentAddressDesign(model: addr);
     }
 
@@ -501,7 +559,8 @@ class _AddressSection extends StatelessWidget {
               icon: Icons.location_off_rounded, text: "Address not found");
         }
         return ShipmentAddressDesign(
-          model: Address.fromJson(snap.data!.data()! as Map<String, dynamic>),
+          model: Address.fromJson(
+              snap.data!.data()! as Map<String, dynamic>),
         );
       },
     );
@@ -537,11 +596,12 @@ class _PickupCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("Pick up from store",
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                    style: TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w700)),
                 SizedBox(height: 2),
                 Text("Show this order at the counter",
-                    style: TextStyle(fontSize: 12, color: Color(0xFFAAAAAA))),
+                    style: TextStyle(
+                        fontSize: 12, color: Color(0xFFAAAAAA))),
               ],
             ),
           ),
@@ -570,7 +630,8 @@ class _InfoTile extends StatelessWidget {
           Icon(icon, color: Colors.grey.shade400, size: 18),
           const SizedBox(width: 12),
           Text(text,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+              style: TextStyle(
+                  fontSize: 13, color: Colors.grey.shade600)),
         ],
       ),
     );
@@ -589,7 +650,9 @@ class _StatusImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: Image.asset(
-        delivered ? 'assets/images/delivered.jpg' : 'assets/images/state.jpg',
+        delivered
+            ? 'assets/images/delivered.jpg'
+            : 'assets/images/state.jpg',
         width: double.infinity,
         fit: BoxFit.cover,
       ),
@@ -612,6 +675,81 @@ class _SectionLabel extends StatelessWidget {
         fontWeight: FontWeight.w800,
         color: Colors.black87,
       ),
+    );
+  }
+}
+
+// ── Rated badge — shown when order has already been rated ─────────────────────
+
+class _RatedBadge extends StatelessWidget {
+  final int foodRating;
+  final int driverRating;
+  const _RatedBadge(
+      {required this.foodRating, required this.driverRating});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF00C48C).withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+            color: const Color(0xFF00C48C).withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle_rounded,
+              color: Color(0xFF00C48C), size: 20),
+          const SizedBox(width: 10),
+          const Text('You rated this order',
+              style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF00C48C))),
+          const Spacer(),
+          _MiniStars(label: 'Food', rating: foodRating),
+          const SizedBox(width: 12),
+          _MiniStars(label: 'Driver', rating: driverRating),
+        ],
+      ),
+    );
+  }
+}
+
+class _MiniStars extends StatelessWidget {
+  final String label;
+  final int rating;
+  const _MiniStars({required this.label, required this.rating});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(label,
+            style: TextStyle(
+                fontSize: 9,
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.w500)),
+        const SizedBox(height: 2),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            5,
+            (i) => Icon(
+              i < rating
+                  ? Icons.star_rounded
+                  : Icons.star_outline_rounded,
+              size: 12,
+              color: i < rating
+                  ? Colors.amber.shade600
+                  : Colors.grey.shade300,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

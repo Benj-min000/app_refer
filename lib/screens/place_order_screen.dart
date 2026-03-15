@@ -20,7 +20,7 @@ import 'package:user_app/widgets/unified_app_bar.dart';
 import 'package:user_app/widgets/address_design.dart';
 import 'package:user_app/widgets/unified_snackbar.dart';
 
-// ── Payment method ─────────────────────────────────────────────────────────────
+//  Payment method
 
 enum _PaymentMethod { cash, stripe }
 
@@ -48,7 +48,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   String _gpsLabel = "Finding location...";
   Map<String, dynamic> _gpsData = {};
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────────
+  //  Lifecycle
 
   @override
   void initState() {
@@ -160,7 +160,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  // ── Validation & ordering ─────────────────────────────────────────────────────
+  //  Validation & ordering
 
   bool _validate() {
     if (_orderType == "delivery") {
@@ -239,7 +239,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      final amountProvider = Provider.of<AmountProvider>(context, listen: false);
+      final amountProvider =
+          Provider.of<AmountProvider>(context, listen: false);
       final subtotal = amountProvider.totalAmount;
       final fee = _deliveryFee(subtotal);
       final total = subtotal + fee;
@@ -321,7 +322,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     );
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────────
+  //  Build
 
   @override
   Widget build(BuildContext context) {
@@ -348,7 +349,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Order summary card ───────────────────────────────────
+                  //  Order summary card
                   _SectionLabel(label: "Order Summary"),
                   const SizedBox(height: 10),
                   _SummaryCard(
@@ -360,7 +361,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   const SizedBox(height: 24),
 
-                  // ── Order type ───────────────────────────────────────────
+                  //  Order type
                   _SectionLabel(label: "Order Type"),
                   const SizedBox(height: 10),
                   _OrderTypeSelector(
@@ -370,7 +371,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   const SizedBox(height: 24),
 
-                  // ── Address / pickup ─────────────────────────────────────
+                  //  Address / pickup
                   if (_orderType == "delivery") ...[
                     _SectionLabel(label: "Delivery Address"),
                     const SizedBox(height: 10),
@@ -420,7 +421,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   const SizedBox(height: 24),
 
-                  // ── Payment ──────────────────────────────────────────────
+                  //  Payment
                   _SectionLabel(label: "Payment Method"),
                   const SizedBox(height: 10),
                   _PaymentSelector(
@@ -430,7 +431,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
                   const SizedBox(height: 32),
 
-                  // ── Place order button ───────────────────────────────────
+                  //  Place order button
                   _PlaceOrderButton(
                     isProcessing: _isProcessing,
                     selectedPayment: _selectedPayment,
@@ -444,7 +445,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   }
 }
 
-// ── Sub-widgets ───────────────────────────────────────────────────────────────
+//  Sub-widgets
 
 class _SectionLabel extends StatelessWidget {
   final String label;

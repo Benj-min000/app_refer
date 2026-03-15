@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:user_app/global/global.dart';
 import 'package:user_app/widgets/unified_app_bar.dart';
 
-// ── Notification source → preference key mapping ──────────────────────────────
+//  Notification source → preference key mapping
 // source: 'order'  → notif_order_status
 // source: 'admin'  → notif_promotions  (admin broadcasts)
 // source: 'nearby' → notif_nearby
@@ -14,13 +14,10 @@ class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  State<NotificationsScreen> createState() =>
-      _NotificationsScreenState();
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState
-    extends State<NotificationsScreen> {
-
+class _NotificationsScreenState extends State<NotificationsScreen> {
   bool _shouldShow(Map<String, dynamic> data) {
     final source = data['source']?.toString() ?? 'welcome';
     return switch (source) {
@@ -108,8 +105,7 @@ class _NotificationsScreenState
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
-              child:
-                  CircularProgressIndicator(color: Colors.redAccent),
+              child: CircularProgressIndicator(color: Colors.redAccent),
             );
           }
 
@@ -120,8 +116,9 @@ class _NotificationsScreenState
             return _shouldShow(doc.data() as Map<String, dynamic>);
           }).toList();
 
-          final unread =
-              visible.where((d) => (d.data() as Map)['isRead'] != true).toList();
+          final unread = visible
+              .where((d) => (d.data() as Map)['isRead'] != true)
+              .toList();
 
           if (visible.isEmpty) {
             return Center(
@@ -138,8 +135,8 @@ class _NotificationsScreenState
                           color: Colors.grey.shade500)),
                   const SizedBox(height: 6),
                   Text("You're all caught up!",
-                      style: TextStyle(
-                          fontSize: 13, color: Colors.grey.shade400)),
+                      style:
+                          TextStyle(fontSize: 13, color: Colors.grey.shade400)),
                 ],
               ),
             );
@@ -147,7 +144,7 @@ class _NotificationsScreenState
 
           return Column(
             children: [
-              // ── Header row ───────────────────────────────────────
+              //  Header row
               if (unread.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -175,19 +172,17 @@ class _NotificationsScreenState
                   ),
                 ),
 
-              // ── List ─────────────────────────────────────────────
+              //  List
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                   itemCount: visible.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: 8),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final doc = visible[index];
                     final data = doc.data() as Map<String, dynamic>;
                     final bool isRead = data['isRead'] == true;
-                    final source =
-                        data['source']?.toString() ?? 'welcome';
+                    final source = data['source']?.toString() ?? 'welcome';
                     final color = _colorForSource(source);
 
                     return Dismissible(
@@ -229,8 +224,7 @@ class _NotificationsScreenState
                                 height: 40,
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.1),
-                                  borderRadius:
-                                      BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Icon(_iconForSource(source),
                                     size: 18, color: color),
@@ -240,15 +234,13 @@ class _NotificationsScreenState
                               // Content
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            data['title']?.toString() ??
-                                                '',
+                                            data['title']?.toString() ?? '',
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: isRead
