@@ -1,0 +1,49 @@
+name: rider_app
+description: Delivery Rider App - Poland Delivery Platform
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  firebase_messaging: ^14.7.9
+  firebase_storage: ^11.5.6
+  cloud_functions: ^4.5.8        # ← for saveFcmToken callable
+
+  # Maps & Location
+  google_maps_flutter: ^2.5.3
+  geolocator: ^10.1.0
+  permission_handler: ^11.1.0
+
+  # State management
+  provider: ^6.1.1
+
+  # UI
+  cached_network_image: ^3.3.0
+  shimmer: ^3.0.0
+
+  # Notifications
+  flutter_local_notifications: ^17.1.2
+
+  # Utils
+  intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  url_launcher: ^6.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
