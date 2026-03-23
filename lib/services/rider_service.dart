@@ -1,160 +1,136 @@
 // lib/services/rider_service.dart
 //
 // All Firestore read/write for the rider app.
-// Collection names come from AppConstants so they stay in sync with user app.
+// Works directly with the orders collection — no separate deliveries collection.
+// Status strings MUST match the customer app exactly:
+//   Pending → In Progress → Ready → Delivered
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/delivery_model.dart';
 import '../utils/app_theme.dart';
 
 class RiderService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // ── Online / offline ──────────────────────────────────────────────────────
-  Future<void> setOnlineStatus(String riderId, bool isOnline) async {
-    await _db.collection(AppConstants.colRiders).doc(riderId).update({
-      'isOnline': isOnline,
-      'lastSeenAt': FieldValue.serverTimestamp(),
-    });
-  }
+  // ── Rider doc ──────────────────────────────────────────────────────────────
 
-  // ── Real-time streams ─────────────────────────────────────────────────────
+  Stream<DocumentSnapshot> streamRider(String riderUID) =>
+      _db.collection(AppConstants.colRiders).doc(riderUID).snapshots();
 
-  /// Stream rider doc changes (isOnline, hasActiveDelivery, earnings etc.)
-  Stream<DocumentSnapshot> streamRider(String riderId) =>
-      _db.collection(AppConstants.colRiders).doc(riderId).snapshots();
+  Future<void> setOnlineStatus(String riderUID, bool isOnline) =>
+      _db.collection(AppConstants.colRiders).doc(riderUID).update({
+        'isOnline': isOnline,
+        'lastSeenAt': FieldValue.serverTimestamp(),
+      });
 
-  /// Stream pending dispatch jobs assigned to this rider
-  Stream<QuerySnapshot> streamPendingJobs(String riderId) =>
+  // ── Dispatch jobs ──────────────────────────────────────────────────────────
+  // dispatch_jobs/{jobID}
+  //   riderId, status ('pending'|'accepted'|'rejected'), orderID, createdAt
+
+  Stream<QuerySnapshot> streamPendingJobs(String riderUID) =>
       _db
           .collection(AppConstants.colDispatchJobs)
-          .where('riderId', isEqualTo: riderId)
-          .where('status', isEqualTo: 'PENDING')
+          .where('riderId', isEqualTo: riderUID)
+          .where('status', isEqualTo: AppConstants.jobPending)
           .orderBy('createdAt', descending: true)
           .snapshots();
 
-  /// Stream active delivery doc.
-  /// User app also subscribes to this same doc for the tracking screen.
-  Stream<DocumentSnapshot?> streamActiveDelivery(String deliveryId) =>
-      _db.collection(AppConstants.colDeliveries).doc(deliveryId).snapshots();
+  Future<void> acceptJob(String jobID, String riderUID) =>
+      _db.collection(AppConstants.colDispatchJobs).doc(jobID).update({
+        'status': AppConstants.jobAccepted,
+        'acceptedAt': FieldValue.serverTimestamp(),
+      });
 
-  // ── Job accept / reject ───────────────────────────────────────────────────
+  Future<void> rejectJob(String jobID) =>
+      _db.collection(AppConstants.colDispatchJobs).doc(jobID).update({
+        'status': AppConstants.jobRejected,
+        'rejectedAt': FieldValue.serverTimestamp(),
+      });
 
-  /// Accept job — rider app updates the dispatch_job doc.
-  /// Cloud Function then sets delivery.riderId and delivery.status = ASSIGNED.
-  Future<void> acceptJob(String jobId, String riderId) async {
-    await _db.collection(AppConstants.colDispatchJobs).doc(jobId).update({
-      'status': 'ACCEPTED',
-      'acceptedAt': FieldValue.serverTimestamp(),
-    });
-    // NOTE: Do NOT set delivery status here — Cloud Function owns that transition
-    // to avoid race conditions with the user app's real-time listener.
-  }
-
-  /// Reject job
-  Future<void> rejectJob(String jobId) async {
-    await _db.collection(AppConstants.colDispatchJobs).doc(jobId).update({
-      'status': 'REJECTED',
-      'rejectedAt': FieldValue.serverTimestamp(),
-    });
-  }
-
-  // ── Delivery status transitions ───────────────────────────────────────────
+  // ── Order status transitions ───────────────────────────────────────────────
+  // The rider directly updates orders/{orderID}.status.
+  // The customer app OrderDetailsScreen streams this same doc,
+  // so the progress timeline updates in real time.
   //
-  // Rider app advances the delivery status.
-  // Each transition also writes the mirrored order status so that:
-  //   - user app order history screen reflects the correct state
-  //   - user app tracking screen gets the status update via its own listener
-  //
-  // State machine (matches project spec):
-  //   ASSIGNED → AT_STORE → PICKED_UP → DELIVERING → DELIVERED
-  //
-  Future<void> updateDeliveryStatus(String deliveryId, String newStatus) async {
-    final deliveryRef = _db.collection(AppConstants.colDeliveries).doc(deliveryId);
+  // Flow the rider controls:
+  //   In Progress → Ready      (rider arrives at restaurant, picks up order)
+  //   Ready       → Delivered  (rider delivers to customer)
 
-    final updates = <String, dynamic>{
+  Future<void> updateOrderStatus(String orderID, String newStatus) async {
+    final Map<String, dynamic> updates = {
       'status': newStatus,
-      'lastUpdateAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
 
-    // Side effects per transition
-    switch (newStatus) {
-      case AppConstants.statusAtStore:
-        updates['arrivedAtStoreAt'] = FieldValue.serverTimestamp();
-        break;
-      case AppConstants.statusPickedUp:
-        // routePhase change tells user app map to switch to TO_DROPOFF polyline
-        updates['routePhase'] = 'TO_DROPOFF';
-        updates['pickedUpAt'] = FieldValue.serverTimestamp();
-        break;
-      case AppConstants.statusDelivered:
-        updates['trackingEnabled'] = false;
-        updates['deliveredAt'] = FieldValue.serverTimestamp();
-        break;
+    // Timestamp fields per transition
+    if (newStatus == AppConstants.statusReady) {
+      updates['pickedUpAt'] = FieldValue.serverTimestamp();
+    } else if (newStatus == AppConstants.statusDelivered) {
+      updates['deliveredAt'] = FieldValue.serverTimestamp();
     }
 
-    await deliveryRef.update(updates);
+    // Update both order locations so customer app history + details both update
+    final batch = _db.batch();
+    final topLevel =
+        _db.collection(AppConstants.colOrders).doc(orderID);
+    batch.update(topLevel, updates);
 
-    // Mirror to orders collection so user app order list/history stays in sync
-    final deliverySnap = await deliveryRef.get();
-    final orderId = (deliverySnap.data() as Map<String, dynamic>?)?.get('orderId');
-    if (orderId != null) {
-      await _db.collection(AppConstants.colOrders).doc(orderId).update({
-        'status': _deliveryStatusToOrderStatus(newStatus),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    }
+    // Also update the user sub-collection copy if driverUID is known
+    // (we handle this in completeDelivery below with a batch)
+    await batch.commit();
   }
 
-  /// Map delivery status → order status that user app understands
-  String _deliveryStatusToOrderStatus(String deliveryStatus) {
-    switch (deliveryStatus) {
-      case AppConstants.statusAtStore:    return AppConstants.orderPreparing;
-      case AppConstants.statusPickedUp:   return AppConstants.orderPickedUp;
-      case AppConstants.statusDelivering: return AppConstants.orderDelivering;
-      case AppConstants.statusDelivered:  return AppConstants.orderCompleted;
-      default:                            return AppConstants.orderConfirmed;
-    }
-  }
-
-  // ── Write rider GPS to delivery doc ──────────────────────────────────────
-  // User app tracking screen subscribes to this field in real time.
-  Future<void> updateRiderLocation({
-    required String deliveryId,
-    required RiderLocation location,
-  }) async {
-    await _db.collection(AppConstants.colDeliveries).doc(deliveryId).update({
-      'riderLocation': location.toMap(),
-      'lastUpdateAt': FieldValue.serverTimestamp(),
-    });
-  }
-
-  // ── Complete delivery (atomic batch) ─────────────────────────────────────
+  /// Called when the rider marks an order as Delivered.
+  /// Atomic batch: marks order delivered + updates rider stats.
   Future<void> completeDelivery({
-    required String riderId,
-    required String deliveryId,
+    required String riderUID,
+    required String orderID,
+    required String orderedByUID,
     required double earnings,
   }) async {
     final batch = _db.batch();
 
-    batch.update(_db.collection(AppConstants.colDeliveries).doc(deliveryId), {
-      'status': AppConstants.statusDelivered,
-      'trackingEnabled': false,
-      'deliveredAt': FieldValue.serverTimestamp(),
-    });
+    final orderRef =
+        _db.collection(AppConstants.colOrders).doc(orderID);
+    final userOrderRef = _db
+        .collection(AppConstants.colUsers)
+        .doc(orderedByUID)
+        .collection(AppConstants.colOrders)
+        .doc(orderID);
+    final riderRef =
+        _db.collection(AppConstants.colRiders).doc(riderUID);
 
-    batch.update(_db.collection(AppConstants.colRiders).doc(riderId), {
-      'hasActiveDelivery': false,
-      'currentDeliveryId': null,
-      'totalEarnings': FieldValue.increment(earnings),
+    final Map<String, dynamic> orderUpdates = {
+      'status': AppConstants.statusDelivered,
+      'deliveredAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+
+    batch.update(orderRef, orderUpdates);
+    batch.update(userOrderRef, orderUpdates);
+    batch.update(riderRef, {
+      'hasActiveOrder': false,
+      'currentOrderID': null,
       'totalDeliveries': FieldValue.increment(1),
+      'totalEarnings': FieldValue.increment(earnings),
     });
 
     await batch.commit();
   }
-}
 
-// Extension so map access doesn't throw on missing keys
-extension _MapGet on Map<String, dynamic> {
-  dynamic get(String key) => containsKey(key) ? this[key] : null;
+  // ── Active order stream ────────────────────────────────────────────────────
+
+  Stream<DocumentSnapshot> streamOrder(String orderID) =>
+      _db.collection(AppConstants.colOrders).doc(orderID).snapshots();
+
+
+
+  // ── Rider GPS location ─────────────────────────────────────────────────────
+  // Written to riders/{uid}.location so future map tracking can use it.
+
+  Future<void> updateRiderLocation(
+      String riderUID, double lat, double lng) =>
+      _db.collection(AppConstants.colRiders).doc(riderUID).update({
+        'location': {'lat': lat, 'lng': lng},
+        'locationUpdatedAt': FieldValue.serverTimestamp(),
+      });
 }

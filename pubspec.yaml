@@ -16,7 +16,7 @@ dependencies:
   cloud_firestore: ^4.13.6
   firebase_messaging: ^14.7.9
   firebase_storage: ^11.5.6
-  cloud_functions: ^4.5.8        # ← for saveFcmToken callable
+  cloud_functions: ^4.5.8       
 
   # Maps & Location
   google_maps_flutter: ^2.5.3
@@ -34,9 +34,13 @@ dependencies:
   flutter_local_notifications: ^17.1.2
 
   # Utils
-  intl: ^0.18.1
+  intl: ^0.20.2
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.2
+  fancy_password_field: ^2.0.8
+  phone_form_field: ^10.0.17
+  country_flags: ^4.1.2
+  auto_translator: ^2.3.5
 
 dev_dependencies:
   flutter_test:
@@ -45,5 +49,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/
+  generate: true
+
+  # assets:
+  #   - assets/

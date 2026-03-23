@@ -8,9 +8,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/delivery_model.dart';
-import '../utils/app_theme.dart';
+import 'package:rider_app/models/delivery_model.dart';
 import 'rider_service.dart';
 
 class LocationService {
@@ -89,10 +87,7 @@ class LocationService {
     try {
       // Write to Firestore → triggers onRiderLocationUpdate Cloud Function
       // which calls Google Directions and writes back eta + route.encodedPolyline
-      await _riderService.updateRiderLocation(
-        deliveryId: _activeDeliveryId!,
-        location: loc,
-      );
+      await _riderService.updateRiderLocation(_activeDeliveryId!, loc.lat, loc.lng);
     } catch (e) {
       _log('Failed to update location: $e');
     }

@@ -1,10 +1,9 @@
 // lib/screens/profile_setup_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
-import '../services/rider_provider.dart';
-import '../utils/app_theme.dart';
-import '../models/delivery_model.dart';
+import 'package:rider_app/services/auth_service.dart';
+import 'package:rider_app/providers/rider_provider.dart';
+import 'package:rider_app/utils/app_theme.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
