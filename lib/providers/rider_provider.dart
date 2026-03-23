@@ -342,6 +342,14 @@ class RiderProvider extends ChangeNotifier {
     _setLoading(false);
   }
 
+  /// Called after ProfileSetupScreen creates the rider doc.
+  /// Re-runs _loadProfile with the current auth UID.
+  Future<void> reload() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    await _loadProfile(uid);
+  }
+
   Future<void> signOut() async {
     _cleanup();
     await _auth.signOut();

@@ -132,14 +132,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.person_outline_rounded,
-              color: AppTheme.textPrimary),
-          onPressed: () =>
-              Navigator.pushNamed(context, '/profile'),
-        ),
-      ],
+      actions: [],
     );
   }
 

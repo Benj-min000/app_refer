@@ -14,6 +14,7 @@ import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/active_delivery_screen.dart';
 import 'screens/profile_setup_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,9 +50,6 @@ class RiderApp extends StatelessWidget {
 }
 
 // ── Router ────────────────────────────────────────────────────────────────────
-// Listens to RiderProvider.appState and shows the correct screen.
-// RiderStatsProvider is only mounted once the rider is authenticated
-// so it always has a valid riderUID to query against.
 
 class _AppRouter extends StatelessWidget {
   const _AppRouter();
@@ -61,7 +59,6 @@ class _AppRouter extends StatelessWidget {
     final provider = context.watch<RiderProvider>();
 
     switch (provider.appState) {
-
       case RiderAppState.loading:
         return const _SplashScreen();
 
@@ -73,16 +70,62 @@ class _AppRouter extends StatelessWidget {
 
       case RiderAppState.idle:
       case RiderAppState.onJob:
-        // Mount RiderStatsProvider here — rider is authenticated,
-        // uid is guaranteed non-null.
         return ChangeNotifierProvider(
-          key: ValueKey(provider.rider!.uid),  // recreate if uid changes
+          key: ValueKey(provider.rider!.uid),
           create: (_) => RiderStatsProvider(provider.rider!.uid),
           child: provider.appState == RiderAppState.onJob
               ? const ActiveDeliveryScreen()
-              : const HomeScreen(),
+              : const _RiderShell(),
         );
     }
+  }
+}
+
+// ── Shell — bottom nav + screen switching ─────────────────────────────────────
+
+class _RiderShell extends StatefulWidget {
+  const _RiderShell();
+
+  @override
+  State<_RiderShell> createState() => _RiderShellState();
+}
+
+class _RiderShellState extends State<_RiderShell> {
+  int _currentIndex = 0;
+
+  static const List<Widget> _screens = [
+    HomeScreen(),
+    ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.background,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (i) => setState(() => _currentIndex = i),
+        backgroundColor: AppTheme.surface,
+        selectedItemColor: AppTheme.primary,
+        unselectedItemColor: AppTheme.textSecondary,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
   }
 }
 

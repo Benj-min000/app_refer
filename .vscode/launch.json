@@ -5,21 +5,21 @@
       "name": "Flutter (Debug)",
       "request": "launch",
       "type": "dart",
-      "args": ["--dart-define-from-file", "secrets.json"]
+      "args": ["--dart-define-from-file", "cloud_functions/secrets.json"]
     },
     {
       "name": "Flutter (Profile)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile",
-      "args": ["--dart-define-from-file", "secrets.json"]
+      "args": ["--dart-define-from-file", "cloud_functions/secrets.json"]
     },
     {
       "name": "Flutter (Release)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release",
-      "args": ["--dart-define-from-file", "secrets.json"]
+      "args": ["--dart-define-from-file", "cloud_functions/secrets.json"]
     }
   ]
 }
