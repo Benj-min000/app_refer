@@ -82,3 +82,5 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+
+translator_key
