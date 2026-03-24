@@ -1,3 +1,6 @@
 {
-    "@@locale": "pl"
+    "@@locale": "pl",
+    "time_just_now": "Właśnie",
+    "time_minutes": "{n}m temu",
+    "time_hours": "{n}godz. temu"
 }

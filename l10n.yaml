@@ -6,7 +6,7 @@ output-dir: lib/l10n
 
 translator:
   service: Google
-  key_file: secrets.json
+  key_file: cloud_functions/secrets.json
   targets:
     - ko # Korean
     - pl 

@@ -51,38 +51,24 @@ class AuthService {
   Future<void> ensureRiderProfile({
     required String name,
     required String phone,
-    required String vehicleType, // 'SCOOTER' | 'BIKE' | 'CAR'
+    required String vehicleType,
   }) async {
     final uid = currentUser!.uid;
-    final doc =
-        await _db.collection('riders').doc(uid).get();
 
-    if (!doc.exists) {
-      await _db.collection('riders').doc(uid).set({
-        // ── Identity ──────────────────────────────────────────────────────
-        'name': name,
-        'phone': phone,
-        'photoUrl': '',
-        'role': 'rider',
-
-        // ── Vehicle ───────────────────────────────────────────────────────
-        'vehicleType': vehicleType,
-
-        // ── Status ────────────────────────────────────────────────────────
-        'isOnline': false,
-        'hasActiveOrder': false, 
-        'currentOrderID': null,  
-
-        // ── Stats ─────────────────────────────────────────────────────────
-        'totalDeliveries': 0,     
-        'totalEarnings': 0.0,      
-        'rating': 5.0,             
-
-        // ── Timestamps ───────────────────────────────────────────────────
-        'createdAt': FieldValue.serverTimestamp(),
-        'lastSeenAt': FieldValue.serverTimestamp(),
-      });
-    }
+    await FirebaseFirestore.instance
+        .collection('riders')
+        .doc(uid)
+        .set({
+      'name': name,
+      'phone': phone,
+      'vehicleType': vehicleType,
+      'isOnline': true,
+      'hasActiveOrder': false,
+      'currentOrderID': null,
+      'totalDeliveries': 0,
+      'totalEarnings': 0,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
 
   // ── Sign out ───────────────────────────────────────────────────────────────

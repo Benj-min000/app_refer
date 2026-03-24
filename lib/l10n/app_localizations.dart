@@ -103,6 +103,24 @@ abstract class AppLocalizations {
     Locale('pl'),
     Locale('uk')
   ];
+
+  /// No description provided for @time_just_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get time_just_now;
+
+  /// No description provided for @time_minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}m ago'**
+  String time_minutes(int n);
+
+  /// No description provided for @time_hours.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}h ago'**
+  String time_hours(int n);
 }
 
 class _AppLocalizationsDelegate

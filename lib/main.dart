@@ -8,6 +8,8 @@ import 'firebase_options.dart';
 import 'providers/rider_provider.dart';
 import 'providers/rider_stats_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils/app_theme.dart';
 import 'global/global.dart';
 import 'screens/login_screen.dart';
@@ -157,4 +159,14 @@ class _SplashScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void setupFCM() {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.data['type'] == 'DISPATCH_JOB') {
+      FirebaseFirestore.instance
+          .collection('dispatch_jobs')
+          .get();
+    }
+  });
 }

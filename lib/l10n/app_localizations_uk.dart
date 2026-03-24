@@ -7,4 +7,17 @@ import 'app_localizations.dart';
 /// The translations for Ukrainian (`uk`).
 class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
+
+  @override
+  String get time_just_now => 'Щойно';
+
+  @override
+  String time_minutes(int n) {
+    return '$nхв тому';
+  }
+
+  @override
+  String time_hours(int n) {
+    return '$nгод тому';
+  }
 }

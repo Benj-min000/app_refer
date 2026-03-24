@@ -1,3 +1,21 @@
 {
-  "@@locale": "en"
+  "@@locale": "en",
+
+  "time_just_now": "Just now",
+  "time_minutes": "{n}m ago",
+  "@time_minutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "time_hours": "{n}h ago",
+  "@time_hours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

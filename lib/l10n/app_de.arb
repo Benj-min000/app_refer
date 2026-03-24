@@ -1,3 +1,6 @@
 {
-    "@@locale": "de"
+    "@@locale": "de",
+    "time_just_now": "Soeben",
+    "time_minutes": "{n}m vor",
+    "time_hours": "{n}h vor"
 }

@@ -1,3 +1,6 @@
 {
-    "@@locale": "ko"
+    "@@locale": "ko",
+    "time_just_now": "방금",
+    "time_minutes": "{n}m 전",
+    "time_hours": "{n}시간 전"
 }

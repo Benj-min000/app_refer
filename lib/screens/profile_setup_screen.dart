@@ -198,10 +198,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       );
 
       if (!mounted) return;
-      // Reload the provider — triggers _loadProfile which
-      // will find the new doc and transition to idle state.
-      await Provider.of<RiderProvider>(context, listen: false)
-          .reload();
+      Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       setState(
           () => _error = 'Failed to save profile. Try again.');

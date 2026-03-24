@@ -49,3 +49,4 @@ app.*.map.json
 
 # Cloud Functions Secrets
 cloud_functions/secrets.json
+translator_key

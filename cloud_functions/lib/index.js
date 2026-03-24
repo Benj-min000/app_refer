@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.savefcmtoken = exports.onriderlocationupdate = exports.onorderstatuschanged = exports.ondispatchjobaccepted = exports.stripewebhook = exports.createpaymentintent = void 0;
+exports.savefcmtoken = exports.placecashorder = exports.onriderlocationupdate = exports.onorderstatuschanged = exports.restaurantmarkorderready = exports.ondispatchjobaccepted = exports.stripewebhook = exports.createpaymentintent = void 0;
 const https_1 = require("firebase-functions/v2/https");
 const firestore_1 = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
@@ -23,14 +23,6 @@ const GOOGLE_MAPS_KEY = secrets.MAPS_API_KEY || secrets.GOOGLE || "";
 const STRIPE_PUBLISHABLE_KEY = secrets.STRIPE_PUBLISHABLE_KEY;
 const STRIPE_WEBHOOK_SECRET = secrets.STRIPE_WEBHOOK_SECRET ?? "";
 // ── Helpers ──────────────────────────────────────────────────────────────────
-function haversineKm(lat1, lng1, lat2, lng2) {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLng = ((lng2 - lng1) * Math.PI) / 180;
-    const a = Math.sin(dLat / 2) ** 2 +
-        Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
 async function getDirections(fromLat, fromLng, toLat, toLng) {
     try {
         const { data } = await axios_1.default.get("https://maps.googleapis.com/maps/api/directions/json", {
@@ -47,7 +39,7 @@ async function writeNotification(uid, title, body, source) {
         title, body, source, isRead: false, createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 }
-// ── 1. createPaymentIntent (Gen 2) ──────────────────────────────────────────
+// ── 1. createPaymentIntent ──────────────────────────────────────────────────
 exports.createpaymentintent = (0, https_1.onCall)({ region: "europe-west1" }, async (request) => {
     if (!request.auth)
         throw new https_1.HttpsError("unauthenticated", "Login required");
@@ -65,7 +57,7 @@ exports.createpaymentintent = (0, https_1.onCall)({ region: "europe-west1" }, as
     await db.collection("quotes").doc(quoteId).update({ stripePaymentIntentId: paymentIntent.id, paymentStatus: "PENDING" });
     return { clientSecret: paymentIntent.client_secret, publishableKey: STRIPE_PUBLISHABLE_KEY };
 });
-// ── 2. stripeWebhook (Gen 2) ────────────────────────────────────────────────
+// ── 2. stripeWebhook (Enhanced for Rider Pop-up) ───────────────────────────
 exports.stripewebhook = (0, https_1.onRequest)({ region: "europe-west1" }, async (req, res) => {
     const sig = req.headers["stripe-signature"];
     let event;
@@ -101,16 +93,51 @@ exports.stripewebhook = (0, https_1.onRequest)({ region: "europe-west1" }, async
             batch.update(db.collection("quotes").doc(quoteId), { status: "USED", orderID, paymentStatus: "PAID" });
             await batch.commit();
             await writeNotification(userId, "Order Placed! 🎉", `Order from ${restaurant.name} received.`, "order");
-            // Simplified dispatch trigger
-            const ridersSnap = await db.collection("riders").where("isOnline", "==", true).where("hasActiveOrder", "==", false).limit(1).get();
+            // DISPATCH TRIGGER: Send full data so the Rider App can show the job sheet
+            const ridersSnap = await db.collection("riders")
+                .where("isOnline", "==", true)
+                .where("hasActiveOrder", "==", false)
+                .limit(1)
+                .get();
             if (!ridersSnap.empty) {
-                await db.collection("dispatch_jobs").add({ riderId: ridersSnap.docs[0].id, orderID, status: "pending", createdAt: admin.firestore.FieldValue.serverTimestamp() });
+                const riderDoc = ridersSnap.docs[0];
+                const riderId = riderDoc.id;
+                const riderData = riderDoc.data();
+                const jobRef = await db.collection("dispatch_jobs").add({
+                    riderId,
+                    orderID,
+                    status: "pending",
+                    restaurantName: restaurant.name ?? "",
+                    restaurantAddress: restaurant.address ?? "",
+                    customerName: userDoc.data()?.name ?? "Customer",
+                    customerAddress: quote.address?.fullAddress ?? "",
+                    totalAmount: quote.finalTotal ?? 0,
+                    deliveryFee: quote.deliveryFee ?? 0,
+                    orderType: quote.orderType ?? "delivery",
+                    paymentMethod: "stripe",
+                    items: quote.items ?? [],
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                });
+                if (riderData.fcmToken) {
+                    await admin.messaging().send({
+                        token: riderData.fcmToken,
+                        notification: {
+                            title: "New Delivery Request",
+                            body: restaurant.name ?? "",
+                        },
+                        data: {
+                            type: "DISPATCH_JOB",
+                            jobId: jobRef.id,
+                            orderID,
+                        },
+                    });
+                }
             }
         }
     }
     res.json({ received: true });
 });
-// ── 3. onDispatchJobAccepted (Gen 2 Firestore Trigger) ──────────────────────
+// ── 3. onDispatchJobAccepted ────────────────────────────────────────────────
 exports.ondispatchjobaccepted = (0, firestore_1.onDocumentUpdated)({ region: "europe-west1", document: "dispatch_jobs/{jobId}" }, async (event) => {
     const after = event.data?.after.data();
     const before = event.data?.before.data();
@@ -126,7 +153,24 @@ exports.ondispatchjobaccepted = (0, firestore_1.onDocumentUpdated)({ region: "eu
     batch.update(db.collection("riders").doc(after.riderId), { hasActiveOrder: true, currentOrderID: after.orderID });
     await batch.commit();
 });
-// ── 4. onOrderStatusChanged (Gen 2) ──────────────────────────────────────────
+// ── 4. restaurantMarkOrderReady (New - Enables the Pickup button) ───────────
+exports.restaurantmarkorderready = (0, https_1.onCall)({ region: "europe-west1" }, async (request) => {
+    if (!request.auth)
+        throw new https_1.HttpsError("unauthenticated", "Login required");
+    const { orderID } = request.data;
+    const orderRef = db.collection("orders").doc(orderID);
+    const orderDoc = await orderRef.get();
+    if (!orderDoc.exists)
+        throw new https_1.HttpsError("not-found", "Order not found");
+    const orderData = orderDoc.data();
+    const update = { status: "Ready", updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+    const batch = db.batch();
+    batch.update(orderRef, update);
+    batch.update(db.collection("users").doc(orderData.userID).collection("orders").doc(orderID), update);
+    await batch.commit();
+    return { success: true };
+});
+// ── 5. onOrderStatusChanged ────────────────────────────────────────────────
 exports.onorderstatuschanged = (0, firestore_1.onDocumentUpdated)({ region: "europe-west1", document: "orders/{orderID}" }, async (event) => {
     const after = event.data?.after.data();
     if (!after || event.data?.before.data().status === after.status)
@@ -135,7 +179,7 @@ exports.onorderstatuschanged = (0, firestore_1.onDocumentUpdated)({ region: "eur
         await db.collection("riders").doc(after.driverUID).update({ hasActiveOrder: false, currentOrderID: null });
     }
 });
-// ── 5. onRiderLocationUpdate (Gen 2) ────────────────────────────────────────
+// ── 6. onRiderLocationUpdate (Adaptive ETA) ─────────────────────────────────
 exports.onriderlocationupdate = (0, firestore_1.onDocumentUpdated)({ region: "europe-west1", document: "riders/{riderUID}" }, async (event) => {
     const after = event.data?.after.data();
     if (!after?.location || !after.hasActiveOrder || !after.currentOrderID)
@@ -144,6 +188,7 @@ exports.onriderlocationupdate = (0, firestore_1.onDocumentUpdated)({ region: "eu
     if (!orderDoc.exists)
         return;
     const order = orderDoc.data();
+    // If 'In Progress', calculate time to Restaurant. If 'Ready', calculate to Customer.
     const targetLat = order.status === "In Progress" ? order.restaurantLat : parseFloat(order.address?.lat || "0");
     const targetLng = order.status === "In Progress" ? order.restaurantLng : parseFloat(order.address?.lng || "0");
     const directions = await getDirections(after.location.lat, after.location.lng, targetLat, targetLng);
@@ -153,7 +198,87 @@ exports.onriderlocationupdate = (0, firestore_1.onDocumentUpdated)({ region: "eu
         });
     }
 });
-// ── 6. saveFcmToken (Gen 2) ──────────────────────────────────────────────────
+exports.placecashorder = (0, https_1.onCall)({ region: "europe-west1" }, async (request) => {
+    if (!request.auth) {
+        throw new https_1.HttpsError("unauthenticated", "Login required");
+    }
+    const { quoteId } = request.data;
+    const quoteDoc = await db.collection("quotes").doc(quoteId).get();
+    if (!quoteDoc.exists) {
+        throw new https_1.HttpsError("not-found", "Quote not found");
+    }
+    const quote = quoteDoc.data();
+    const userId = request.auth.uid;
+    const restaurantDoc = await db.collection("restaurants")
+        .doc(quote.restaurantID)
+        .get();
+    if (!restaurantDoc.exists) {
+        throw new https_1.HttpsError("not-found", "Restaurant not found");
+    }
+    const restaurant = restaurantDoc.data();
+    const orderID = db.collection("orders").doc().id;
+    const orderData = {
+        orderID,
+        userID: userId,
+        restaurantID: quote.restaurantID,
+        restaurantName: restaurant.name ?? "",
+        restaurantLat: restaurant.lat ?? null,
+        restaurantLng: restaurant.lng ?? null,
+        itemIDs: quote.itemIDs ?? [],
+        address: quote.address ?? {},
+        orderType: quote.orderType ?? "delivery",
+        paymentMethod: "cash",
+        totalAmount: String(quote.finalTotal ?? "0.00"),
+        status: "Pending",
+        orderTime: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    const batch = db.batch();
+    batch.set(db.collection("orders").doc(orderID), orderData);
+    batch.set(db.collection("users").doc(userId).collection("orders").doc(orderID), orderData);
+    batch.update(db.collection("quotes").doc(quoteId), {
+        status: "USED",
+    });
+    await batch.commit();
+    const ridersSnap = await db.collection("riders")
+        .where("isOnline", "==", true)
+        .where("hasActiveOrder", "==", false)
+        .limit(1)
+        .get();
+    if (!ridersSnap.empty) {
+        const riderDoc = ridersSnap.docs[0];
+        const riderId = riderDoc.id;
+        const riderData = riderDoc.data();
+        const jobRef = await db.collection("dispatch_jobs").add({
+            riderId,
+            orderID,
+            status: "pending",
+            restaurantName: restaurant.name ?? "",
+            restaurantAddress: restaurant.address ?? "",
+            customerName: "Customer",
+            customerAddress: quote.address?.fullAddress ?? "",
+            totalAmount: quote.finalTotal ?? 0,
+            deliveryFee: quote.deliveryFee ?? 0,
+            orderType: quote.orderType ?? "delivery",
+            paymentMethod: "cash",
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        if (riderData.fcmToken) {
+            await admin.messaging().send({
+                token: riderData.fcmToken,
+                notification: {
+                    title: "New Cash Order",
+                    body: restaurant.name ?? "",
+                },
+                data: {
+                    type: "DISPATCH_JOB",
+                    jobId: jobRef.id,
+                },
+            });
+        }
+    }
+    return { success: true, orderID };
+});
+// ── 7. saveFcmToken ──────────────────────────────────────────────────────────
 exports.savefcmtoken = (0, https_1.onCall)({ region: "europe-west1" }, async (request) => {
     if (!request.auth)
         throw new https_1.HttpsError("unauthenticated", "Login required");
