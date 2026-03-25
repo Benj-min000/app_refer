@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../utils/app_theme.dart';
+import 'package:rider_app/utils/app_constants.dart';
 
 class RiderService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;

@@ -1,14 +1,8 @@
-// lib/widgets/job_request_sheet.dart
-//
-// Bottom sheet shown when a DISPATCH_JOB arrives (FCM or Firestore).
-// DispatchJob is defined in rider_provider.dart — import from there.
-// Fields used: storeName, storeAddress, customerName, customerAddress,
-//   items, riderEarnings, finalTotal, distanceKm, paymentMethod.
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rider_app/providers/rider_provider.dart';
-import 'package:rider_app/utils/app_theme.dart';
+import 'package:rider_app/models/delivery_model.dart';
+import '../utils/app_theme.dart';
 
 class JobRequestSheet extends StatefulWidget {
   final DispatchJob job;
@@ -25,8 +19,7 @@ class JobRequestSheet extends StatefulWidget {
   });
 
   @override
-  State<JobRequestSheet> createState() =>
-      _JobRequestSheetState();
+  State<JobRequestSheet> createState() => _JobRequestSheetState();
 }
 
 class _JobRequestSheetState extends State<JobRequestSheet>
@@ -74,7 +67,7 @@ class _JobRequestSheetState extends State<JobRequestSheet>
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-            color: AppTheme.primary.withValues(alpha: 0.4),
+            color: AppTheme.primary.withValues(alpha: 0.4), 
             width: 1.5),
         boxShadow: [
           BoxShadow(
@@ -87,10 +80,9 @@ class _JobRequestSheetState extends State<JobRequestSheet>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Timer bar ──────────────────────────────────────────
+          // Pasek postępu czasu
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 5,
@@ -105,7 +97,7 @@ class _JobRequestSheetState extends State<JobRequestSheet>
             padding: const EdgeInsets.all(18),
             child: Column(
               children: [
-                // ── Header ────────────────────────────────────────
+                // Nagłówek i Zarobki
                 Row(
                   children: [
                     AnimatedBuilder(
@@ -118,54 +110,45 @@ class _JobRequestSheetState extends State<JobRequestSheet>
                           color: AppTheme.primary.withValues(
                               alpha: 0.1 + 0.12 * _pulse.value),
                         ),
-                        child: const Icon(
-                            Icons.delivery_dining_rounded,
-                            color: AppTheme.primary,
-                            size: 24),
+                        child: const Icon(Icons.delivery_dining_rounded,
+                            color: AppTheme.primary, size: 24),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('New Delivery Request',
+                          const Text('Nowe zlecenie',
                               style: TextStyle(
                                   color: AppTheme.textPrimary,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 16)),
                           Text(
                             isLowTime
-                                ? '⚠ Auto-reject in $_secondsLeft s'
-                                : 'Expires in $_secondsLeft seconds',
+                                ? 'Autoodrzucenie za $_secondsLeft s'
+                                : 'Wygasa za $_secondsLeft s',
                             style: TextStyle(
-                              color: isLowTime
-                                  ? AppTheme.danger
-                                  : AppTheme.textSecondary,
+                              color: isLowTime ? AppTheme.danger : AppTheme.textSecondary,
                               fontSize: 12,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    // Earnings badge
+                    // Badge z zarobkiem kuriera
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppTheme.primary
-                            .withValues(alpha: 0.15),
+                        color: AppTheme.primary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: AppTheme.primary
-                                .withValues(alpha: 0.4)),
+                        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.4)),
                       ),
                       child: Text(
-                        'zł ${job.riderEarnings?.toStringAsFixed(2) ?? '--'}',
+                        'zł ${(job.deliveryFee).toStringAsFixed(2)}', // Używamy deliveryFee jako zarobek
                         style: const TextStyle(
                           color: AppTheme.primary,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
                           fontSize: 16,
                         ),
                       ),
@@ -175,7 +158,7 @@ class _JobRequestSheetState extends State<JobRequestSheet>
 
                 const SizedBox(height: 16),
 
-                // ── Route ─────────────────────────────────────────
+                // Trasa (Restauracja -> Klient)
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -187,210 +170,77 @@ class _JobRequestSheetState extends State<JobRequestSheet>
                       _RouteRow(
                         icon: Icons.store_rounded,
                         iconColor: AppTheme.info,
-                        label: 'Pick up at',
+                        label: 'Odbiór',
                         value: job.storeName,
                         sub: job.storeAddress,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 11),
-                        child: Container(
-                          width: 2,
-                          height: 20,
-                          color: AppTheme.divider,
-                        ),
-                      ),
+                      const SizedBox(height: 8),
                       _RouteRow(
                         icon: Icons.location_on_rounded,
                         iconColor: AppTheme.danger,
-                        label: 'Deliver to',
-                        value:
-                            job.customerName ?? 'Customer',
+                        label: 'Dostawa',
+                        value: job.customerName ?? 'Klient',
                         sub: job.customerAddress,
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
-                // ── Stats row ─────────────────────────────────────
+                // Statystyki zlecenia
                 Row(
                   children: [
                     _StatChip(
-                      icon: Icons.straighten_rounded,
-                      label: job.distanceKm != null
-                          ? '${job.distanceKm!.toStringAsFixed(1)} km'
-                          : '-- km',
-                      color: AppTheme.warning,
-                    ),
-                    const SizedBox(width: 8),
-                    _StatChip(
-                      icon: _isCash(job.paymentMethod)
-                          ? Icons.payments_outlined
-                          : Icons.credit_card_rounded,
+                      icon: Icons.payments_outlined,
                       label: _isCash(job.paymentMethod)
-                          ? 'Cash · zł${job.finalTotal?.toStringAsFixed(2) ?? '--'}'
-                          : 'Card · Paid',
-                      color: _isCash(job.paymentMethod)
-                          ? AppTheme.warning
-                          : AppTheme.primary,
+                          ? 'Gotówka · zł${job.totalAmount.toStringAsFixed(2)}'
+                          : 'Zapłacone (Stripe)',
+                      color: _isCash(job.paymentMethod) ? AppTheme.warning : AppTheme.primary,
                     ),
                     const SizedBox(width: 8),
                     _StatChip(
                       icon: Icons.receipt_long_outlined,
-                      label:
-                          '${job.items.length} item${job.items.length == 1 ? '' : 's'}',
+                      label: '${job.items.length} produkty',
                       color: AppTheme.info,
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
-                // ── Items expandable ──────────────────────────────
-                GestureDetector(
-                  onTap: () => setState(
-                      () => _showItems = !_showItems),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceLight,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.fastfood_outlined,
-                            color: AppTheme.textSecondary,
-                            size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          _showItems
-                              ? 'Hide order items'
-                              : 'See order items',
-                          style: const TextStyle(
-                              color: AppTheme.textSecondary,
-                              fontSize: 13),
-                        ),
-                        const Spacer(),
-                        Icon(
-                          _showItems
-                              ? Icons.keyboard_arrow_up_rounded
-                              : Icons
-                                  .keyboard_arrow_down_rounded,
-                          color: AppTheme.textSecondary,
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                if (_showItems && job.items.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                // Ostrzeżenie o pobraniu gotówki
+                if (job.collectPayment || _isCash(job.paymentMethod)) ...[
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg,
+                      color: AppTheme.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppTheme.warning.withValues(alpha: 0.4)),
                     ),
-                    child: Column(
-                      children: job.items
-                          .map((item) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(
-                                        vertical: 5),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 24,
-                                      height: 24,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primary
-                                            .withValues(alpha: 0.1),
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                6),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${item.quantity}',
-                                          style: const TextStyle(
-                                            color:
-                                                AppTheme.primary,
-                                            fontWeight:
-                                                FontWeight.w700,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
-                                        children: [
-                                          Text(item.name,
-                                              style: const TextStyle(
-                                                  color: AppTheme
-                                                      .textPrimary,
-                                                  fontSize: 13,
-                                                  fontWeight:
-                                                      FontWeight
-                                                          .w500)),
-                                          if (item.displayOptions
-                                              .isNotEmpty)
-                                            Text(
-                                                item.displayOptions,
-                                                style: const TextStyle(
-                                                    color: AppTheme
-                                                        .textSecondary,
-                                                    fontSize: 11)),
-                                        ],
-                                      ),
-                                    ),
-                                    Text(
-                                      'zł ${(item.price * item.quantity).toStringAsFixed(2)}',
-                                      style: const TextStyle(
-                                        color:
-                                            AppTheme.textSecondary,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.fromLTRB(4, 8, 4, 0),
-                    child: Row(
-                      children: [
-                        const Text('Order total',
-                            style: TextStyle(
-                                color: AppTheme.textSecondary,
-                                fontSize: 13)),
-                        const Spacer(),
-                        Text(
-                          'zł ${job.finalTotal?.toStringAsFixed(2) ?? '--'}',
+                    child: Row(children: [
+                      const Icon(Icons.account_balance_wallet, color: AppTheme.warning, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Pobierz zł${job.totalAmount.toStringAsFixed(2)} od klienta przy dostawie',
                           style: const TextStyle(
-                            color: AppTheme.textPrimary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
+                              color: AppTheme.warning,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
-                      ],
-                    ),
+                      ),
+                    ]),
                   ),
+                  const SizedBox(height: 12),
                 ],
+
+                // Lista produktów (rozwijana)
+                _buildExpandableItems(job),
 
                 const SizedBox(height: 16),
 
-                // ── Buttons ───────────────────────────────────────
+                // Przyciski Akcji
                 Row(
                   children: [
                     Expanded(
@@ -398,17 +248,11 @@ class _JobRequestSheetState extends State<JobRequestSheet>
                         onPressed: widget.onReject,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppTheme.danger,
-                          side: const BorderSide(
-                              color: AppTheme.danger),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 14),
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(12)),
+                          side: const BorderSide(color: AppTheme.danger),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Reject',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700)),
+                        child: const Text('Odrzuć'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -416,7 +260,11 @@ class _JobRequestSheetState extends State<JobRequestSheet>
                       flex: 2,
                       child: ElevatedButton(
                         onPressed: widget.onAccept,
-                        child: const Text('Accept'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('Akceptuj'),
                       ),
                     ),
                   ],
@@ -429,11 +277,58 @@ class _JobRequestSheetState extends State<JobRequestSheet>
     );
   }
 
-  bool _isCash(String method) =>
-      method.toLowerCase() == 'cash';
-}
+  Widget _buildExpandableItems(DispatchJob job) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _showItems = !_showItems),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceLight,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.fastfood_outlined, color: AppTheme.textSecondary, size: 16),
+                const SizedBox(width: 8),
+                Text(_showItems ? 'Ukryj produkty' : 'Pokaż produkty',
+                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                const Spacer(),
+                Icon(_showItems ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    color: AppTheme.textSecondary, size: 18),
+              ],
+            ),
+          ),
+        ),
+        if (_showItems)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.cardBg,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: job.items.map((item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Text('${item.quantity}x', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(item.name)),
+                    Text('zł ${(item.price * item.quantity).toStringAsFixed(2)}'),
+                  ],
+                ),
+              )).toList(),
+            ),
+          ),
+      ],
+    );
+  }
 
-// ── Route row ─────────────────────────────────────────────────────────────────
+  bool _isCash(String method) => method.toLowerCase() == 'cash';
+}
 
 class _RouteRow extends StatelessWidget {
   final IconData icon;
@@ -455,28 +350,16 @@ class _RouteRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: iconColor, size: 22),
+        Icon(icon, color: iconColor, size: 20),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style: const TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontSize: 10)),
-              Text(value,
-                  style: const TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14)),
+              Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10)),
+              Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               if (sub != null)
-                Text(sub!,
-                    style: const TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 12),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
+                Text(sub!, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
             ],
           ),
         ),
@@ -485,46 +368,29 @@ class _RouteRow extends StatelessWidget {
   }
 }
 
-// ── Stat chip ─────────────────────────────────────────────────────────────────
-
 class _StatChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
 
-  const _StatChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+  const _StatChip({required this.icon, required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(
-            vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: color.withValues(alpha: 0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color, size: 14),
             const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                    color: color,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            Flexible(child: Text(label, style: TextStyle(color: color, fontSize: 11), overflow: TextOverflow.ellipsis)),
           ],
         ),
       ),

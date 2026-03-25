@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rider_app/utils/app_constants.dart';
 
 import 'firebase_options.dart';
 import 'providers/rider_provider.dart';

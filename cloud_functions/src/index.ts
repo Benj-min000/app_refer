@@ -1,333 +1,190 @@
-import { onCall, onRequest, HttpsError } from "firebase-functions/v2/https";
-import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+import * as https from "firebase-functions/v2/https";
+import * as firestore from "firebase-functions/v2/firestore";
+import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import Stripe from "stripe";
-import axios from "axios";
-import * as path from "path";
-import * as fs from "fs";
 
 admin.initializeApp();
 const db = admin.firestore();
 
-// ── Load secrets from secrets.json ───────────────────────────────────────────
-interface Secrets {
-  STRIPE_SECRET_KEY:      string;
-  STRIPE_PUBLISHABLE_KEY: string;
-  STRIPE_WEBHOOK_SECRET?: string;
-  MAPS_API_KEY:           string;
-  GOOGLE?:                string;
-}
+// Secret Manager dla Stripe
+const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
 
-function loadSecrets(): Secrets {
-  const secretsPath = path.join(__dirname, "..", "secrets.json");
-  if (!fs.existsSync(secretsPath)) {
-    throw new Error("secrets.json not found at " + secretsPath);
-  }
-  return JSON.parse(fs.readFileSync(secretsPath, "utf-8")) as Secrets;
-}
+/**
+ * 1. Tworzy Payment Intent dla Stripe
+ */
+export const createPaymentIntent = https.onCall(
+  { 
+    secrets: [stripeSecretKey], 
+    region: "europe-west1", 
+    enforceAppCheck: false 
+  },
+  async (req) => {
+    const { amount } = req.data;
+    if (!amount) throw new https.HttpsError("invalid-argument", "Brak kwoty (amount).");
 
-const secrets = loadSecrets();
-const stripe = new Stripe(secrets.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
-const GOOGLE_MAPS_KEY = secrets.MAPS_API_KEY || secrets.GOOGLE || "";
-const STRIPE_PUBLISHABLE_KEY = secrets.STRIPE_PUBLISHABLE_KEY;
-const STRIPE_WEBHOOK_SECRET  = secrets.STRIPE_WEBHOOK_SECRET ?? "";
+    const stripe = new Stripe(stripeSecretKey.value(), { apiVersion: "2023-10-16" });
+    const amountInCents = Math.round(parseFloat(amount.toString()) * 100);
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-async function getDirections(fromLat: number, fromLng: number, toLat: number, toLng: number) {
-  try {
-    const { data } = await axios.get("https://maps.googleapis.com/maps/api/directions/json", {
-      params: { origin: `${fromLat},${fromLng}`, destination: `${toLat},${toLng}`, mode: "driving", key: GOOGLE_MAPS_KEY },
-    });
-    return data.status === "OK" ? { durationSeconds: data.routes[0].legs[0].duration.value, polyline: data.routes[0].overview_polyline.points } : null;
-  } catch { return null; }
-}
-
-async function writeNotification(uid: string, title: string, body: string, source: string) {
-  await db.collection("users").doc(uid).collection("notifications").add({
-    title, body, source, isRead: false, createdAt: admin.firestore.FieldValue.serverTimestamp(),
-  });
-}
-
-// ── 1. createPaymentIntent ──────────────────────────────────────────────────
-export const createpaymentintent = onCall({ region: "europe-west1" }, async (request) => {
-  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
-  
-  const { quoteId } = request.data;
-  const quoteDoc = await db.collection("quotes").doc(quoteId).get();
-  if (!quoteDoc.exists) throw new HttpsError("not-found", "Quote not found");
-  
-  const quote = quoteDoc.data()!;
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: Math.round(quote.finalTotal * 100),
-    currency: "pln",
-    metadata: { quoteId, userId: request.auth.uid, restaurantID: quote.restaurantID },
-    automatic_payment_methods: { enabled: true },
-  });
-
-  await db.collection("quotes").doc(quoteId).update({ stripePaymentIntentId: paymentIntent.id, paymentStatus: "PENDING" });
-  return { clientSecret: paymentIntent.client_secret, publishableKey: STRIPE_PUBLISHABLE_KEY };
-});
-
-// ── 2. stripeWebhook (Enhanced for Rider Pop-up) ───────────────────────────
-export const stripewebhook = onRequest({ region: "europe-west1" }, async (req, res) => {
-  const sig = req.headers["stripe-signature"] as string;
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
-  } catch (err) { res.status(400).send("Invalid signature"); return; }
-
-  if (event.type === "payment_intent.succeeded") {
-    const pi = event.data.object as Stripe.PaymentIntent;
-    const { quoteId, userId, restaurantID } = pi.metadata;
-    const [quoteDoc, userDoc, restaurantDoc] = await Promise.all([
-      db.collection("quotes").doc(quoteId).get(),
-      db.collection("users").doc(userId).get(),
-      db.collection("restaurants").doc(restaurantID).get(),
-    ]);
-
-    if (quoteDoc?.exists && restaurantDoc?.exists) {
-      const quote = quoteDoc.data()!;
-      const restaurant = restaurantDoc.data()!;
-      const orderID = db.collection("orders").doc().id;
-      
-      const orderData = {
-        orderID, userID: userId, restaurantID, restaurantName: restaurant.name ?? "",
-        restaurantLat: restaurant.lat ?? null, restaurantLng: restaurant.lng ?? null,
-        itemIDs: quote.itemIDs ?? [], address: quote.address ?? {}, orderType: quote.orderType ?? "delivery",
-        paymentMethod: "stripe", totalAmount: String(quote.finalTotal ?? "0.00"), status: "Pending",
-        orderTime: admin.firestore.FieldValue.serverTimestamp(), stripePaymentIntentId: pi.id,
-      };
-
-      const batch = db.batch();
-      batch.set(db.collection("orders").doc(orderID), orderData);
-      batch.set(db.collection("users").doc(userId).collection("orders").doc(orderID), orderData);
-      batch.update(db.collection("quotes").doc(quoteId), { status: "USED", orderID, paymentStatus: "PAID" });
-      await batch.commit();
-      
-      await writeNotification(userId, "Order Placed! 🎉", `Order from ${restaurant.name} received.`, "order");
-
-      // DISPATCH TRIGGER: Send full data so the Rider App can show the job sheet
-      const ridersSnap = await db.collection("riders")
-  .where("isOnline", "==", true)
-  .where("hasActiveOrder", "==", false)
-  .limit(1)
-  .get();
-
-      if (!ridersSnap.empty) {
-        const riderDoc = ridersSnap.docs[0];
-        const riderId = riderDoc.id;
-        const riderData = riderDoc.data();
-
-        const jobRef = await db.collection("dispatch_jobs").add({
-          riderId,
-          orderID,
-          status: "pending",
-          restaurantName: restaurant.name ?? "",
-          restaurantAddress: restaurant.address ?? "",
-          customerName: userDoc.data()?.name ?? "Customer",
-          customerAddress: quote.address?.fullAddress ?? "",
-          totalAmount: quote.finalTotal ?? 0,
-          deliveryFee: quote.deliveryFee ?? 0,
-          orderType: quote.orderType ?? "delivery",
-          paymentMethod: "stripe",
-          items: quote.items ?? [],
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-
-        if (riderData.fcmToken) {
-          await admin.messaging().send({
-            token: riderData.fcmToken,
-            notification: {
-              title: "New Delivery Request",
-              body: restaurant.name ?? "",
-            },
-            data: {
-              type: "DISPATCH_JOB",
-              jobId: jobRef.id,
-              orderID,
-            },
-          });
-        }
-      }
+    try {
+      const pi = await stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: "pln",
+        automatic_payment_methods: { enabled: true },
+      });
+      return { clientSecret: pi.client_secret, paymentIntentId: pi.id };
+    } catch (error: any) {
+      console.error("Stripe Error:", error);
+      throw new https.HttpsError("internal", error.message);
     }
   }
-  res.json({ received: true });
-});
+);
 
-// ── 3. onDispatchJobAccepted ────────────────────────────────────────────────
-export const ondispatchjobaccepted = onDocumentUpdated({ region: "europe-west1", document: "dispatch_jobs/{jobId}" }, async (event) => {
-  const after = event.data?.after.data();
-  const before = event.data?.before.data();
-  if (!after || before?.status === after.status || after.status !== "accepted") return;
+/**
+ * 2. Pobiera typ metody płatności (karta/blik) po sukcesie
+ */
+export const getPaymentMethodType = https.onCall(
+  { 
+    secrets: [stripeSecretKey], 
+    region: "europe-west1", 
+    enforceAppCheck: false 
+  },
+  async (req) => {
+    const { paymentIntentId } = req.data;
+    if (!paymentIntentId) throw new https.HttpsError("invalid-argument", "Brak paymentIntentId.");
 
-  const orderDoc = await db.collection("orders").doc(after.orderID).get();
-  if (!orderDoc.exists) return;
-  
-  const update = { status: "In Progress", driverUID: after.riderId, updatedAt: admin.firestore.FieldValue.serverTimestamp() };
-  const batch = db.batch();
-  batch.update(db.collection("orders").doc(after.orderID), update);
-  batch.update(db.collection("users").doc(orderDoc.data()!.userID).collection("orders").doc(after.orderID), update);
-  batch.update(db.collection("riders").doc(after.riderId), { hasActiveOrder: true, currentOrderID: after.orderID });
-  await batch.commit();
-});
-
-// ── 4. restaurantMarkOrderReady (New - Enables the Pickup button) ───────────
-export const restaurantmarkorderready = onCall({ region: "europe-west1" }, async (request) => {
-  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
-  
-  const { orderID } = request.data;
-  const orderRef = db.collection("orders").doc(orderID);
-  const orderDoc = await orderRef.get();
-  if (!orderDoc.exists) throw new HttpsError("not-found", "Order not found");
-
-  const orderData = orderDoc.data()!;
-  const update = { status: "Ready", updatedAt: admin.firestore.FieldValue.serverTimestamp() };
-
-  const batch = db.batch();
-  batch.update(orderRef, update);
-  batch.update(db.collection("users").doc(orderData.userID).collection("orders").doc(orderID), update);
-  await batch.commit();
-
-  return { success: true };
-});
-
-// ── 5. onOrderStatusChanged ────────────────────────────────────────────────
-export const onorderstatuschanged = onDocumentUpdated({ region: "europe-west1", document: "orders/{orderID}" }, async (event) => {
-  const after = event.data?.after.data();
-  if (!after || event.data?.before.data().status === after.status) return;
-
-  if (after.status === "Delivered" && after.driverUID) {
-    await db.collection("riders").doc(after.driverUID).update({ hasActiveOrder: false, currentOrderID: null });
+    const stripe = new Stripe(stripeSecretKey.value(), { apiVersion: "2023-10-16" });
+    
+    try {
+      const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
+        expand: ["payment_method"],
+      });
+      const paymentMethod = pi.payment_method as Stripe.PaymentMethod;
+      return { paymentMethodType: paymentMethod?.type ?? "card" };
+    } catch (error: any) {
+      throw new https.HttpsError("internal", error.message);
+    }
   }
-});
+);
 
-// ── 6. onRiderLocationUpdate (Adaptive ETA) ─────────────────────────────────
-export const onriderlocationupdate = onDocumentUpdated({ region: "europe-west1", document: "riders/{riderUID}" }, async (event) => {
-  const after = event.data?.after.data();
-  if (!after?.location || !after.hasActiveOrder || !after.currentOrderID) return;
+/**
+ * 3. Zapisuje zamówienie w Firestore
+ */
+export const placeOrder = https.onCall(
+  { 
+    region: "europe-west1", 
+    enforceAppCheck: false 
+  },
+  async (req) => {
+    const { data, auth } = req;
+    if (!auth) throw new https.HttpsError("unauthenticated", "Wymagane logowanie.");
 
-  const orderDoc = await db.collection("orders").doc(after.currentOrderID).get();
-  if (!orderDoc.exists) return;
-  const order = orderDoc.data()!;
-  
-  // If 'In Progress', calculate time to Restaurant. If 'Ready', calculate to Customer.
-  const targetLat = order.status === "In Progress" ? order.restaurantLat : parseFloat(order.address?.lat || "0");
-  const targetLng = order.status === "In Progress" ? order.restaurantLng : parseFloat(order.address?.lng || "0");
-
-  const directions = await getDirections(after.location.lat, after.location.lng, targetLat, targetLng);
-  if (directions) {
-    await db.collection("orders").doc(after.currentOrderID).update({
-      eta: { minMinutes: Math.max(1, Math.ceil(directions.durationSeconds / 60) - 1), updatedAt: admin.firestore.FieldValue.serverTimestamp() }
-    });
-  }
-});
-
-export const placecashorder = onCall({ region: "europe-west1" }, async (request) => {
-  if (!request.auth) {
-    throw new HttpsError("unauthenticated", "Login required");
-  }
-
-  const { quoteId } = request.data;
-
-  const quoteDoc = await db.collection("quotes").doc(quoteId).get();
-  if (!quoteDoc.exists) {
-    throw new HttpsError("not-found", "Quote not found");
-  }
-
-  const quote = quoteDoc.data()!;
-  const userId = request.auth.uid;
-
-  const restaurantDoc = await db.collection("restaurants")
-      .doc(quote.restaurantID)
-      .get();
-
-  if (!restaurantDoc.exists) {
-    throw new HttpsError("not-found", "Restaurant not found");
-  }
-
-  const restaurant = restaurantDoc.data()!;
-
-  const orderID = db.collection("orders").doc().id;
-
-  const orderData = {
-    orderID,
-    userID: userId,
-    restaurantID: quote.restaurantID,
-    restaurantName: restaurant.name ?? "",
-    restaurantLat: restaurant.lat ?? null,
-    restaurantLng: restaurant.lng ?? null,
-    itemIDs: quote.itemIDs ?? [],
-    address: quote.address ?? {},
-    orderType: quote.orderType ?? "delivery",
-    paymentMethod: "cash",
-    totalAmount: String(quote.finalTotal ?? "0.00"),
-    status: "Pending",
-    orderTime: admin.firestore.FieldValue.serverTimestamp(),
-  };
-
-  const batch = db.batch();
-
-  batch.set(db.collection("orders").doc(orderID), orderData);
-  batch.set(
-    db.collection("users").doc(userId).collection("orders").doc(orderID),
-    orderData
-  );
-
-  batch.update(db.collection("quotes").doc(quoteId), {
-    status: "USED",
-  });
-
-  await batch.commit();
-
-  const ridersSnap = await db.collection("riders")
-    .where("isOnline", "==", true)
-    .where("hasActiveOrder", "==", false)
-    .limit(1)
-    .get();
-
-  if (!ridersSnap.empty) {
-    const riderDoc = ridersSnap.docs[0];
-    const riderId = riderDoc.id;
-    const riderData = riderDoc.data();
-
-    const jobRef = await db.collection("dispatch_jobs").add({
-      riderId,
+    const orderID = db.collection("orders").doc().id;
+    const orderData = {
+      ...data,
       orderID,
-      status: "pending",
-      restaurantName: restaurant.name ?? "",
-      restaurantAddress: restaurant.address ?? "",
-      customerName: "Customer",
-      customerAddress: quote.address?.fullAddress ?? "",
-      totalAmount: quote.finalTotal ?? 0,
-      deliveryFee: quote.deliveryFee ?? 0,
-      orderType: quote.orderType ?? "delivery",
-      paymentMethod: "cash",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      userID: auth.uid,
+      status: "Pending",
+      orderTime: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const batch = db.batch();
+    batch.set(db.collection("orders").doc(orderID), orderData);
+    batch.set(db.collection("users").doc(auth.uid).collection("orders").doc(orderID), orderData);
+    
+    await batch.commit();
+    
+    // Próba wysłania do kuriera
+    try {
+      await dispatchToRider(orderID);
+    } catch (e) {
+      console.error("Dispatch Error:", e);
+    }
+
+    return { success: true, orderID };
+  }
+);
+
+/**
+ * Trigger: Gdy kurier zaakceptuje zadanie
+ */
+export const onDispatchAccepted = firestore.onDocumentUpdated(
+  {
+    document: "dispatch_jobs/{jobId}",
+    region: "europe-west1",
+  },
+  async (event) => {
+    const after = event.data?.after.data();
+    if (!after || after.status !== "accepted") return;
+
+    const { riderId, orderID } = after;
+
+    await db.collection("orders").doc(orderID).update({
+      status: "In Progress",
+      driverUID: riderId,
     });
 
-    if (riderData.fcmToken) {
-      await admin.messaging().send({
-        token: riderData.fcmToken,
-        notification: {
-          title: "New Cash Order",
-          body: restaurant.name ?? "",
-        },
-        data: {
-          type: "DISPATCH_JOB",
-          jobId: jobRef.id,
-        },
+    await db.collection("riders").doc(riderId).update({
+      hasActiveOrder: true,
+      currentOrderID: orderID,
+    });
+  }
+);
+
+/**
+ * Trigger: Gdy status zamówienia zmieni się na Delivered
+ */
+export const onOrderUpdated = firestore.onDocumentUpdated(
+  {
+    document: "orders/{orderID}",
+    region: "europe-west1",
+  },
+  async (event) => {
+    const after = event.data?.after.data();
+    if (!after) return;
+
+    if (after.status === "Delivered" && after.driverUID) {
+      await db.collection("riders").doc(after.driverUID).update({
+        hasActiveOrder: false,
+        currentOrderID: null,
       });
     }
   }
+);
 
-  return { success: true, orderID };
-});
+/**
+ * Funkcja pomocnicza: Szukanie kuriera
+ */
+async function dispatchToRider(orderID: string) {
+  const riders = await db.collection("riders")
+    .where("isOnline", "==", true)
+    .where("hasActiveOrder", "==", false)
+    .limit(1).get();
 
-// ── 7. saveFcmToken ──────────────────────────────────────────────────────────
-export const savefcmtoken = onCall({ region: "europe-west1" }, async (request) => {
-  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
-  const collection = request.data.role === "rider" ? "riders" : "users";
-  await db.collection(collection).doc(request.auth.uid).update({ fcmToken: request.data.token, fcmUpdatedAt: admin.firestore.FieldValue.serverTimestamp() });
-  return { success: true };
+  if (riders.empty) return;
+  const riderDoc = riders.docs[0];
+
+  await db.collection("dispatch_jobs").add({
+    riderId: riderDoc.id,
+    orderID,
+    status: "pending",
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+}
+
+/**
+ * Zapisywanie tokena FCM
+ */
+export const saveFcmToken = https.onCall(
+  { 
+    region: "europe-west1", 
+    enforceAppCheck: false 
+  }, 
+  async (req) => {
+    const { token, role } = req.data;
+    if (!req.auth) return { success: false };
+    
+    const coll = role === "rider" ? "riders" : "users";
+    await db.collection(coll).doc(req.auth.uid).set({ fcmToken: token }, { merge: true });
+    return { success: true };
 });
